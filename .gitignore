@@ -1,0 +1,6 @@
+.d2
+build
+node_modules
+.env.production
+.env.development
+.env

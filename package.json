@@ -1,0 +1,31 @@
+{
+  "name": "import-export-excel",
+  "version": "1.0.0",
+  "description": "",
+  "license": "BSD-3-Clause",
+  "private": true,
+  "scripts": {
+    "build": "d2-app-scripts build",
+    "start": "d2-app-scripts start",
+    "test": "d2-app-scripts test",
+    "deploy": "d2-app-scripts deploy"
+  },
+  "devDependencies": {
+    "@dhis2/cli-app-scripts": "^10.4.1"
+  },
+  "dependencies": {
+    "@dhis2/app-runtime": "^3.10.2",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/material": "^5.15.19",
+    "@mui/styled-engine-sc": "^6.0.0-alpha.18",
+    "@mui/styles": "^5.15.19",
+    "@mui/x-data-grid": "^7.7.0",
+    "clsx": "^2.1.0",
+    "d2": "^31.10.2",
+    "file-saver": "^2.0.5",
+    "prop-types": "^15.8.1",
+    "styled-components": "^6.1.11",
+    "xlsx": "^0.18.5"
+  }
+}
