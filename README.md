@@ -1,7 +1,3 @@
-## Aggreation import app
-
-This app uplaods countries yearly data in the data set.
-
 This project was bootstrapped with [DHIS2 Application Platform](https://github.com/dhis2/app-platform).
 
 ## Available Scripts

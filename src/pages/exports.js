@@ -8,6 +8,7 @@ import { makeStyles } from '@mui/styles';
 import { DataGrid } from '@mui/x-data-grid';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import InputFileUpload from './import';
 const region = ['Country', 'Subnational', 'Org unit ID', 'Age group', 'ID']
 
 const useStyles = makeStyles({
@@ -19,7 +20,8 @@ const useStyles = makeStyles({
         },
     },
     card: {
-        minHeight: '70vh'
+        minHeight: '50vh',
+        // backgroundColor: 'rgb(44 102 147)!important',
     },
     typo: {
         textAlign: 'center',
@@ -34,12 +36,14 @@ export default function Exports() {
     const [selectedFilter, setSelectedFilter] = useState({ period: '', country: {} })
     const [data, setData] = useState({ columns: [], rows: [] })
 
+    // console.log('filter:>>>>>>', filter)
+
     useEffect(async () => {
         const d = new Date();
         let currentYear = d.getFullYear();
 
-        const country=await exportAction()
-        
+        const country = await exportAction()
+
         setFilter({
             country: country,
             period: getYear(currentYear)
@@ -117,7 +121,7 @@ export default function Exports() {
 
             <Card style={{ marginBottom: '10px', padding: '10px' }}>
                 <Grid container gap={3} >
-                    <Grid xs={2}>
+                    <Grid xs={12} md={2}>
                         <Autocomplete
                             disablePortal
                             disableClearable
@@ -132,7 +136,7 @@ export default function Exports() {
                             renderInput={(params) => <TextField {...params} label="Select Country" />}
                         />
                     </Grid>
-                    <Grid xs={2}>
+                    <Grid xs={12} md={2}>
                         <Autocomplete
                             disablePortal
                             disableClearable
@@ -148,9 +152,16 @@ export default function Exports() {
                         />
                     </Grid>
 
-                    <Grid xs={2}>
+                    <Grid xs={12} md={2}>
                         <Button disabled={data.columns.length == 5 || data.rows.length == 0}
                             variant="contained" color='secondary' onClick={() => handleExport('report-table', 'Worklist')}>Export</Button>
+                    </Grid>
+
+                    <Grid xs={12} md={5}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <InputFileUpload />
+                        </div>
+
                     </Grid>
 
                 </Grid>
@@ -158,7 +169,7 @@ export default function Exports() {
 
             <Card className={classes.card} >
                 {data.columns.length == 5 || data.rows.length == 0 ?
-                    <Typography variant="h5" gutterBottom className={classes.typo}>
+                    <Typography variant="h6" gutterBottom className={classes.typo}>
                         'No Filter Selected'
                     </Typography>
                     :

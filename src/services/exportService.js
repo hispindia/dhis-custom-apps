@@ -9,7 +9,8 @@ export class exportService {
     static fetchSubNational = async () => {
         const base_url = process.env.REACT_APP_DHIS2_BASE_URL
         const requestOptions = { method: 'GET' }
-        let response = await fetch(base_url + "/api/29/organisationUnitGroups/znpMvXHhbPX.json?fields=id,name,organisationUnits[id,name,path]", requestOptions);
+        // let response = await fetch(base_url + "/api/29/organisationUnitGroups/znpMvXHhbPX.json?fields=id,name,organisationUnits[id,name,path]", requestOptions);
+        let response = await fetch(base_url + "/api/dataSets/psffCPn7pDW.json?fields=id,name,organisationUnits[id,name,path]&paging=false", requestOptions);
         return response.json();
     }
 }
