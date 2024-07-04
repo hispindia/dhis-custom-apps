@@ -1,0 +1,20 @@
+
+.dataset-container{
+    // margin-left: 15px;
+    // margin-bottom: 50px;
+}
+.dataset-container{
+    display: flex;
+    align-items: center;
+}
+.dataset-container label {
+    margin-right: 10px; /* Space between label and select */
+    font-weight: bold;
+    width: 12%;
+  }
+  .button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Adjust this value as needed */
+  }

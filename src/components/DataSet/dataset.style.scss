@@ -1,0 +1,35 @@
+// .side-bar {
+//     height: 90vh;
+//     width:20vw;
+// }
+
+.container {
+    box-sizing: border-box;
+    display: flex;
+    flex: 0 1 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-right: -1rem;
+    margin-left: -1rem;
+}
+.box{
+    margin-top: 10px;
+   
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #fff;
+}
+.dataset-container{
+    display: flex;
+    align-items: center;
+}
+.dataset-container label {
+    margin-right: 10px; /* Space between label and select */
+    font-weight: bold;
+    width: 12%;
+  }
+  .button-container {
+    display: flex;
+    justify-content: center;
+    // height: 100%; /* Adjust this value as needed */
+  }

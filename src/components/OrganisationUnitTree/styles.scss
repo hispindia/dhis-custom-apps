@@ -1,0 +1,28 @@
+
+.ou {
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ou-tree {
+    height: 40vh;
+    overflow:auto;
+}
+
+.ou-clicked {
+    color: rgb(0, 121, 107);
+}
+
+.ou-hide {
+    display: none;
+}
+
+.ou-modal{
+    position:absolute;
+    background-color: whitesmoke;
+    padding-left:1em;
+    width:inherit;
+    height: 40vh;
+    overflow: auto;
+    
+}
