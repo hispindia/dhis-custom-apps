@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 import { setPeriod } from "../../store/main/main.action";
-
 export const Period = ({ head }) => {
   const dispatch = useDispatch();
-  const selectedDataset = useSelector((state) => state?.main?.selectedDataset);
+  const selectedDataset = useSelector((state) => state.main.selectedDataset);
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
   const [periodType, setPeriodType] = useState("");

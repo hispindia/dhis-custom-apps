@@ -2,17 +2,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.scss'
-
 import 'bootstrap/dist/css/bootstrap.css';
-
-
 import { Provider } from "react-redux";
-
 import { InitialQuery } from "./constants";
 import { useDataQuery } from "@dhis2/app-runtime";
-
 import { CircularLoader } from "@dhis2/ui";
-
 import { store } from "./store/store";
 import Main from './components/Main';
 const MyApp = () => {
@@ -29,16 +23,13 @@ const MyApp = () => {
   return (
     <Provider store={store}>
       <Router basename="nepalhmis/api/apps/dataset-reporting-app/index.html">
-{/* <Sidebar /> */}
+        {/* <Sidebar /> */}
         <Routes>
           <Route path="/" element={<Main data={data} head={true} />} />
-          <Route path="/report" element={<Main data={data} head={false}/>} />
-         
+          <Route path="/report" element={<Main data={data} head={false} />} />
         </Routes>
-
       </Router>
     </Provider>
-
   );
 };
 export default MyApp;

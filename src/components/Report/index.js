@@ -2,25 +2,18 @@ import React, { useState, useEffect } from "react";
 import { CircularLoader } from "@dhis2/ui";
 import { useSelector } from "react-redux";
 import { ApiService } from "../../services/apiService";
-
-import { tableToExcel, printContent,downloadPDF } from '../../utils/download'
-
+import { tableToExcel } from '../../utils/download'
 const Report = ({ head }) => {
-
     const [report, setReport] = useState(null);
     const [reportApp, setReportApp] = useState(null);
     const [loading, setLoading] = useState(true);
     const selectedOU = useSelector((state) => state.outree.clickedOU);
     const selectedPeriod = useSelector((state) => state.main.period);
-    const useSelectedUnitOnly = useSelector((state) => state.main?.useSelectedUnitOnly);
-    const dataSetList = useSelector((state) => state.main?.dataSetList);
-    const selectedDataset = useSelector(
-        (state) => state.main.selectedDataset
-    );
+    const useSelectedUnitOnly = useSelector((state) => state.main.useSelectedUnitOnly);
+    const dataSetList = useSelector((state) => state.main.dataSetList);
+    const selectedDataset = useSelector( (state) => state.main.selectedDataset);
     const ouChildrenIds = selectedOU?.children?.map((ou) => ou.id).join(";");
     const dataSet = (dataSetList.length && selectedDataset) ? dataSetList.find(list => list.id == selectedDataset) : '';
-
-
     const fetchReport = async () => {
         const response = await ApiService.getReport(
             selectedOU.id,
@@ -57,13 +50,14 @@ const Report = ({ head }) => {
         </th>
     ));
 
-    const tableRows = reportApp?.data?.map((row, index) => (
+    const tableRows = reportApp?.rows?.map((row, index) => (
         <tr key={index} style={{ border: '1px solid black' }}>
-            {row.map((cell, cellIndex) => (
-                <td key={cellIndex} style={{ border: '1px solid black' }}>
-                    {cell}
-                </td>
-            ))}
+
+            <td style={{ border: '1px solid black' }}>{row[4]}</td>
+            <td style={{ border: '1px solid black' }}>{row[5]}</td>
+            <td style={{ border: '1px solid black' }}>{row[6]}</td>
+            <td style={{ border: '1px solid black' }}>{row[7]}</td>
+            <td style={{ border: '1px solid black' }}>{row[8]}</td>
         </tr>
     ));
 
@@ -85,7 +79,7 @@ const Report = ({ head }) => {
             >
                 DOWNLOAD AS XLS
             </button>
-           
+
             {head ? (
                 <div style={{ marginTop: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1);', borderRadius: '8px', backgroundColor: '#fff' }} >
 

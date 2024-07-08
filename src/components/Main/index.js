@@ -7,18 +7,16 @@ import {
   setUserOU,
 } from "../../store/outree/outree.action";
 import { setDatasets, setStatus, setUseSelectedUnitOnly } from "../../store/main/main.action";
-
 import OrganisationUnitTree from "../OrganisationUnitTree";
 import Sidebar from "../Sidebar";
 import DataSets from "../Datasets";
 import Period from "../Period";
 import Report from "../Report";
-
 const Main = ({ data, head }) => {
   const dispatch = useDispatch();
   const selectedOU = useSelector((state) => state.outree.clickedOU);
   const status = useSelector((state) => state.main.status);
-  const useSelectedUnitOnly = useSelector((state) => state.main?.useSelectedUnitOnly);
+  const useSelectedUnitOnly = useSelector((state) => state.main.useSelectedUnitOnly);
   
   useEffect(() => {
     if (data) {
