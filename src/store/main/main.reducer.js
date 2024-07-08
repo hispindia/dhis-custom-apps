@@ -7,9 +7,9 @@ export const MAIN_ACTION_TYPES = {
   };
   
   export const INITIAL_STATE = {
-    dataSetList: null,
+    dataSetList: [],
     period: null,
-    selectedDataset:null,
+    selectedDataset:'',
     status:false,
     useSelectedUnitOnly:false,
   };

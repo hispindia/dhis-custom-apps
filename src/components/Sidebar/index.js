@@ -22,10 +22,6 @@ const Sidebar = () => {
     }, [location]);
 
     function handleDataSet() {
-        dispatch(setSelectedDataset([]));
-        dispatch(setPeriod([]));
-        dispatch(dispatch(setStatus(false)))
-        dispatch(dispatch(setUseSelectedUnitOnly(false)))
         console.log('side bar clicked....................................');
     }
 

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./dataset.style.scss";
-import OrganisationUnitTree from "../OrganisationUnitTree";
-import DataSetTree from "../DataSetTree";
+import "./main.style.scss";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setClickedOU,
@@ -9,14 +7,19 @@ import {
   setUserOU,
 } from "../../store/outree/outree.action";
 import { setDatasets, setStatus, setUseSelectedUnitOnly } from "../../store/main/main.action";
+
+import OrganisationUnitTree from "../OrganisationUnitTree";
 import Sidebar from "../Sidebar";
-import PeriodType from "../PeriodType";
-import Main from "../Main/Main";
-const Dataset = ({ data }) => {
+import DataSets from "../Datasets";
+import Period from "../Period";
+import Report from "../Report";
+
+const Main = ({ data, head }) => {
   const dispatch = useDispatch();
   const selectedOU = useSelector((state) => state.outree.clickedOU);
-  const SelectedRoute = useSelector((state) => state.sidebar?.Title?.text);
+  const status = useSelector((state) => state.main.status);
   const useSelectedUnitOnly = useSelector((state) => state.main?.useSelectedUnitOnly);
+  
   useEffect(() => {
     if (data) {
       if (data.ouList) dispatch(setOUList(data.ouList.organisationUnits));
@@ -44,11 +47,10 @@ const Dataset = ({ data }) => {
     <>
       <Sidebar />
 
-      <div style={{ width: '85%', boxSizing: 'border-box', float: 'left' }} className="p-3">
+      <div style={{ width: '85%', boxSizing: 'border-box', float: 'left' }}>
         {selectedOU && (
           <>
-            <div style={{ display: "flex", width: "100%" }} className="box">
-
+            <div className="box p-3 d-flex w-100">
               <div >
                 <input
                   className="form-control"
@@ -59,12 +61,11 @@ const Dataset = ({ data }) => {
                 <OrganisationUnitTree />
               </div>
               <div style={{ position: 'relative', marginLeft: '13px' }}>
-                <DataSetTree />
-                <div>
-                  <PeriodType />
-                </div>
-                {SelectedRoute == "Data Set Report" && (
-                  <div style={{ marginTop: '3rem' }}>
+              <h3 className="text-center fw-bold my-2">{head? "Data Set Report":"Reporting Rate Summary"}</h3>
+              <DataSets head={head}/>
+              <Period head={head}/>
+                {head && (
+                  <div className="mt-5">
                     <input
                       type="checkbox"
                       id="useSelectedUnitOnly"
@@ -103,9 +104,9 @@ const Dataset = ({ data }) => {
           </>
         )}
 
-        <Main />
+        {status ? <Report head={head}/> : ''}
       </div>
     </>
   );
 };
-export default Dataset;
+export default Main;

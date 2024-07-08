@@ -1,125 +1,11 @@
-// import React, { useState, useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// // import { setPeriod } from "../../store/sidebar/sidebar.action";
-// import { setPeriod } from "../../store/main/main.action";
-
-// export const PeriodType = () => {
-//   const dispatch = useDispatch();
-//   const selectedDataset = useSelector((state) => state?.main?.selectedDataset);
-
-//   const [year, setYear] = useState("");
-//   const [month, setMonth] = useState("");
-
-//   const handleChange = (e, type) => {
-//     const { value } = e.target;
-//     if (type == "yyyy") setYear(value);
-//     if (type == "mm") setMonth(value);
-//   };
-//   useEffect(() => {
-//     if (year) dispatch(setPeriod(year));
-//     if (month) dispatch(setPeriod(`${year}-${month}`));
-//   }, [year, month]);
-//   useEffect(() => {
-//     setPeriod([]);
-//   }, []);
-
-//   if (!selectedDataset) return null;
-//   return (
-//     <div className="period-container" style={{ marginLeft: "15px" }}>
-//       <DisplayPeriod
-//         periodType={selectedDataset[0]?.periodType}
-//         setMonth={setMonth}
-//         handleChange={handleChange}
-//       />
-//     </div>
-//   );
-// };
-
-// const DisplayPeriod = ({ periodType, handleChange, setMonth }) => {
-//   if (!periodType) return null;
-//   if (periodType == "Yearly") {
-//     const currentYear = new Date().getFullYear();
-//     const years = [];
-//     for (let i = currentYear - 5; i <= currentYear; i++) years.push(i);
-
-//     return (
-//       <div className="col" style={{ width: "175px" }}>
-//         <label style={{ marginRight: "10px", fontWeight: "bold", width: "9%" }}>
-//           Period
-//         </label>
-//         <select
-//           className="form-select"
-//           onChange={(e) => {
-//             setMonth("");
-//             handleChange(e, "yyyy");
-//           }}
-//         >
-//           <option className="text-italic" val="">
-//             Year
-//           </option>
-//           {years.map((year) => (
-//             <option value={year}>{year}</option>
-//           ))}
-//         </select>
-//       </div>
-//     );
-//   } else if (periodType == "Monthly") {
-//     const currentYear = new Date().getFullYear();
-//     const years = [];
-//     for (let i = currentYear - 5; i <= currentYear; i++) years.push(i);
-
-//     var months = "Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sept_Oct_Nov_Dec";
-//     months = months.split("_");
-
-//     return (
-//       <div className="row">
-//         <label style={{ marginRight: "10px", fontWeight: "bold", width: "9%" }}>
-//           Period
-//         </label>
-//         <div className="col" style={{ width: "175px" }}>
-//           <select
-//             className="form-select"
-//             onChange={(e) => handleChange(e, "yyyy")}
-//           >
-//             <option className="text-italic" val="">
-//               Year
-//             </option>
-//             {years.map((year) => (
-//               <option value={year}>{year}</option>
-//             ))}
-//           </select>
-//         </div>
-//         <div className="col" style={{ width: "175px" }}>
-//           <select
-//             className="form-select"
-//             onChange={(e) => handleChange(e, "mm")}
-//           >
-//             <option className="text-italic" val="">
-//               Month
-//             </option>
-//             {months.map((month, index) => (
-//               <option value={`00${index + 1}`.slice(-2)}>{month}</option>
-//             ))}
-//           </select>
-//         </div>
-//       </div>
-//     );
-//   } else {
-//     return null;
-//   }
-// };
-// export default PeriodType;
-
-
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// import { setPeriod } from "../../store/sidebar/sidebar.action";
+
 import { setPeriod } from "../../store/main/main.action";
 
-export const PeriodType = () => {
+export const Period = ({ head }) => {
   const dispatch = useDispatch();
   const selectedDataset = useSelector((state) => state?.main?.selectedDataset);
-  const SelectedRoute = useSelector((state) => state.sidebar?.Title?.text);
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
   const [periodType, setPeriodType] = useState("");
@@ -145,12 +31,12 @@ export const PeriodType = () => {
     setFormData(null)
     setPeriodType('')
     setFormMonth(null)
-  }, [SelectedRoute]);
+  }, [head]);
 
   if (!selectedDataset) return null;
 
   return (
-    <div className="period-container" >
+    <div className="period-container my-3" >
       <div className="col" style={{ display: 'flex', width: '100%', marginTop: '10px' }}>
         <label style={{ marginRight: "10px", fontWeight: "bold", width: "12%" }}>
           Period Type
@@ -177,8 +63,8 @@ export const PeriodType = () => {
   );
 };
 
-const DisplayPeriod = ({ periodType, handleChange, setMonth, formData,formMonth }) => {
- 
+const DisplayPeriod = ({ periodType, handleChange, setMonth, formData, formMonth }) => {
+
   if (!periodType) return null;
 
   const currentYear = 2082;
@@ -214,7 +100,10 @@ const DisplayPeriod = ({ periodType, handleChange, setMonth, formData,formMonth 
     );
   } else if (periodType === "Monthly") {
     // var months = "Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec";
-    var months = "January_February_March_April_May_June_July_August_September_October_November_December";
+    var months = "Baisakh_Jestha_Asadh_Shrawan_Bharda_Ashwin_Kartik_Mansir_Poush_Magh_Falgun_Chaitra";
+
+
+
 
     months = months.split("_");
 
@@ -262,5 +151,5 @@ const DisplayPeriod = ({ periodType, handleChange, setMonth, formData,formMonth 
   }
 };
 
-export default PeriodType;
+export default Period;
 
