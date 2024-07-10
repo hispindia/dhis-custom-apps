@@ -96,9 +96,6 @@ const Report = ({ head }) => {
                     <table style={{ border: '1px solid black' }}>
                         <thead>
                             <tr style={{ border: '1px solid black' }}>
-                                {/* {reportApp?.metaData?.dimensions?.dx?.map(item => {
-                                        return <th style={{ border: '1px solid black' }} key={item}>{item.replace(dataSet?.id + '.', ' - ' + dataSet?.name)}</th>
-                                    })} */}
                                 {tableHeaders}
                             </tr>
                         </thead>

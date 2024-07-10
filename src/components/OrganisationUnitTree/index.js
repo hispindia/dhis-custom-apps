@@ -7,7 +7,6 @@ const OrganisationUnitTree = () => {
   const userOU = useSelector((state) => state.outree.userOU);
   const filteredOU = useSelector((state) => state.outree.filteredOU);
   const [path, setPath] = useState("");
-
   useEffect(() => {
     if (filteredOU && filteredOU.path) setPath(filteredOU.path);
   }, [filteredOU]);

@@ -17,7 +17,6 @@ const Main = ({ data, head }) => {
   const selectedOU = useSelector((state) => state.outree.clickedOU);
   const status = useSelector((state) => state.main.status);
   const useSelectedUnitOnly = useSelector((state) => state.main.useSelectedUnitOnly);
-  
   useEffect(() => {
     if (data) {
       if (data.ouList) dispatch(setOUList(data.ouList.organisationUnits));
@@ -36,15 +35,12 @@ const Main = ({ data, head }) => {
       dispatch(setDatasets(data.dataSetList.dataSets));
     }
   }, [selectedOU]);
-
-
   const handleCheckboxChange = (e) => {
     dispatch(setUseSelectedUnitOnly(e.target.checked));
   };
   return (
     <>
       <Sidebar />
-
       <div style={{ width: '85%', boxSizing: 'border-box', float: 'left' }}>
         {selectedOU && (
           <>
@@ -101,7 +97,6 @@ const Main = ({ data, head }) => {
             </div>
           </>
         )}
-
         {status ? <Report head={head}/> : ''}
       </div>
     </>

@@ -2,9 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
-import { setTitle } from '../../store/sidebar/sidebar.action';
 import { setPeriod, setSelectedDataset, setStatus, setUseSelectedUnitOnly } from '../../store/main/main.action';
-
 const Sidebar = () => {
     const dispatch = useDispatch();
     const location = useLocation();
@@ -16,15 +14,8 @@ const Sidebar = () => {
     ];
 
     useEffect(() => {
-        setActiveLink(location.pathname);
-        const activeLinkText = links.find(link => link.to === location.pathname)?.text || '';
-        dispatch(setTitle({ href: location.pathname, text: activeLinkText }));
+        setActiveLink(location.pathname);  
     }, [location]);
-
-    function handleDataSet() {
-        console.log('side bar clicked....................................');
-    }
-
     const sidebarStyle = {
         backgroundColor: 'rgb(243, 243, 243)',
 
@@ -79,7 +70,6 @@ const Sidebar = () => {
                         style={activeLink === link.to ? activeLinkStyle : linkStyle}
                         onClick={() => {
                             setActiveLink(link.to);
-                            handleDataSet()
                         }}
                     >
                         <div>

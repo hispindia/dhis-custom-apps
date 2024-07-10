@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setClickedOU, setFilteredOU } from "../../store/outree/outree.action";
-
 const OrgUnitChildren = ({ orgUnit, display, path }) => {
   const dispatch = useDispatch();
-
   const ouList = useSelector((state) => state.outree.ouList);
   const clickedOU = useSelector((state) => state.outree.clickedOU);
-
   const [pathId, setPathId] = useState(path);
   const [currentOU, setCurrentOU] = useState(orgUnit);
   const [displayChildren, setDisplayChildren] = useState(display);
@@ -48,7 +45,6 @@ const OrgUnitChildren = ({ orgUnit, display, path }) => {
   };
 
   const isClicked = clickedOU && currentOU.id == clickedOU.id ? true : false;
-
   return (
     <div>
       <>

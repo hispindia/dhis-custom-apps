@@ -9,7 +9,6 @@ export const Period = ({ head }) => {
   const [periodType, setPeriodType] = useState("");
   const [formData, setFormData] = useState(null);
   const [formMonth, setFormMonth] = useState(null);
-
   const handleChange = (e, type) => {
     const { value } = e.target;
     setFormData(value)
@@ -99,12 +98,7 @@ const DisplayPeriod = ({ periodType, handleChange, setMonth, formData, formMonth
   } else if (periodType === "Monthly") {
     // var months = "Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec";
     var months = "Baisakh_Jestha_Asadh_Shrawan_Bharda_Ashwin_Kartik_Mansir_Poush_Magh_Falgun_Chaitra";
-
-
-
-
     months = months.split("_");
-
     return (
       <div className="row" style={{ marginTop: '10px' }}>
         <label style={{ marginRight: "-5px", fontWeight: "bold", width: "12%" }}>
