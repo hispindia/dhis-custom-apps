@@ -16,6 +16,7 @@
   "dependencies": {
     "@dhis2/app-runtime": "^3.10.4",
     "bootstrap": "^5.3.1",
+    "nepali-datetime": "^1.2.1",
     "react-bootstrap": "^2.10.4",
     "react-component-export-image": "^1.0.6",
     "react-icons": "^5.2.1",
