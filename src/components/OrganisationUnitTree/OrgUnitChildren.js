@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setClickedOU, setFilteredOU } from "../../store/outree/outree.action";
+import { setStatus } from "../../store/main/main.action";
 const OrgUnitChildren = ({ orgUnit, display, path }) => {
   const dispatch = useDispatch();
   const ouList = useSelector((state) => state.outree.ouList);
@@ -40,6 +41,7 @@ const OrgUnitChildren = ({ orgUnit, display, path }) => {
 
   const handleOUClick = () => {
     dispatch(setFilteredOU(""));
+    dispatch(setStatus(false));
     setDisplayChildren(!displayChildren);
     dispatch(setClickedOU(currentOU));
   };

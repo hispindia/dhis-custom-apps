@@ -59,28 +59,27 @@ console.log("type===========",type)
           onChange={(e) => setPeriodType(e.target.value)}
         >
           <option value="">Select Period Type</option>
-          <option selected={periodType == 'Yearly'} value="Yearly">Yearly</option>
-          <option selected={periodType == 'Monthly'} value="Monthly">Monthly</option>
-          <option selected={periodType == 'Six Monthly April'} value="Six Monthly April">Six Monthly April</option>
-          <option selected={periodType == 'Financial April'} value="Financial April">Financial April</option>
+          <option selected={periodType == 'yearly'} value="yearly">Yearly</option>
+          <option selected={periodType == 'monthly'} value="monthly">Monthly</option>
+          <option selected={periodType == 'six-monthly-shrawan'} value="six-monthly-shrawan">Six Monthly Shrawan</option>
+          <option selected={periodType == 'financial-shrawan'} value="financial-shrawan">Financial Shrawan</option>
 
         </select>
       </div>
       {periodType && (
         <DisplayPeriod
           periodType={periodType}
-          setMonth={setMonth}
+          year={year}
           handleChange={handleChange}
           formData={formData}
           formMonth={formMonth}
-          setFinancialApril={setFinancialApril}
         />
       )}
     </div>
   );
 };
 
-const DisplayPeriod = ({ periodType, handleChange, setMonth, formData, formMonth ,setFinancialApril}) => {
+const DisplayPeriod = ({ periodType, handleChange, year, formData, formMonth}) => {
 
   if (!periodType) return null;
   const nepaliDate = new NepaliDate()
@@ -89,7 +88,7 @@ const DisplayPeriod = ({ periodType, handleChange, setMonth, formData, formMonth
 
   for (let i = currentYear ; i >= currentYear-5; i--) years.push(i);
 
-  if (periodType === "Yearly") {
+  if (periodType === "yearly") {
     return (
       <div className="col" style={{ width: "100%", display: 'flex', marginTop: '10px' }}>
         <label style={{ marginRight: "10px", fontWeight: "bold", width: "12%" }}>
@@ -98,8 +97,6 @@ const DisplayPeriod = ({ periodType, handleChange, setMonth, formData, formMonth
         <select
           className="form-select"
           onChange={(e) => {
-
-            setMonth("");
             handleChange(e, "yyyy");
           }}
         >
@@ -107,9 +104,7 @@ const DisplayPeriod = ({ periodType, handleChange, setMonth, formData, formMonth
             Year
           </option>
           {years.map((year) => (
-            <option selected={formMonth == year} key={year} value={year}
-
-            >
+            <option selected={formMonth == year} key={year} value={year}>
               {year}
             </option>
           ))}
@@ -117,7 +112,7 @@ const DisplayPeriod = ({ periodType, handleChange, setMonth, formData, formMonth
       </div>
     );
   } 
-  else if (periodType === "Monthly") {
+  else if (periodType === "monthly") {
     // var months = "Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec";
     var months = "Baisakh_Jestha_Asadh_Shrawan_Bharda_Ashwin_Kartik_Mansir_Poush_Magh_Falgun_Chaitra";
     months = months.split("_");
@@ -161,9 +156,7 @@ const DisplayPeriod = ({ periodType, handleChange, setMonth, formData, formMonth
       </div>
     );
   }
-  else if (periodType === "Six Monthly April") {
-    
-  
+  else if (periodType === "six-monthly-shrawan") {
     return (
       <div className="row" style={{ marginTop: '10px' }}>
         <label style={{ marginRight: "-5px", fontWeight: "bold", width: "12%" }}>
@@ -193,19 +186,18 @@ const DisplayPeriod = ({ periodType, handleChange, setMonth, formData, formMonth
             <option className="text-italic" value="">
               Six Monthly
             </option>
-          
-          
-                <option  value="AprilS1">April-September</option>
-                <option  value="AprilS2">October-March</option>
-        
-        
+          {year ?
+            <>
+            <option  value="AprilS1">Shrawan-Poush {year}</option>
+            <option  value="AprilS2">Magh-Asar {Number(year)+1}</option>
+            </>: ''}
           </select>
         </div>
       </div>
     );
   }
 
-  else if (periodType === "Financial April") {
+  else if (periodType === "financial-shrawan") {
     return (
       <div className="col" style={{ width: "100%", display: 'flex', marginTop: '10px' }}>
         <label style={{ marginRight: "10px", fontWeight: "bold", width: "12%" }}>
@@ -214,19 +206,16 @@ const DisplayPeriod = ({ periodType, handleChange, setMonth, formData, formMonth
         <select
           className="form-select"
           onChange={(e) => {
-
-         
             handleChange(e, "yyyyApril");
-          }}
-        >
+          }}>
           <option className="text-italic" value="">
-            Year
+            Financial
           </option>
           {years.map((year) => (
             <option selected={formMonth == year} key={year} value={year}
 
             >
-              {year}
+              Shrawan {year-1} - Ashadh {year}
             </option>
           ))}
         </select>
