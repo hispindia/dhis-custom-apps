@@ -86,7 +86,7 @@ const DisplayPeriod = ({ periodType, handleChange, year, formData, formMonth}) =
   const currentYear = nepaliDate.getYear();
   const years = [];
 
-  for (let i = currentYear ; i >= currentYear-5; i--) years.push(i);
+  for (let i = currentYear ; i >= currentYear-11; i--) years.push(i);
 
   if (periodType === "yearly") {
     return (
