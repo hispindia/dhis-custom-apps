@@ -7,7 +7,7 @@ export const MAIN_ACTION_TYPES = {
 export const INITIAL_STATE = {
   status: false,
   programId: "bASezt1TUKD",
-  transferStatus: "transfer-in"
+  transferStatus: "WcufiACzd0P"
 };
 
 export const mainReducer = (state = INITIAL_STATE, action) => {

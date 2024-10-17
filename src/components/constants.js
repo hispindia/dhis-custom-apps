@@ -23,3 +23,8 @@ export const InitialQuery = {
     },
   }
 };
+export const TRANSFER_IN = "WcufiACzd0P";
+export const TRANSFER_OUT = "n9ptsm7foaJ";
+export const CLIENTID = "P3Spi0kT92n";
+export const PREPID = "n2gG7cdigPc";
+

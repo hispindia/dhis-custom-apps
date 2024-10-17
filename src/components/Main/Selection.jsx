@@ -10,6 +10,7 @@ import {
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
+import {TRANSFER_IN,TRANSFER_OUT} from '../constants'
 
 const Selection = ({
   clickedOU,
@@ -28,7 +29,7 @@ const Selection = ({
   }
   return (
     <>
-      {clickedOU && clickedOU.level != 5 && clickedOU.level != 6 ? (
+      {/* {clickedOU && clickedOU.level != 5 && clickedOU.level != 6 ? ( */}
         <Row>
           <Col md={3} lg={1} className="py-3">
             Program:{" "}
@@ -52,18 +53,18 @@ const Selection = ({
             <Form.Select
             onChange={handleTransfer}
             >
-            <option value={'transfer-in'}>
+            <option value={TRANSFER_IN}>
               Transferred In
             </option>
-            <option value={'transfer-out'}>
+            <option value={TRANSFER_OUT}>
               Transferred Out
             </option>
             </Form.Select>
           </Col>
         </Row>
-      ) : (
+      {/* ) : (
         ""
-      )}
+      )} */}
 
       <div className="text-center">
         <button

@@ -83,8 +83,8 @@ export const trackedEntityInstance = {
       };
     }
   },
-  filter: async (orgUnitId, programId) => {
-    var url = `${process.env.REACT_APP_DHIS2_BASE_URL}/api/trackedEntityInstances.json?skipPaging=true&fields=orgUnit,trackedEntityInstance,trackedEntityType,attributes[attribute,value],enrollments[events[program,orgUnit,programStage,status,event,eventDate,dataValues[dataElement,value]]&ouMode=DESCENDANTS&ou=${orgUnitId}&program=${programId}`;
+  filter: async (orgUnitId, programId,TrackId) => {
+    var url = `${process.env.REACT_APP_DHIS2_BASE_URL}/api/trackedEntityInstances/${TrackId}.json?skipPaging=true&fields=orgUnit,trackedEntityInstance,trackedEntityType,attributes[attribute,value]&program=${programId}`;
 
     let response = await fetch(url, {
       method: "GET",
@@ -97,4 +97,21 @@ export const trackedEntityInstance = {
 
     return data;
   },
+
+  // transfer in 
+  transferredData: async (orgUnitId, programId,transferStatus) => {
+    var url = `${process.env.REACT_APP_DHIS2_BASE_URL}/api/29/sqlViews/${transferStatus}/data.json?skipPaging=true&var=orgunit:${orgUnitId}`;
+  
+    let response = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+    let data = await response.json();
+   return data;
+  },
+ 
 };
+

@@ -10,6 +10,7 @@ const Main = () => {
   const programList = useSelector((state) => state.metadata.programList);
   const programId = useSelector((state) => state.main.programId);
   const status = useSelector((state) => state.main.status);
+  const transferStatus = useSelector((state) => state.main.transferStatus);
 
   return (
     <div className="ms-2 w-100">
@@ -25,6 +26,7 @@ const Main = () => {
           clickedOU={clickedOU}
           programList={programList}
           programId={programId}
+          transferStatus = {transferStatus}
         />
       ) : (
         ""
