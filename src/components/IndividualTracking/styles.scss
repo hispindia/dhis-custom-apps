@@ -1,0 +1,274 @@
+
+  .button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Adjust this value as needed */
+  }
+  body {
+    font-family: Arial, sans-serif;
+    // margin: 20px;
+    background-color: #f4f4f4;
+}
+.dataset-container {
+  display: flex;
+  align-items: center; /* Vertically align all items */
+  gap: 20px; /* Space between filter icon and inputs */
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  max-width: 900px; /* Set maximum width */
+  margin: auto; /* Center container */
+}
+/* Styling for the filter icon on the left */
+.filter-icon {
+  font-size: 50px; /* Increase size for better visibility */
+  color: #118DFF; /* Subtle color */
+}
+
+/* Flexbox container for inputs */
+.input-container {
+  display: flex;
+  gap: 20px; /* Space between input fields */
+  flex: 1; /* Makes sure the inputs take up available space */
+}
+
+/* Each input group takes up equal width */
+.input-group {
+  display: flex;
+  flex-direction: column; /* Stack label on top of input */
+  flex: 1;
+  min-width: 200px; /* Minimum width for responsive layout */
+}
+
+/* Labels styling */
+label {
+  font-weight: bold;
+  font-size: 16px;
+  color: #118DFF;
+  margin-bottom: 8px; /* Space between label and input */
+}
+
+/* Input with icons container */
+.input-with-icons {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Input fields (file and text) */
+.input-file, .input-text {
+  width: 100%;
+  padding: 10px 5px; /* Padding for the icons */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box; /* Ensure padding doesn't affect width */
+}
+
+/* Icons inside inputs (both left and right) */
+.icon-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 10px; /* Align to right inside the input */
+  color: #888;
+}
+
+/* Responsiveness: Adjust layout for smaller screens */
+@media (max-width: 768px) {
+  .dataset-container {
+    flex-direction: column; /* Stack elements vertically */
+    align-items: flex-start; /* Align items to start */
+  }
+
+  .input-container {
+    flex-direction: column; /* Stack input fields vertically */
+    gap: 10px; /* Smaller gap between input fields */
+  }
+}
+
+.timeline-wrapper {
+  width: 100%;
+  border: 1px solid  #118DFF;
+  border-radius: 5px;
+  padding-left: 50px;
+  // margin-top: 40px;
+}
+.timeline-container {
+  position: relative;
+  width: 85%;
+ 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.timeline-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: #118DFF;
+  transform: translateY(-50%);
+}
+
+.timeline-event {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.event-circle {
+  width: 15px;
+  height: 15px;
+  background-color: #118DFF;
+  border-radius: 50%;
+  position: relative;
+  z-index: 1;
+}
+.event-start-label{
+  // margin-top: 50px;
+  padding-top: 200px;
+}
+.event-end-label{
+  // margin-top: 50px; 
+  padding-top: 200px;
+}
+
+.event-value {
+  padding: 5px;
+  padding-left: 20px;
+  white-space: nowrap;
+  text-overflow: ellipsis; /* Optionally add ellipsis for long text */
+  max-width: 150px; /* Set a max width if needed */
+}
+
+.event-label {
+  margin-top: 10px;
+  font-size: 14px;
+  text-align: center;
+  color: #333;
+}
+
+/* Table Styles */
+.table-container {
+  margin-top: 20px;
+  width: 85%;
+  overflow-x: auto;
+}
+
+.timeline-table {
+  width: 85%;
+  border-collapse: collapse;
+  text-align: left;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-table th,
+.timeline-table td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+}
+
+.timeline-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+  color: #118DFF;
+}
+
+.timeline-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.timeline-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.timeline-table td {
+  color: black;
+}
+.search-icon {
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.search-icon:hover {
+  color: #007bff; /* Change the color on hover */
+  transform: scale(1.2); /* Slightly enlarge the icon */
+}
+
+.table-container {
+  display: flex;
+  // flex-wrap: wrap; /* Allow boxes to wrap in case of smaller screens */
+  gap: 20px; /* Space between the boxes */
+}
+
+.data-box {
+  flex: 1 1 200px; /* Make each box flexible */
+  border: 1px solid #ccc; /* Border for the box */
+  border-radius: 8px; /* Rounded corners */
+  padding: 10px; /* Padding inside the box */
+  background-color: #f9f9f9; /* Light background for the box */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+}
+
+.data-item {
+  margin: 5px 0; /* Space between items */
+}
+
+h3 {
+  margin: 0; /* Remove default margin for headers */
+  font-size: 1.2em; /* Slightly larger font size for headers */
+  color: #333; /* Darker text color for headers */
+}
+.data-header {
+  font-size: 1.5em; /* Adjust size as needed */
+  font-weight: bold; /* Make it bold */
+  color: #a9cef0; /* Color of the header */
+ text-align: center;
+}
+
+
+.data-box {
+  width: 100%;
+  padding: 20px;
+  background-color: #f5f5f5;
+}
+
+.event-container-horizontal {
+  display: flex;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  padding: 10px;
+  gap: 10px; /* Add some spacing between the event boxes */
+}
+
+.event-box-horizontal {
+  min-width: 200px; /* Set a fixed width to each event box */
+  padding: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.event-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.event-detail {
+  margin-bottom: 5px;
+}
+
+.event-box {
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+}
+
