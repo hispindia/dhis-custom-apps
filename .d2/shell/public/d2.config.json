@@ -1,0 +1,10 @@
+{
+  "type": "app",
+  "title": "Tracking App",
+  "name": "Tracking-app",
+  "version": "1.0.0",
+  "description": "",
+  "entryPoints": {
+    "app": "index.html"
+  }
+}
