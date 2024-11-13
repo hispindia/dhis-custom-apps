@@ -201,9 +201,9 @@ const GroupTracking = () => {
   const TransitcountryDataElement = "ext8UP5JnKH"; //Location going to - Province
   const destinationDataElement = "WNhI1Tykxf0"; //Location going to - Country
   // Data element for the 2 part of the chart Zero-dose returnees
-  const ZeroDoseDataElement1 = "fhTeO7mruuT";
-  const ZeroDoseDataElement2 = "aQj0Ba3n6nG";
-  const ZeroDoseDataElement3 = "OWA0F7rH7KN";
+  const ZeroDoseDataElement1 = "SvqmnSe5lpl";
+  // const ZeroDoseDataElement2 = "aQj0Ba3n6nG"
+  // const ZeroDoseDataElement3 = "OWA0F7rH7KN"
 
   // Get data from the Event Api for all the charts  
   const fetchAllEventsWithCount = async () => {
@@ -231,12 +231,20 @@ const GroupTracking = () => {
         const response = await ApiService.getAllEvent(teiObj === null || teiObj === void 0 ? void 0 : teiObj.trackedEntityInstance);
         if (response !== null && response !== void 0 && response.events && response.events.length > 0) {
           const firstEvent = response.events[0];
+          // const lastEvent = response?.events[response.events.length - 1];
+          const lastEvent = response.events[response.events.length - 1];
+          console.log("lastEvent===============", lastEvent);
           const additionalDataElement1 = firstEvent.dataValues.find(dataValue => dataValue.dataElement === ZeroDoseDataElement1 // replace `dataElement1` with the first data element ID
           );
-          const additionalDataElement2 = firstEvent.dataValues.find(dataValue => dataValue.dataElement === ZeroDoseDataElement2 // replace `dataElement2` with the second data element ID
-          );
-          const additionalDataElement3 = firstEvent.dataValues.find(dataValue => dataValue.dataElement === ZeroDoseDataElement3 // replace `dataElement3` with the third data element ID
-          );
+
+          // const additionalDataElement2 = firstEvent.dataValues.find(
+          //   dataValue => dataValue.dataElement === ZeroDoseDataElement2 // replace `dataElement2` with the second data element ID
+          // );
+
+          // const additionalDataElement3 = firstEvent.dataValues.find(
+          //   dataValue => dataValue.dataElement === ZeroDoseDataElement3 // replace `dataElement3` with the third data element ID
+          // );
+
           const foundDataElement = firstEvent.dataValues.find(dataValue => dataValue.dataElement === originDataElement);
           console.log("foundDataElement=================", foundDataElement);
           if (foundDataElement && foundDataElement.value == (selectedOrgUnit === null || selectedOrgUnit === void 0 ? void 0 : selectedOrgUnit.code)) {
@@ -304,7 +312,7 @@ const GroupTracking = () => {
                 countryTransitCount[value] = (countryTransitCount[value] || 0) + 1;
               }
               // count the transit value for the 2 chart Zero-dose returnees
-              if (foundDataElement && (foundDataElement === null || foundDataElement === void 0 ? void 0 : foundDataElement.value) == (selectedOrgUnit === null || selectedOrgUnit === void 0 ? void 0 : selectedOrgUnit.code) && foundcountryTransit && (additionalDataElement1 === null || additionalDataElement1 === void 0 ? void 0 : additionalDataElement1.value) == "no" && (additionalDataElement2 === null || additionalDataElement2 === void 0 ? void 0 : additionalDataElement2.value) == "no" && (additionalDataElement3 === null || additionalDataElement3 === void 0 ? void 0 : additionalDataElement3.value) == "no") {
+              if (foundDataElement && (foundDataElement === null || foundDataElement === void 0 ? void 0 : foundDataElement.value) == (selectedOrgUnit === null || selectedOrgUnit === void 0 ? void 0 : selectedOrgUnit.code) && foundcountryTransit && (additionalDataElement1 === null || additionalDataElement1 === void 0 ? void 0 : additionalDataElement1.value) == "no") {
                 const value = foundcountryTransit.value;
                 // Update counts for this value (value is the value of the data element)
                 zeroDosecountryTransitCount[value] = (zeroDosecountryTransitCount[value] || 0) + 1;
@@ -313,7 +321,7 @@ const GroupTracking = () => {
           }
 
           // count the Destination for the first chart 
-          const founddestinationDataElement = firstEvent.dataValues.find(dataValue => dataValue.dataElement === destinationDataElement);
+          const founddestinationDataElement = lastEvent.dataValues.find(dataValue => dataValue.dataElement === destinationDataElement);
           if (foundDataElement && foundDataElement.value == (selectedOrgUnit === null || selectedOrgUnit === void 0 ? void 0 : selectedOrgUnit.code) && founddestinationDataElement) {
             const value = founddestinationDataElement.value;
             // Update counts for this value (value is the value of the data element)
@@ -379,12 +387,12 @@ const GroupTracking = () => {
 
           // Zero Dose Logic Below  
 
-          if (foundDataElement && (foundDataElement === null || foundDataElement === void 0 ? void 0 : foundDataElement.value) == (selectedOrgUnit === null || selectedOrgUnit === void 0 ? void 0 : selectedOrgUnit.code) && (additionalDataElement1 === null || additionalDataElement1 === void 0 ? void 0 : additionalDataElement1.value) == "no" && (additionalDataElement2 === null || additionalDataElement2 === void 0 ? void 0 : additionalDataElement2.value) == "no" && (additionalDataElement3 === null || additionalDataElement3 === void 0 ? void 0 : additionalDataElement3.value) == "no") {
+          if (foundDataElement && (foundDataElement === null || foundDataElement === void 0 ? void 0 : foundDataElement.value) == (selectedOrgUnit === null || selectedOrgUnit === void 0 ? void 0 : selectedOrgUnit.code) && (additionalDataElement1 === null || additionalDataElement1 === void 0 ? void 0 : additionalDataElement1.value) == "no") {
             OriginCountZeroDose += 1;
           }
 
           // count the Parent logic for the 2 chart first contact           
-          if (foundDataElement && foundDataElement.value == (selectedOrgUnit === null || selectedOrgUnit === void 0 ? void 0 : selectedOrgUnit.code) && (additionalDataElement1 === null || additionalDataElement1 === void 0 ? void 0 : additionalDataElement1.value) == "no" && (additionalDataElement2 === null || additionalDataElement2 === void 0 ? void 0 : additionalDataElement2.value) == "no" && (additionalDataElement3 === null || additionalDataElement3 === void 0 ? void 0 : additionalDataElement3.value) == "no") {
+          if (foundDataElement && foundDataElement.value == (selectedOrgUnit === null || selectedOrgUnit === void 0 ? void 0 : selectedOrgUnit.code) && (additionalDataElement1 === null || additionalDataElement1 === void 0 ? void 0 : additionalDataElement1.value) == "no") {
             const orgUnit = firstEvent.orgUnit;
             // Fetch org name and check for parent
             const fetchOrgName = async orgUnit => {
@@ -409,7 +417,7 @@ const GroupTracking = () => {
             fetchOrgName(orgUnit);
           }
           // destination logic Count for the 2 nd chart with AdditionalDatElements conditions
-          if (foundDataElement && foundDataElement.value == (selectedOrgUnit === null || selectedOrgUnit === void 0 ? void 0 : selectedOrgUnit.code) && founddestinationDataElement && (additionalDataElement1 === null || additionalDataElement1 === void 0 ? void 0 : additionalDataElement1.value) == "no" && (additionalDataElement2 === null || additionalDataElement2 === void 0 ? void 0 : additionalDataElement2.value) == "no" && (additionalDataElement3 === null || additionalDataElement3 === void 0 ? void 0 : additionalDataElement3.value) == "no") {
+          if (foundDataElement && foundDataElement.value == (selectedOrgUnit === null || selectedOrgUnit === void 0 ? void 0 : selectedOrgUnit.code) && founddestinationDataElement && (additionalDataElement1 === null || additionalDataElement1 === void 0 ? void 0 : additionalDataElement1.value) == "no") {
             const value = founddestinationDataElement.value;
             // Update counts for this value (value is the value of the data element)
             zeroDosedestinationDataElementCounts[value] = (zeroDosedestinationDataElementCounts[value] || 0) + 1;

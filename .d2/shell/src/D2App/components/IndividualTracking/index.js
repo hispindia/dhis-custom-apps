@@ -3,7 +3,7 @@ import "./styles.scss"; // Make sure you have your styles in this file
 import { ApiService } from "../../services/apiService"; // Ensure your ApiService is correctly set up
 import "bootstrap-icons/font/bootstrap-icons.css";
 const IndividualTracking = _ref => {
-  var _dataelement$dataElem, _data$events, _data$events3, _data$events$, _data$events4, _data$events5, _data$events6, _data$events$0$dataVa, _data$events7, _data$events$0$dataVa2, _orgname$parent, _orgname$parent$paren, _data$events8, _data$events9, _data$events$0$dataVa3;
+  var _dataelement$dataElem, _data$events, _data$events3, _data$events$0$dataVa, _data$events4, _data$events$0$dataVa2, _orgname$parent, _orgname$parent$paren, _data$events5, _data$events6, _data$events$0$dataVa3;
   let {
     head
   } = _ref;
@@ -239,20 +239,22 @@ const IndividualTracking = _ref => {
       }
     }, yesIomDataElements === null || yesIomDataElements === void 0 ? void 0 : yesIomDataElements.join(", ")), /*#__PURE__*/React.createElement("div", {
       className: "event-circle"
-    }));
-  }), (data === null || data === void 0 ? void 0 : (_data$events3 = data.events) === null || _data$events3 === void 0 ? void 0 : _data$events3.length) > 0 && /*#__PURE__*/React.createElement("div", {
-    className: "event-start-label"
-  }, new Date(data === null || data === void 0 ? void 0 : (_data$events$ = data.events[0]) === null || _data$events$ === void 0 ? void 0 : _data$events$.eventDate).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric"
-  })), (data === null || data === void 0 ? void 0 : (_data$events4 = data.events) === null || _data$events4 === void 0 ? void 0 : _data$events4.length) > 1 && /*#__PURE__*/React.createElement("div", {
-    className: "event-end-label"
-  }, new Date(data.events[(data === null || data === void 0 ? void 0 : (_data$events5 = data.events) === null || _data$events5 === void 0 ? void 0 : _data$events5.length) - 1].eventDate).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric"
-  }))), /*#__PURE__*/React.createElement("div", {
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "event-date",
+      style: {
+        position: 'absolute',
+        top: '30px',
+        // Adjust spacing below the circle as needed
+        left: '50%',
+        transform: 'translateX(-50%)',
+        fontSize: '0.85rem'
+      }
+    }, new Date(event.eventDate).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    })));
+  })), /*#__PURE__*/React.createElement("div", {
     className: "table-container"
   }, /*#__PURE__*/React.createElement("div", {
     className: "data-box"
@@ -263,7 +265,7 @@ const IndividualTracking = _ref => {
       backgroundColor: "#a9cef0",
       fontWeight: "bold"
     }
-  }, "Origin"), (data === null || data === void 0 ? void 0 : (_data$events6 = data.events) === null || _data$events6 === void 0 ? void 0 : _data$events6.length) > 0 && /*#__PURE__*/React.createElement("div", {
+  }, "Origin"), (data === null || data === void 0 ? void 0 : (_data$events3 = data.events) === null || _data$events3 === void 0 ? void 0 : _data$events3.length) > 0 && /*#__PURE__*/React.createElement("div", {
     className: "event-box"
   }, (data === null || data === void 0 ? void 0 : (_data$events$0$dataVa = data.events[0].dataValues.find(dataValue => dataValue.dataElement === "Z5xlVrNUci3")) === null || _data$events$0$dataVa === void 0 ? void 0 : _data$events$0$dataVa.value) || "N/A")), /*#__PURE__*/React.createElement("div", {
     className: "data-box"
@@ -274,7 +276,7 @@ const IndividualTracking = _ref => {
       backgroundColor: "#a9cef0",
       fontWeight: "bold"
     }
-  }, "First Contact"), (data === null || data === void 0 ? void 0 : (_data$events7 = data.events) === null || _data$events7 === void 0 ? void 0 : _data$events7.length) > 0 && /*#__PURE__*/React.createElement("div", {
+  }, "First Contact"), (data === null || data === void 0 ? void 0 : (_data$events4 = data.events) === null || _data$events4 === void 0 ? void 0 : _data$events4.length) > 0 && /*#__PURE__*/React.createElement("div", {
     className: "event-box"
   }, ((_data$events$0$dataVa2 = data.events[0].dataValues.find(dataValue => dataValue.dataElement === "fXZL56HdDsH")) === null || _data$events$0$dataVa2 === void 0 ? void 0 : _data$events$0$dataVa2.value) || (orgname === null || orgname === void 0 ? void 0 : (_orgname$parent = orgname.parent) === null || _orgname$parent === void 0 ? void 0 : (_orgname$parent$paren = _orgname$parent.parent) === null || _orgname$parent$paren === void 0 ? void 0 : _orgname$parent$paren.name))), /*#__PURE__*/React.createElement("div", {
     className: "data-box"
@@ -287,7 +289,7 @@ const IndividualTracking = _ref => {
     }
   }, "In Transit"), /*#__PURE__*/React.createElement("div", {
     className: "event-container-horizontal"
-  }, data === null || data === void 0 ? void 0 : (_data$events8 = data.events) === null || _data$events8 === void 0 ? void 0 : _data$events8.map((event, eventIndex) => {
+  }, data === null || data === void 0 ? void 0 : (_data$events5 = data.events) === null || _data$events5 === void 0 ? void 0 : _data$events5.map((event, eventIndex) => {
     const GoingTocountry = event.dataValues.find(dataValue => dataValue.dataElement === "WNhI1Tykxf0");
     const GoingToprovince = event.dataValues.find(dataValue => dataValue.dataElement === "ext8UP5JnKH");
     return /*#__PURE__*/React.createElement("div", {
@@ -309,7 +311,7 @@ const IndividualTracking = _ref => {
       backgroundColor: "#a9cef0",
       fontWeight: "bold"
     }
-  }, "Destination"), (data === null || data === void 0 ? void 0 : (_data$events9 = data.events) === null || _data$events9 === void 0 ? void 0 : _data$events9.length) > 0 && /*#__PURE__*/React.createElement("div", {
+  }, "Destination"), (data === null || data === void 0 ? void 0 : (_data$events6 = data.events) === null || _data$events6 === void 0 ? void 0 : _data$events6.length) > 0 && /*#__PURE__*/React.createElement("div", {
     className: "event-box"
   }, ((_data$events$0$dataVa3 = data.events[0].dataValues.find(dataValue => dataValue.dataElement === "WNhI1Tykxf0")) === null || _data$events$0$dataVa3 === void 0 ? void 0 : _data$events$0$dataVa3.value) || "N/A")))));
 };

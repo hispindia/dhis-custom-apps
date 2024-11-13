@@ -73,7 +73,7 @@ const IndividualTracking = ({ head }) => {
     }
   };
   const fetchOrgName = async (orgunit) => {
-  
+
     setErrorMessage("");
     try {
       const response = await ApiService.getOrgName(orgunit); // Use passed TEI or state TEI
@@ -145,7 +145,7 @@ const IndividualTracking = ({ head }) => {
     acc[element.id] = element?.shortName;
     return acc;
   }, {});
- 
+
   return (
     <>
       <div className="dataset-container my-3">
@@ -230,7 +230,7 @@ const IndividualTracking = ({ head }) => {
         <div className="loading-indicator">Loading...</div>
       ) : (
         data && (
-          <div className="timeline-wrapper">
+          <div className="timeline-wrapper" >
             {/* <div className="timeline-container">
               <div className="timeline-line"></div>
               {data?.events?.map((event, index) => (
@@ -271,12 +271,28 @@ const IndividualTracking = ({ head }) => {
                     )}
 
                     <div className="event-circle"></div>
+                    <div
+                      className="event-date"
+                      style={{
+                        position: 'absolute',
+                        top: '30px', // Adjust spacing below the circle as needed
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        fontSize: '0.85rem',
+                      }}
+                    >
+                      {new Date(event.eventDate).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </div>
                   </div>
                 );
               })}
 
               {/* First Event Date at the Start */}
-              {data?.events?.length > 0 && (
+              {/* {data?.events?.length > 0 && (
                 <div className="event-start-label">
                   {new Date(data?.events[0]?.eventDate).toLocaleDateString("en-US", {
                     year: "numeric",
@@ -284,10 +300,10 @@ const IndividualTracking = ({ head }) => {
                     day: "numeric",
                   })}
                 </div>
-              )}
+              )} */}
 
               {/* Last Event Date at the End */}
-              {data?.events?.length > 1 && (
+              {/* {data?.events?.length > 1 && (
                 <div className="event-end-label">
                   {new Date(data.events[data?.events?.length - 1].eventDate).toLocaleDateString("en-US", {
                     year: "numeric",
@@ -295,7 +311,7 @@ const IndividualTracking = ({ head }) => {
                     day: "numeric",
                   })}
                 </div>
-              )}
+              )} */}
             </div>
 
 

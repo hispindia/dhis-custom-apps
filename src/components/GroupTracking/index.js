@@ -178,6 +178,10 @@ const GroupTracking = () => {
 
         if (response?.events && response.events.length > 0) {
           const firstEvent = response.events[0];
+          // const lastEvent = response?.events[response.events.length - 1];
+          const lastEvent = response.events[response.events.length - 1];
+
+          console.log("lastEvent===============",lastEvent)
           const additionalDataElement1 = firstEvent.dataValues.find(
             dataValue => dataValue.dataElement === ZeroDoseDataElement1 // replace `dataElement1` with the first data element ID
           );
@@ -283,7 +287,7 @@ const GroupTracking = () => {
 
 
           // count the Destination for the first chart 
-          const founddestinationDataElement = firstEvent.dataValues.find(
+          const founddestinationDataElement = lastEvent.dataValues.find(
             dataValue => dataValue.dataElement === destinationDataElement
           );
           if (foundDataElement && foundDataElement.value == selectedOrgUnit?.code && founddestinationDataElement) {
