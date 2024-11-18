@@ -3,6 +3,8 @@ import "./styles.scss";
 import { CircularLoader } from "@dhis2/ui";
 import { ApiService } from "../../services/api";
 import { CLIENTID , PREPID } from "../constants";
+import { tableToExcel } from "../utils.func";
+
 const Sheet = ({
   clickedOU,
   programList,
@@ -21,7 +23,7 @@ useEffect(() => {
     const tranferredData = await ApiService.trackedEntityInstance.transferredData(
       clickedOU.id,
       programId,
-      transferStatus,
+      transferStatus.split('-')[0],
     );
     if (tranferredData.listGrid.rows.length > 0) { 
       for (const row of tranferredData.listGrid.rows) {
@@ -68,8 +70,13 @@ useEffect(() => {
     );
   }
   return (
+    <> 
+    <div className="text-end">
+      <a id="dlink" style={{display:"none"}}></a>
+      <button className="btn btn-success" onClick={() => tableToExcel('client-referral', `client-referral-${transferStatus.split('-')[1]}`, `client-referral-${transferStatus.split('-')[1]}`)}>Download As Excel</button>
+    </div>
     <div className="scroll">
-      <table className="table">
+      <table className="table" id='client-referral'>
         <thead className="header">
           <tr>
             <th
@@ -98,7 +105,7 @@ useEffect(() => {
               Enrolling OrgUnit
             </th>
             <th>
-              Transferred OrgUnit
+              Transferred {transferStatus.split('-')[1]}
             </th>
             <th>
             </th>
@@ -107,12 +114,13 @@ useEffect(() => {
         <tbody>
           {
             teiList.map((tei,index) => 
-              <tr><td>{index+1}</td><td>{tei[2]}</td><td>{tei[3]}</td><td>{tei[0]}</td><td>{tei[1]}</td><td><button class="btn btn-success" onClick={() => loadTracker(`https://links.hispindia.org/prep_tracker/dhis-web-tracker-capture/index.html#/dashboard?tei=${tei[4]}&program=${programId}&ou=${clickedOU.id}`)}>Go To Tracker</button></td></tr>
+              <tr><td>{index+1}</td><td>{tei[2]}</td><td>{tei[3]}</td><td>{tei[0]}</td><td>{tei[1]}</td><td><button class="btn btn-success" onClick={() => loadTracker(`../../../dhis-web-tracker-capture/index.html#/dashboard?tei=${tei[4]}&program=${programId}&ou=${clickedOU.id}`)}>Go To Tracker</button></td></tr>
             )
           }
         </tbody>
       </table>
     </div>
+    </>
   );
 };
 

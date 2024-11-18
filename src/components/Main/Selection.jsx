@@ -53,10 +53,10 @@ const Selection = ({
             <Form.Select
             onChange={handleTransfer}
             >
-            <option value={TRANSFER_IN}>
+            <option value={`${TRANSFER_IN}-From`}>
               Transferred In
             </option>
-            <option value={TRANSFER_OUT}>
+            <option value={`${TRANSFER_OUT}-To`}>
               Transferred Out
             </option>
             </Form.Select>
