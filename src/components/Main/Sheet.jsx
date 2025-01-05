@@ -30,6 +30,7 @@ useEffect(() => {
         const TrackId = row[0]; 
         const EnrollingorgUnit = row[4]; 
         const TransferouName = row[6]; 
+        const createdDate = row[9]
 
         // Fetch details for the TrackId from the API
         const list = await ApiService.trackedEntityInstance.filter(
@@ -38,16 +39,19 @@ useEffect(() => {
           TrackId
         );
         // Initialize an empty row in teiRows
-        const teiRow = [
-          EnrollingorgUnit,
-          TransferouName,
-          list.attributes.find(attr => attr.attribute === CLIENTID)?.value || '', // clientId
-          list.attributes.find(attr => attr.attribute === PREPID)?.value || '', // prepId
-          list.trackedEntityInstance || '' // trackedEntityInstance
-        ];
-
-        // Push the populated teiRow into teiRows
-        teiRows.push(teiRow);
+        if(row[3] != row[5]) {
+          const teiRow = [
+            EnrollingorgUnit,
+            TransferouName,
+            list.attributes.find(attr => attr.attribute === CLIENTID)?.value || '', // clientId
+            list.attributes.find(attr => attr.attribute === PREPID)?.value || '', // prepId
+            list.trackedEntityInstance || '', // trackedEntityInstance
+            createdDate
+          ];
+  
+          // Push the populated teiRow into teiRows
+          teiRows.push(teiRow);
+        }
       }
     }
 
@@ -69,6 +73,8 @@ useEffect(() => {
       </div>
     );
   }
+  if(!teiList.length) return <h2 className="text-center text-secondary fst-italic"> No client found!</h2>;
+
   return (
     <> 
     <div className="text-end">
@@ -86,7 +92,7 @@ useEffect(() => {
                 border: "0",
               }}
               className="text-center"
-              colSpan={6}
+              colSpan={7}
             >
               Client Referral
             </th> 
@@ -108,13 +114,16 @@ useEffect(() => {
               Transferred {transferStatus.split('-')[1]}
             </th>
             <th>
+              Transferred Date
+            </th>
+            <th>
             </th>
           </tr>
         </thead>
         <tbody>
           {
             teiList.map((tei,index) => 
-              <tr><td>{index+1}</td><td>{tei[2]}</td><td>{tei[3]}</td><td>{tei[0]}</td><td>{tei[1]}</td><td><button class="btn btn-success" onClick={() => loadTracker(`../../../dhis-web-tracker-capture/index.html#/dashboard?tei=${tei[4]}&program=${programId}&ou=${clickedOU.id}`)}>Go To Tracker</button></td></tr>
+              <tr><td>{index+1}</td><td>{tei[2]}</td><td>{tei[3]}</td><td>{tei[0]}</td><td>{tei[1]}</td><td>{tei[5]}</td><td><button class="btn btn-success" onClick={() => loadTracker(`../../../dhis-web-tracker-capture/index.html#/dashboard?tei=${tei[4]}&program=${programId}&ou=${clickedOU.id}`)}>Go To Tracker</button></td></tr>
             )
           }
         </tbody>
