@@ -23,14 +23,15 @@ useEffect(() => {
     const tranferredData = await ApiService.trackedEntityInstance.transferredData(
       clickedOU.id,
       programId,
-      transferStatus.split('-')[0],
+      transferStatus,
     );
     if (tranferredData.listGrid.rows.length > 0) { 
       for (const row of tranferredData.listGrid.rows) {
         const TrackId = row[0]; 
-        const EnrollingorgUnit = row[4]; 
+        const ownerShipOUId = row[3]; 
+        const ownerShipOUName = row[4];
         const TransferouName = row[6]; 
-        const createdDate = row[9]
+        const createdDate = row[9];
 
         // Fetch details for the TrackId from the API
         const list = await ApiService.trackedEntityInstance.filter(
@@ -40,14 +41,15 @@ useEffect(() => {
         );
         // Initialize an empty row in teiRows
         if(row[3] != row[5]) {
-          const teiRow = [
-            EnrollingorgUnit,
-            TransferouName,
-            list.attributes.find(attr => attr.attribute === CLIENTID)?.value || '', // clientId
-            list.attributes.find(attr => attr.attribute === PREPID)?.value || '', // prepId
-            list.trackedEntityInstance || '', // trackedEntityInstance
-            createdDate
-          ];
+          const teiRow = {
+          ownerShipOUName,
+          ownerShipOUId,
+           transfer: TransferouName,
+           clientId: list.attributes.find(attr => attr.attribute === CLIENTID)?.value || '', // clientId
+           prepId: list.attributes.find(attr => attr.attribute === PREPID)?.value || '', // prepId
+           teiId: list.trackedEntityInstance || '', // trackedEntityInstance
+           created: createdDate
+        };
   
           // Push the populated teiRow into teiRows
           teiRows.push(teiRow);
@@ -79,7 +81,7 @@ useEffect(() => {
     <> 
     <div className="text-end">
       <a id="dlink" style={{display:"none"}}></a>
-      <button className="btn btn-success" onClick={() => tableToExcel('client-referral', `client-referral-${transferStatus.split('-')[1]}`, `client-referral-${transferStatus.split('-')[1]}`)}>Download As Excel</button>
+      <button className="btn btn-success" onClick={() => tableToExcel('client-referral', `client-referral-${clickedOU.name}`, `client-referral-${clickedOU.name}`)}>Download As Excel</button>
     </div>
     <div className="scroll">
       <table className="table" id='client-referral'>
@@ -108,10 +110,10 @@ useEffect(() => {
               Prep Id
             </th>
             <th>
-              Enrolling OrgUnit
+              Transferred From
             </th>
             <th>
-              Transferred {transferStatus.split('-')[1]}
+              Transferred to
             </th>
             <th>
               Transferred Date
@@ -123,7 +125,7 @@ useEffect(() => {
         <tbody>
           {
             teiList.map((tei,index) => 
-              <tr><td>{index+1}</td><td>{tei[2]}</td><td>{tei[3]}</td><td>{tei[0]}</td><td>{tei[1]}</td><td>{tei[5]}</td><td><button class="btn btn-success" onClick={() => loadTracker(`../../../dhis-web-tracker-capture/index.html#/dashboard?tei=${tei[4]}&program=${programId}&ou=${clickedOU.id}`)}>Go To Tracker</button></td></tr>
+              <tr><td>{index+1}</td><td>{tei.clientId}</td><td>{tei.prepId}</td><td>{tei.ownerShipOUName}</td><td>{tei.transfer}</td><td>{tei.created}</td><td><button class="btn btn-success" onClick={() => loadTracker(`../../../dhis-web-tracker-capture/index.html#/dashboard?tei=${tei.teiId}&program=${programId}&ou=${tei.ownerShipOUId}`)}>Go To Tracker</button></td></tr>
             )
           }
         </tbody>
