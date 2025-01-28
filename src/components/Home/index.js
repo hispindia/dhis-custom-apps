@@ -1,374 +1,416 @@
-// import React, { useEffect, useState } from "react";
-// import "./styles.scss"; // Make sure you have your styles in this file
-// import { ApiService } from "../../services/apiService"; // Ensure your ApiService is correctly set up
-// import "bootstrap-icons/font/bootstrap-icons.css";
-
-// const Home = () => {
- 
-//   const [data, setData] = useState(null); // Don't initialize data as an empty string, use `null` instead
-//   const [errorMessage, setErrorMessage] = useState("");
-//   const [loading, setLoading] = useState(false); // Loading state to handle async calls
-//   const [allIndicators, setAllIndicators] = useState();
-//   const [programindicator, setProgramindicator] = useState("");// Used for All Data elements Name and Id 
-//   const [dataelement, setDataelement] = useState("");// Used for All Data elements Name and Id 
-
-//   // Fetch TEI by QR Code
-//   const fetchAllIndicators = async () => {
-//     setLoading(true);
-//     setErrorMessage("");
-//     try {
-//       const response = await ApiService.getAllIndicators();
-//       if (response) {
-//         setAllIndicators(response)
-//       } else {
-//         setErrorMessage("No trackedEntityInstances found for this QR Code.");
-//         setData(null);
-//       }
-//     } catch (error) {
-//       setErrorMessage("Error fetching TEI by QR Code.");
-//       setData(null);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-//   const fetchAllDataElements = async () => {
-   
-//     try {
-//       const response = await ApiService.getAllDataElements();
-//       if (response) {
-//         setDataelement(response)
-//       } else {
-//         setErrorMessage("No trackedEntityInstances found for this QR Code.");
-      
-//       }
-//     } catch (error) {
-//       setErrorMessage("Error fetching TEI by QR Code.");
-     
-//     } finally {
-     
-//     }
-//   };
-//   const fetchProgramIndicators = async () => {
-   
-//     try {
-//       const response = await ApiService.getProgramIndicators();
-//       if (response) {
-//         setProgramindicator(response)
-//       } else {
-//         setErrorMessage("No trackedEntityInstances found for this QR Code.");
-      
-//       }
-//     } catch (error) {
-//       setErrorMessage("Error fetching TEI by QR Code.");
-     
-//     } finally {
-     
-//     }
-//   };
-// useEffect(()=>{
-//   fetchAllIndicators();
-//   fetchAllDataElements();
-//   fetchProgramIndicators();
-// },[]);
-
-
-// const [searchTerm, setSearchTerm] = useState("");
-
-// // Sample data for dynamic rendering
-// const indicators = [
-//   {
-//     id: 1,
-//     title: "1st 90- 90% of all PLHIV will have been diagnosed (0-12 months)",
-//     description: "It is measured by HIV- Alive PLHIV (0-12 months) to Estimated infants living with HIV (0-12 months)",
-//     createdOn: "Feb 2, 2022",
-//   },
-//   {
-//     id: 2,
-//     title: "1st 90- 90% of all PLHIV will have been diagnosed (<=14 years)",
-//     description: "It is measured by HIV- Alive PLHIV (<=14 years) to Estimated children living with HIV (<=14 years)",
-//     createdOn: "Feb 2, 2022",
-//   },
-//   {
-//     id: 3,
-//     title: "1st 90- 90% of all PLHIV will have been diagnosed (15-24 years)",
-//     description: "It is measured by HIV- Alive PLHIV (15-24 years) to Estimated young people living with HIV (15-24 years)",
-//     createdOn: "Feb 2, 2022",
-//   },
-//   // Add more indicators as needed
-// ];
-
-// // Filtered data based on search term
-// const filteredIndicators = indicators.filter((indicator) =>
-//   indicator.title.toLowerCase().includes(searchTerm.toLowerCase())
-// );
-// console.log("allIndicators==========",allIndicators)
-//   return (
-//     <>
-//        <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-//       <h1>Indicator Dictionary</h1>
-//       <div style={{ marginBottom: "20px" }}>
-//         <input
-//           type="text"
-//           placeholder="Search indicator"
-//           value={searchTerm}
-//           onChange={(e) => setSearchTerm(e.target.value)}
-//           style={{
-//             padding: "10px",
-//             width: "100%",
-//             maxWidth: "500px",
-//             border: "1px solid #ccc",
-//             borderRadius: "4px",
-//           }}
-//         />
-//       </div>
-//       <div>
-//         <h2>{filteredIndicators.length} indicators</h2>
-//         <table
-//           style={{
-//             width: "100%",
-//             borderCollapse: "collapse",
-//             marginTop: "10px",
-//           }}
-//         >
-//           <thead>
-//             <tr>
-//               <th
-//                 style={{
-//                   textAlign: "left",
-//                   padding: "10px",
-//                   borderBottom: "2px solid #ccc",
-//                 }}
-//               >
-//                 Title
-//               </th>
-//               <th
-//                 style={{
-//                   textAlign: "left",
-//                   padding: "10px",
-//                   borderBottom: "2px solid #ccc",
-//                 }}
-//               >
-//                 Description
-//               </th>
-//               <th
-//                 style={{
-//                   textAlign: "left",
-//                   padding: "10px",
-//                   borderBottom: "2px solid #ccc",
-//                 }}
-//               >
-//                 Created On
-//               </th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {filteredIndicators.map((indicator) => (
-//               <tr key={indicator.id}>
-//                 <td style={{ padding: "10px", borderBottom: "1px solid #eee" }}>
-//                   {indicator.title}
-//                 </td>
-//                 <td style={{ padding: "10px", borderBottom: "1px solid #eee" }}>
-//                   {indicator.description}
-//                 </td>
-//                 <td style={{ padding: "10px", borderBottom: "1px solid #eee" }}>
-//                   {indicator.createdOn}
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-//     </div>
-
-//     </>
-//   );
-// };
-
-// export default Home;
-
-
-
-import React, { useState,useEffect } from 'react';
-import "./styles.scss"; // Make sure you have your styles in this file
+import React, { useState, useEffect } from "react";
+import "./styles.scss"; // Ensure your styles are correctly set up
 import { ApiService } from "../../services/apiService"; // Ensure your ApiService is correctly set up
-
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 const Home = () => {
-    const [activeTab, setActiveTab] = useState('Indicators');
-    const [searchQuery, setSearchQuery] = useState('');
-    const [data, setData] = useState([
-      {
-          indicator: '1st 90- 90% of all PLHIV will have been diagnosed (0-12 months)',
-          measurement: 'It is measured by HIV- Alive PLHIV (0-12 months)...',
-          createdOn: 'Feb 2, 2022'
-      },
-      {
-          indicator: '1st 90- 90% of all PLHIV will have been diagnosed (<=14 years)',
-          measurement: 'It is measured by HIV- Alive PLHIV (<=14 years)...',
-          createdOn: 'Feb 2, 2022'
+  const [activeTab, setActiveTab] = useState("Indicators");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [allIndicators, setAllIndicators] = useState([]);
+  const [allProgramIndicators, setAllProgramIndicators] = useState([]);
+  const [allDataElement, setAllDataElement] = useState([]);
+  const [groupindicators, setGroupindicators] = useState([]);
+  const [selectedGroupIndicator, setSelectedGroupIndicator] = useState("");
+  const [filterindicator, setFilterindicator] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state to handle async calls
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Number of items per page
+
+  // Fetch all indicators from API
+  const fetchAllIndicators = async () => {
+    setLoading(true);
+    setErrorMessage("");
+    try {
+      const response = await ApiService.getAllIndicators();
+      if (response && response.indicators && response.indicators.length > 0) {
+        setAllIndicators(response.indicators); // Populate state with data
+      } else {
+        setErrorMessage("No indicators found.");
       }
-  ]);
-    const [errorMessage, setErrorMessage] = useState("");
-    const [loading, setLoading] = useState(false); // Loading state to handle async calls
-    const [allIndicators, setAllIndicators] = useState();
-    const [programindicator, setProgramindicator] = useState("");// Used for All Data elements Name and Id 
-    const [dataelement, setDataelement] = useState("");// Used for All Data elements Name and Id 
-  
-    // Fetch TEI by QR Code
-    const fetchAllIndicators = async () => {
+    } catch (error) {
+      setErrorMessage("Error fetching indicators.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch all program indicators from API
+  const fetchAllProgramIndicators = async () => {
+    setLoading(true);
+    setErrorMessage("");
+    try {
+      const response = await ApiService.getProgramIndicators();
+      if (
+        response &&
+        response.programIndicators &&
+        response.programIndicators.length > 0
+      ) {
+        setAllProgramIndicators(response.programIndicators); // Populate state with data
+      } else {
+        setErrorMessage("No program indicators found.");
+      }
+    } catch (error) {
+      setErrorMessage("Error fetching program indicators.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const fetchAllDataElement = async () => {
+    setLoading(true);
+    setErrorMessage("");
+    try {
+      const response = await ApiService.getAllDataElements();
+      if (
+        response &&
+        response.dataElements &&
+        response.dataElements.length > 0
+      ) {
+        setAllDataElement(response.dataElements); // Populate state with data
+      } else {
+        setErrorMessage("No program indicators found.");
+      }
+    } catch (error) {
+      setErrorMessage("Error fetching program indicators.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const fetchGroupIndicators = async () => {
+    setLoading(true);
+    setErrorMessage("");
+    try {
+      const response = await ApiService.getIndicatorGroup();
+      if (
+        response &&
+        response.indicatorGroups &&
+        response.indicatorGroups.length > 0
+      ) {
+        setGroupindicators(response.indicatorGroups); // Populate state with data
+      } else {
+        setErrorMessage("No program indicators found.");
+      }
+    } catch (error) {
+      setErrorMessage("Error fetching program indicators.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllIndicators();
+    fetchAllProgramIndicators();
+    fetchAllDataElement();
+    fetchGroupIndicators();
+  }, []);
+
+  useEffect(() => {
+    const fetchFilterIndicators = async () => {
+      if (!selectedGroupIndicator) return; // Only fetch if an ID is selected
+
       setLoading(true);
       setErrorMessage("");
+
       try {
-        const response = await ApiService.getAllIndicators();
-        if (response) {
-          setAllIndicators(response)
+        const response = await ApiService.getFilterIndicator(
+          selectedGroupIndicator
+        );
+        if (response && response.indicators && response.indicators.length > 0) {
+          setFilterindicator(response.indicators); // Populate state with data
         } else {
-          setErrorMessage("No trackedEntityInstances found for this QR Code.");
-         
+          setErrorMessage("No indicators found for the selected group.");
         }
       } catch (error) {
-        setErrorMessage("Error fetching TEI by QR Code.");
-       
+        setErrorMessage("Error fetching filtered indicators.");
       } finally {
         setLoading(false);
       }
     };
-    const fetchAllDataElements = async () => {
-     
-      try {
-        const response = await ApiService.getAllDataElements();
-        if (response) {
-          setDataelement(response)
-        } else {
-          setErrorMessage("No trackedEntityInstances found for this QR Code.");
-        
-        }
-      } catch (error) {
-        setErrorMessage("Error fetching TEI by QR Code.");
-       
-      } finally {
-       
-      }
-    };
-    const fetchProgramIndicators = async () => {
-     
-      try {
-        const response = await ApiService.getProgramIndicators();
-        if (response) {
-          setProgramindicator(response)
-        } else {
-          setErrorMessage("No trackedEntityInstances found for this QR Code.");
-        
-        }
-      } catch (error) {
-        setErrorMessage("Error fetching TEI by QR Code.");
-       
-      } finally {
-       
-      }
-    };
-  useEffect(()=>{
-    fetchAllIndicators();
-    fetchAllDataElements();
-    fetchProgramIndicators();
-  },[]);
-  
-  
-console.log("allIndicators========",allIndicators)
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+
+    fetchFilterIndicators();
+  }, [selectedGroupIndicator]);
+
+  const filteredObjects = allIndicators.filter((indicator) =>
+    filterindicator.some((filterItem) => filterItem.id === indicator.id)
+  ); // filter All Indicatrs according to Groupindicator Id
+
+  console.log("groupindicators=====", groupindicators);
+  console.log("selectedGroupIndicator====", selectedGroupIndicator);
+  console.log("allIndicators==========", allIndicators);
+  console.log("filterindicators=====", filterindicator);
 
   const handleTabChange = (tab) => {
-      setActiveTab(tab);
-      // Fetch data based on tab selection (Indicators or Program Indicators)
-      console.log(`Switched to ${tab}`);
+    setActiveTab(tab);
+    setCurrentPage(1); // Reset to the first page when changing tabs
+  };
+  const handleGroupIndicatorChange = (event) => {
+    setSelectedGroupIndicator(event.target.value);
+    console.log(`Selected Group Indicator: ${event.target.value}`);
   };
 
   const handleSearch = () => {
-      console.log(`Searching for: ${searchQuery}`);
-      // Implement search logic here
+    console.log(`Searching for: ${searchQuery}`);
+    // Implement filtering logic here if needed
   };
 
-  const previousPage = () => {
-      if (currentPage > 1) {
-          setCurrentPage(currentPage - 1);
+  const handleDownload = () => {
+    let dataToDownload;
+    if (selectedGroupIndicator) {
+      dataToDownload =
+        activeTab === "Indicators" && selectedGroupIndicator
+          ? filteredObjects
+          : allProgramIndicators;
+
+      if (dataToDownload.length === 0) {
+        alert(`No ${activeTab.toLowerCase()} available for download.`);
+        return;
+      } // when selectedGroupIndicator selected then download will take this part
+    } else {
+      dataToDownload =
+        activeTab === "Indicators" ? allIndicators : allProgramIndicators;
+
+      if (dataToDownload.length === 0) {
+        alert(`No ${activeTab.toLowerCase()} available for download.`);
+        return;
       }
-  };
+    }
 
-  const nextPage = () => {
-      if (currentPage < Math.ceil(data.length / itemsPerPage)) {
-          setCurrentPage(currentPage + 1);
+    const getDataElementNameById = (id) => {
+      const dataElement = allDataElement.find((element) => element.id === id);
+      return dataElement ? dataElement.name : id; // Return the name if found, else return the original ID
+    };
+
+    // Function to extract and map numerator IDs to names
+    const mapNumeratorIdsToNames = (numerator) => {
+      // Regex to extract the IDs from the numerator
+      const numeratorIds = numerator?.match(/#\{([^\}]+)\}/g) || [];
+
+      // Map each ID to its corresponding name
+      return numeratorIds
+        .map((id) => {
+          const idValue = id.replace("#{", "").replace("}", ""); // Extract the ID value
+          const name = getDataElementNameById(idValue);
+          return `#{${name}}`; // Replace with the name in the same format
+        })
+        .join(" + "); // Join with a + for multiple items
+    };
+
+    // Convert data to CSV format
+    const headers =
+      activeTab === "Indicators"
+        ? [
+            "Display Short Name",
+            "Numerator Description",
+            "Denominator Description",
+            "Numerator",
+            "ID",
+            "Name",
+            "Denominator",
+          ]
+        : ["ID", "Name"];
+
+    const rows = dataToDownload.map((item) => {
+      if (activeTab === "Indicators") {
+        const numeratorNames = mapNumeratorIdsToNames(item?.numerator);
+        return [
+          item?.displayShortName || "N/A",
+          item?.displayNumeratorDescription || "N/A",
+          item?.displayDenominatorDescription || "N/A",
+          numeratorNames || "N/A", // Show the names instead of IDs
+          item?.id || "N/A",
+          item?.name || "N/A",
+          item?.denominator || "N/A",
+        ];
+      } else {
+        return [item?.id || "N/A", item?.name || "N/A"];
       }
+    });
+
+    // Create a CSV string
+    const csvContent = [
+      headers.join(","), // Join headers
+      ...rows.map((row) => row.join(",")), // Join rows
+    ].join("\n");
+
+    // Trigger file download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `${activeTab.toLowerCase().replace(" ", "_")}.csv`
+    );
+    link.click();
   };
 
+  // Get the current page's data based on the active tab
   const getCurrentPageData = () => {
+    if (selectedGroupIndicator) {
+      const data =
+        activeTab === "Indicators" ? filteredObjects : allProgramIndicators;
+      // const data = activeTab === "Indicators" ? allIndicators : allProgramIndicators;
       const startIndex = (currentPage - 1) * itemsPerPage;
       const endIndex = startIndex + itemsPerPage;
       return data.slice(startIndex, endIndex);
+    } else {
+      const data =
+        activeTab === "Indicators" ? allIndicators : allProgramIndicators;
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      return data.slice(startIndex, endIndex);
+    }
+  }; // this function will display the row in the table
+
+  // Calculate the total number of pages based on the active tab
+
+
+  const totalPages = Math.ceil(
+    selectedGroupIndicator && activeTab === "Indicators"
+      ? filteredObjects.length / itemsPerPage
+      : (activeTab === "Indicators"
+          ? allIndicators.length
+          : allProgramIndicators.length) / itemsPerPage
+  ); // count the total pages selectedGroupIndicator conditionally applied
+
+  // Navigate to the previous page
+  const previousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
   };
 
+  // Navigate to the next page
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
+  // Get table headers and row data dynamically based on the active tab
+  const getTableHeaders = () => {
+    if (activeTab === "Indicators") {
+      return (
+        <tr>
+          <th>Display Short Name</th>
+          <th>Numerator Description</th>
+          <th>Denominator Description</th>
+        </tr>
+      );
+    } else {
+      return (
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+        </tr>
+      );
+    }
+  };
 
-    return (
-        <div className="app">
-            <div className="header">
-                <h1>Indicator Dictionary</h1>
-                <button className="download-button">Download</button>
-            </div>
+  const getRowData = (row) => {
+    if (activeTab === "Indicators") {
+      return (
+        <>
+          <td>{row?.displayShortName || "N/A"}</td>
+          <td>{row?.displayNumeratorDescription || "N/A"}</td>
+          <td>{row?.displayDenominatorDescription || "N/A"}</td>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <td>{row?.id || "N/A"}</td>
+          <td>{row?.name || "N/A"}</td>
+        </>
+      );
+    }
+  };
 
-            <div className="content">
-                <div className="controls">
-                    <button 
-                        className={activeTab === 'Indicators' ? 'active' : ''} 
-                        onClick={() => handleTabChange('Indicators')}
-                    >
-                        Indicators
-                    </button>
-                    <button 
-                        className={activeTab === 'Program Indicators' ? 'active' : ''} 
-                        onClick={() => handleTabChange('Program Indicators')}
-                    >
-                        Program Indicators
-                    </button>
+  return (
+    <div className="app">
+      <div className="header">
+        <h1>Indicator Dictionary</h1>
+        <button className="download-button" onClick={handleDownload}>
+          Download
+        </button>
+      </div>
 
-                    <div className="search-bar">
-                        <input 
-                            type="text" 
-                            value={searchQuery} 
-                            onChange={(e) => setSearchQuery(e.target.value)} 
-                            placeholder="Search indicator" 
-                        />
-                        <button onClick={handleSearch}>Search</button>
-                    </div>
-                </div>
+      <div className="content">
+        <div className="controls">
+          <button
+            className={activeTab === "Indicators" ? "active" : ""}
+            onClick={() => handleTabChange("Indicators")}
+          >
+            Indicators
+          </button>
+          <button
+            className={activeTab === "Program Indicators" ? "active" : ""}
+            onClick={() => handleTabChange("Program Indicators")}
+          >
+            Program Indicators
+          </button>
+          <div className="group-indicator-dropdown">
+            <label htmlFor="group-indicator-select">
+              Filter by Group Indicator:
+            </label>
+            <select
+              className="group-indicator-select"
+              value={selectedGroupIndicator}
+              onChange={handleGroupIndicatorChange}
+            >
+              <option value="">Select a Group Indicator</option>
+              {groupindicators.map((group) => (
+                <option key={group.id} value={group.id}>
+                  {group.name || "Unnamed Group"}
+                </option>
+              ))}
+            </select>
+          </div>
 
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th>Indicator</th>
-                            <th>Measurement</th>
-                            <th>Created On</th>
-                        </tr>
-                    </thead>
-                    {/* <tbody>
-                        {getCurrentPageData().map((row, index) => (
-                            <tr key={index}>
-                                <td>{row.indicator}</td>
-                                <td>{row.measurement}</td>
-                                <td>{row.createdOn}</td>
-                            </tr>
-                        ))}
-                    </tbody> */}
-                </table>
-
-                <div className="pagination">
-                    <button onClick={previousPage}>Previous</button>
-                    <span className="page-number">Page {currentPage} of {Math.ceil(data.length / itemsPerPage)}</span>
-                    <button onClick={nextPage}>Next</button>
-                </div>
-            </div>
+          <div className="search-bar">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search indicator"
+            />
+            <button onClick={handleSearch}>Search</button>
+          </div>
         </div>
-    );
+
+        {loading ? (
+          <p>Loading...</p>
+        ) : errorMessage ? (
+          <p className="error">{errorMessage}</p>
+        ) : getCurrentPageData().length === 0 ? (
+          <p>No data available to display.</p>
+        ) : (
+          <>
+            <table className="table">
+              <thead>{getTableHeaders()}</thead>
+              <tbody>
+                {getCurrentPageData().map((row, index) => (
+                  <tr key={index}>{getRowData(row)}</tr>
+                ))}
+              </tbody>
+            </table>
+
+            <div className="pagination">
+              <button onClick={previousPage} disabled={currentPage === 1}>
+                Previous
+              </button>
+              <span className="page-number">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button onClick={nextPage} disabled={currentPage === totalPages}>
+                Next
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Home;
