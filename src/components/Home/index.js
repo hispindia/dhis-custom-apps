@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./styles.scss"; // Ensure your styles are correctly set up
 import { ApiService } from "../../services/apiService"; // Ensure your ApiService is correctly set up
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { RingLoader } from "react-spinners";
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState("Indicators");
@@ -12,10 +13,12 @@ const Home = () => {
   const [groupindicators, setGroupindicators] = useState([]);
   const [selectedGroupIndicator, setSelectedGroupIndicator] = useState("");
   const [filterindicator, setFilterindicator] = useState([]);
+  const [filteredObjects, setFilteredObjects] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false); // Loading state to handle async calls
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Number of items per page
+  const [originalAllIndicators, setOriginalAllIndicators] = useState([]);
 
   // Fetch all indicators from API
   const fetchAllIndicators = async () => {
@@ -25,6 +28,8 @@ const Home = () => {
       const response = await ApiService.getAllIndicators();
       if (response && response.indicators && response.indicators.length > 0) {
         setAllIndicators(response.indicators); // Populate state with data
+        setOriginalAllIndicators(response.indicators);
+        setSearchQuery("");
       } else {
         setErrorMessage("No indicators found.");
       }
@@ -56,6 +61,7 @@ const Home = () => {
       setLoading(false);
     }
   };
+  // Fetch all DataElements to pick the Name of the DataElement
   const fetchAllDataElement = async () => {
     setLoading(true);
     setErrorMessage("");
@@ -76,6 +82,7 @@ const Home = () => {
       setLoading(false);
     }
   };
+  // fetch Group indicator for the group select option
   const fetchGroupIndicators = async () => {
     setLoading(true);
     setErrorMessage("");
@@ -103,7 +110,7 @@ const Home = () => {
     fetchAllDataElement();
     fetchGroupIndicators();
   }, []);
-
+  // when selectedGroupIndicator then fetch the FilterIndicator that are present in the list
   useEffect(() => {
     const fetchFilterIndicators = async () => {
       if (!selectedGroupIndicator) return; // Only fetch if an ID is selected
@@ -130,9 +137,17 @@ const Home = () => {
     fetchFilterIndicators();
   }, [selectedGroupIndicator]);
 
-  const filteredObjects = allIndicators.filter((indicator) =>
-    filterindicator.some((filterItem) => filterItem.id === indicator.id)
-  ); // filter All Indicatrs according to Groupindicator Id
+  // const filteredObjects = allIndicators.filter((indicator) =>
+  //   filterindicator.some((filterItem) => filterItem.id === indicator.id)
+  // ); // filter All Indicatrs according to Groupindicator Id
+
+  useEffect(() => {
+    // Filter and update state when inputs change
+    const filtered = allIndicators.filter((indicator) =>
+      filterindicator.some((filterItem) => filterItem.id === indicator.id)
+    );
+    setFilteredObjects(filtered);
+  }, [allIndicators, filterindicator]);
 
   console.log("groupindicators=====", groupindicators);
   console.log("selectedGroupIndicator====", selectedGroupIndicator);
@@ -142,15 +157,18 @@ const Home = () => {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setCurrentPage(1); // Reset to the first page when changing tabs
+    setSearchQuery("");
+    setSelectedGroupIndicator("");
   };
+
   const handleGroupIndicatorChange = (event) => {
     setSelectedGroupIndicator(event.target.value);
+    setSearchQuery("");
     console.log(`Selected Group Indicator: ${event.target.value}`);
   };
 
-  const handleSearch = () => {
-    console.log(`Searching for: ${searchQuery}`);
-    // Implement filtering logic here if needed
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
   };
 
   const handleDownload = () => {
@@ -244,9 +262,10 @@ const Home = () => {
     link.click();
   };
 
-  // Get the current page's data based on the active tab
+  // Get the current page's data based on the active tab and selectedGroupIndicator
   const getCurrentPageData = () => {
     if (selectedGroupIndicator) {
+      // when selectedGroupIndicator is selected then get the filterObjects data
       const data =
         activeTab === "Indicators" ? filteredObjects : allProgramIndicators;
       // const data = activeTab === "Indicators" ? allIndicators : allProgramIndicators;
@@ -263,7 +282,6 @@ const Home = () => {
   }; // this function will display the row in the table
 
   // Calculate the total number of pages based on the active tab
-
 
   const totalPages = Math.ceil(
     selectedGroupIndicator && activeTab === "Indicators"
@@ -326,6 +344,51 @@ const Home = () => {
     }
   };
 
+  // useEffect(() => {
+  //   if(selectedGroupIndicator && searchQuery){
+  //     let filteredResults = filteredObjects.filter(
+  //       (indicator) =>
+  //         indicator.name.toLowerCase().includes(searchQuery.toLowerCase()) || // Match by name
+  //         indicator.displayShortName
+  //           .toLowerCase()
+  //           .includes(searchQuery.toLowerCase()) // Match by display short name
+  //     );
+
+  //     setFilteredObjects(filteredResults); // U  pdate the filtered results
+  //   }
+  //   else if(searchQuery.length > 0) {
+  //     let filteredResults = allIndicators.filter(
+  //       (indicator) =>
+  //         indicator.name.toLowerCase().includes(searchQuery.toLowerCase()) || // Match by name
+  //         indicator.displayShortName
+  //           .toLowerCase()
+  //           .includes(searchQuery.toLowerCase()) // Match by display short name
+  //     );
+
+  //     setAllIndicators(filteredResults); // U  pdate the filtered results
+  //   }
+
+  // }, [searchQuery]); // data filter according to the search query
+
+  useEffect(() => {
+    if (searchQuery.trim().length === 0) {
+      // Reset to the original indicators when search is cleared
+      setAllIndicators(originalAllIndicators);
+      return;
+    }
+
+    const filteredResults = originalAllIndicators.filter(
+      (indicator) =>
+        indicator.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (indicator.displayShortName &&
+          indicator.displayShortName
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()))
+    );
+
+    setAllIndicators(filteredResults);
+  }, [searchQuery]);
+
   return (
     <div className="app">
       <div className="header">
@@ -371,15 +434,17 @@ const Home = () => {
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleSearchChange}
               placeholder="Search indicator"
             />
-            <button onClick={handleSearch}>Search</button>
+            {/* <button onClick={handleSearch}>Search</button> */}
           </div>
         </div>
 
         {loading ? (
-          <p>Loading...</p>
+          <div className="loader-container">
+            <RingLoader color="#36d7b7" size={120} />
+          </div>
         ) : errorMessage ? (
           <p className="error">{errorMessage}</p>
         ) : getCurrentPageData().length === 0 ? (
@@ -394,7 +459,6 @@ const Home = () => {
                 ))}
               </tbody>
             </table>
-
             <div className="pagination">
               <button onClick={previousPage} disabled={currentPage === 1}>
                 Previous
