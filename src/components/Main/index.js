@@ -10,16 +10,18 @@ const Main = ({ data, head }) => {
 
      
         <>
-          
-           
-              <Home />
+        <div className="main-container">
+        <Home />
+
+        </div>
+              
 
 
            
          
         </>
 
-     
+        
     </>
   );
 };

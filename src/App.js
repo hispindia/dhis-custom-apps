@@ -8,6 +8,7 @@ import { useDataQuery } from "@dhis2/app-runtime";
 import { CircularLoader } from "@dhis2/ui";
 import { store } from "./store/store";
 import Main from './components/Main';
+import IndicatorDetails from './components/IndicatorDetails';
 const MyApp = () => {
   // Simulating data query
   const { loading, error, data } = useDataQuery(InitialQuery);
@@ -27,6 +28,10 @@ const MyApp = () => {
         <Routes>
           <Route path="/" element={<Main data={data} head={true} />} />
           <Route path="/group" element={<Main data={data} head={false} />} />
+
+          <Route path="/IndicatorDetails" element={<IndicatorDetails />} />
+
+          
         </Routes>
       </Router>
     </Provider>

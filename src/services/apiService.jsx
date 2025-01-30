@@ -4,6 +4,7 @@ export const ApiService = {
   getProgramIndicators,
   getIndicatorGroup,
   getFilterIndicator,
+  getIndicatorDetails,
  
 };
 // Api for Searching the Sigle Tei using Id (individual App)
@@ -96,6 +97,25 @@ async function getFilterIndicator(selectedGroupIndicator) {
     throw "Error: Data generation failed, Please try again!";
   }
 }
+
+async function getIndicatorDetails() {  
+  var url = `${process.env.REACT_APP_DHIS2_BASE_URL}/api/29/indicators/${getAllIndicators}.json?paging=false&fields=id,name,displayNumeratorDescription,displayDenominatorDescription,`;
+  let response = await fetch(url, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (response.status == "200") {
+    let data = await response.json();
+    return data;
+  } else {
+    throw "Error: Data generation failed, Please try again!";
+  }
+}
+
 
 
 

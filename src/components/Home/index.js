@@ -3,6 +3,7 @@ import "./styles.scss"; // Ensure your styles are correctly set up
 import { ApiService } from "../../services/apiService"; // Ensure your ApiService is correctly set up
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { RingLoader } from "react-spinners";
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState("Indicators");
@@ -305,6 +306,13 @@ const Home = () => {
     }
   };
 
+  const navigate = useNavigate();
+  
+  const handleRowClick = () => {
+    console.log("Row clicked! Navigating...");
+    navigate('/IndicatorDetails'); 
+  }
+
   // Get table headers and row data dynamically based on the active tab
   const getTableHeaders = () => {
     if (activeTab === "Indicators") {
@@ -329,9 +337,9 @@ const Home = () => {
     if (activeTab === "Indicators") {
       return (
         <>
-          <td>{row?.displayShortName || "N/A"}</td>
-          <td>{row?.displayNumeratorDescription || "N/A"}</td>
-          <td>{row?.displayDenominatorDescription || "N/A"}</td>
+          <td onClick={handleRowClick} style={{ cursor: 'pointer',}}>{row?.displayShortName || "N/A"}</td>
+          <td onClick={handleRowClick} style={{ cursor: 'pointer',}}>{row?.displayNumeratorDescription || "N/A"}</td>
+          <td onClick={handleRowClick} style={{ cursor: 'pointer',}}>{row?.displayDenominatorDescription || "N/A"}</td>
         </>
       );
     } else {
