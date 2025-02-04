@@ -23,4 +23,3 @@ export const mainReducer = (state = INITIAL_STATE, action) => {
   }
 };
 
-
