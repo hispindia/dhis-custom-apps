@@ -4,13 +4,17 @@ import { ApiService } from "../../services/apiService"; // Ensure your ApiServic
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { RingLoader } from "react-spinners";
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
+
+import { setState } from "../../store/main/main.action";
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState("Indicators");
   const [searchQuery, setSearchQuery] = useState("");
   const [allIndicators, setAllIndicators] = useState([]);
   const [allProgramIndicators, setAllProgramIndicators] = useState([]);
-  const [allDataElement, setAllDataElement] = useState([]);
+  // const [allDataElement, setAllDataElement] = useState([]);
+  const allDataElement = useSelector((state) => state.main.dataElements);
   const [groupindicators, setGroupindicators] = useState([]);
   const [selectedGroupIndicator, setSelectedGroupIndicator] = useState("");
   const [filterindicator, setFilterindicator] = useState([]);
@@ -20,6 +24,7 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Number of items per page
   const [originalAllIndicators, setOriginalAllIndicators] = useState([]);
+  const dispatch = useDispatch();
 
   // Fetch all indicators from API
   const fetchAllIndicators = async () => {
@@ -73,7 +78,8 @@ const Home = () => {
         response.dataElements &&
         response.dataElements.length > 0
       ) {
-        setAllDataElement(response.dataElements); // Populate state with data
+        // setAllDataElement(response.dataElements); // Populate state with data
+        dispatch(setState(response.dataElements));
       } else {
         setErrorMessage("No program indicators found.");
       }
@@ -200,32 +206,55 @@ const Home = () => {
     };
 
     // Function to extract and map numerator IDs to names
-    const mapNumeratorIdsToNames = (numerator) => {
-      // Regex to extract the IDs from the numerator
-      const numeratorIds = numerator?.match(/#\{([^\}]+)\}/g) || [];
+    // const mapNumeratorIdsToNames = (numerator) => {
+    //   // Regex to extract the IDs from the numerator
+    //   const numeratorIds = numerator?.match(/#\{([^\}]+)\}/g) || [];
 
-      // Map each ID to its corresponding name
-      return numeratorIds
-        .map((id) => {
-          const idValue = id.replace("#{", "").replace("}", ""); // Extract the ID value
-          const name = getDataElementNameById(idValue);
-          return `#{${name}}`; // Replace with the name in the same format
-        })
-        .join(" + "); // Join with a + for multiple items
+    //   // Map each ID to its corresponding name
+    //   return numeratorIds
+    //     .map((id) => {
+    //       const idValue = id.replace("#{", "").replace("}", ""); // Extract the ID value
+    //       const name = getDataElementNameById(idValue);
+    //       return `#{${name}}`; // Replace with the name in the same format
+    //     })
+    //     .join(" + "); // Join with a + for multiple items
+    // };
+    const mapNumeratorIdsToNames = (numerator) => {
+      if (!numerator || !allDataElement.length) return "No numerator data available";
+    
+      // Regex patterns for #{ID} and #{ID.SUFFIX}
+      const idPattern1 = /#\{([a-zA-Z0-9]+)\}/g;
+      const idPattern2 = /#\{([a-zA-Z0-9]+)\.[a-zA-Z0-9]+\}/g;
+    
+      // Extract and map the IDs from both patterns
+      const mapIds = (pattern) =>
+        (numerator.match(pattern) || [])
+          .map((id) => {
+            const idValue = id.replace(/#\{|\..*?\}/g, "").replace("}", "");
+            const name = getDataElementNameById(idValue);
+            return `#{${name}}`;
+          })
+          .join(" + ");
+    
+      const mappedPattern1 = mapIds(idPattern1);
+      const mappedPattern2 = mapIds(idPattern2);
+    
+      // Combine both mapped results
+      return [mappedPattern1, mappedPattern2].filter(Boolean).join(" + ");
     };
 
     // Convert data to CSV format
     const headers =
       activeTab === "Indicators"
         ? [
-            "Display Short Name",
-            "Numerator Description",
-            "Denominator Description",
-            "Numerator",
-            "ID",
-            "Name",
-            "Denominator",
-          ]
+          "Display Short Name",
+          "Numerator Description",
+          "Denominator Description",
+          "Numerator",
+          "ID",
+          "Name",
+          "Denominator",
+        ]
         : ["ID", "Name"];
 
     const rows = dataToDownload.map((item) => {
@@ -288,8 +317,8 @@ const Home = () => {
     selectedGroupIndicator && activeTab === "Indicators"
       ? filteredObjects.length / itemsPerPage
       : (activeTab === "Indicators"
-          ? allIndicators.length
-          : allProgramIndicators.length) / itemsPerPage
+        ? allIndicators.length
+        : allProgramIndicators.length) / itemsPerPage
   ); // count the total pages selectedGroupIndicator conditionally applied
 
   // Navigate to the previous page
@@ -307,17 +336,25 @@ const Home = () => {
   };
 
   const navigate = useNavigate();
-  
-  const handleRowClick = () => {
-    console.log("Row clicked! Navigating...");
-    navigate('/IndicatorDetails'); 
-  }
+
+
+  console.trace("ggggggggg")
+  const handleRowClick = (id) => {
+    if(activeTab === "Indicators"){
+      navigate(`/IndicatorDetails/${id}`);
+    }
+    else{
+      navigate(`/ProgramIndicatorDetails/${id}`); 
+    }
+   
+  };
 
   // Get table headers and row data dynamically based on the active tab
   const getTableHeaders = () => {
     if (activeTab === "Indicators") {
       return (
         <tr>
+          <th>ID</th>
           <th>Display Short Name</th>
           <th>Numerator Description</th>
           <th>Denominator Description</th>
@@ -337,16 +374,17 @@ const Home = () => {
     if (activeTab === "Indicators") {
       return (
         <>
-          <td onClick={handleRowClick} style={{ cursor: 'pointer',}}>{row?.displayShortName || "N/A"}</td>
-          <td onClick={handleRowClick} style={{ cursor: 'pointer',}}>{row?.displayNumeratorDescription || "N/A"}</td>
-          <td onClick={handleRowClick} style={{ cursor: 'pointer',}}>{row?.displayDenominatorDescription || "N/A"}</td>
+          <td onClick={() => handleRowClick(row?.id)} style={{ cursor: 'pointer', }}>{row?.id || "N/A"}</td>
+          <td onClick={() => handleRowClick(row?.id)} style={{ cursor: 'pointer', }}>{row?.displayShortName || "N/A"}</td>
+          <td onClick={() => handleRowClick(row?.id)} style={{ cursor: 'pointer', }}>{row?.displayNumeratorDescription || "N/A"}</td>
+          <td onClick={() => handleRowClick(row?.id)} style={{ cursor: 'pointer', }}>{row?.displayDenominatorDescription || "N/A"}</td>
         </>
       );
     } else {
       return (
         <>
-          <td>{row?.id || "N/A"}</td>
-          <td>{row?.name || "N/A"}</td>
+          <td onClick={() => handleRowClick(row?.id)} style={{ cursor: 'pointer', }}>{row?.id || "N/A"}</td>
+          <td onClick={() => handleRowClick(row?.id)} style={{ cursor: 'pointer', }}>{row?.name || "N/A"}</td>
         </>
       );
     }
