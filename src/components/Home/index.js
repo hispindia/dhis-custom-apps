@@ -255,9 +255,10 @@ const Home = () => {
           "Name",
           "Denominator",
         ]
-        : ["ID", "Name"];
+        : ["ID", "Name", "AggregationType","AnalyticsType"];
 
     const rows = dataToDownload.map((item) => {
+      {console.log("item=======",item)}
       if (activeTab === "Indicators") {
         const numeratorNames = mapNumeratorIdsToNames(item?.numerator);
         return [
@@ -270,7 +271,12 @@ const Home = () => {
           item?.denominator || "N/A",
         ];
       } else {
-        return [item?.id || "N/A", item?.name || "N/A"];
+        return [
+          item?.id || "N/A", 
+          item?.name || "N/A",
+          item?.aggregationType || "N/A",
+          item?.analyticsType || "N/A",
+        ];
       }
     });
 
@@ -365,6 +371,8 @@ const Home = () => {
         <tr>
           <th>ID</th>
           <th>Name</th>
+          <th>AggregationType</th>
+          <th>AnalyticsType</th>
         </tr>
       );
     }
@@ -385,6 +393,9 @@ const Home = () => {
         <>
           <td onClick={() => handleRowClick(row?.id)} style={{ cursor: 'pointer', }}>{row?.id || "N/A"}</td>
           <td onClick={() => handleRowClick(row?.id)} style={{ cursor: 'pointer', }}>{row?.name || "N/A"}</td>
+          <td onClick={() => handleRowClick(row?.id)} style={{ cursor: 'pointer', }}>{row?.aggregationType || "N/A"}</td>
+          <td onClick={() => handleRowClick(row?.id)} style={{ cursor: 'pointer', }}>{row?.analyticsType || "N/A"}</td>
+
         </>
       );
     }
@@ -458,6 +469,7 @@ const Home = () => {
           >
             Program Indicators
           </button>
+          
           <div className="group-indicator-dropdown">
             <label htmlFor="group-indicator-select">
               Filter by Group Indicator:

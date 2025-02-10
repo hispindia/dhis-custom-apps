@@ -8,7 +8,7 @@ import { useDataQuery } from "@dhis2/app-runtime";
 import { CircularLoader } from "@dhis2/ui";
 import { store } from "./store/store";
 import Main from './components/Main';
-// import ProgramIndicatorDetails from './components/programIndicatorDetails';
+import ProgramIndicatorDetails from './components/programIndicatorDetails';
 import IndicatorDetails from './components/IndicatorDetails';
 
 
@@ -34,7 +34,7 @@ const MyApp = () => {
 
           {/* <Route path="/IndicatorDetails" element={<IndicatorDetails />} /> */}
           <Route path="/IndicatorDetails/:id" element={<IndicatorDetails />} />
-          {/* <Route path="/ProgramIndicatorDetails/:id" element={<ProgramIndicatorDetails />} /> */}
+          <Route path="/ProgramIndicatorDetails/:id" element={<ProgramIndicatorDetails />} />
 
           
         </Routes>

@@ -5,7 +5,8 @@ export const ApiService = {
   getIndicatorGroup,
   getFilterIndicator,
   getIndicatorDetails,
-  getProgramDetails
+  getProgramDetails,
+  getProgramRules
  
 };
 // Api for Searching the Sigle Tei using Id (individual App)
@@ -46,7 +47,7 @@ async function getAllDataElements() {
 }
 // APi for getting All the Events present in single Tei  (individual App)  
 async function getProgramIndicators(getTei) {
-  var url = `${process.env.REACT_APP_DHIS2_BASE_URL}/api/programIndicators.json?fields=id,name&paging=false`;
+  var url = `${process.env.REACT_APP_DHIS2_BASE_URL}/api/programIndicators.json?fields=id,name,aggregationType,analyticsType,&paging=false`;
   let response = await fetch(url, {
     method: "GET",
     credentials: "include",
@@ -118,6 +119,24 @@ async function getIndicatorDetails(indicatorId) {
 }
 async function getProgramDetails(programindicatorId) {  
   var url = `${process.env.REACT_APP_DHIS2_BASE_URL}/api/29/programIndicators/${programindicatorId}.json?paging=false&fields=*,`;
+  let response = await fetch(url, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (response.status == "200") {
+    let data = await response.json();
+    return data;
+  } else {
+    throw "Error: Data generation failed, Please try again!";
+  }
+}
+
+async function getProgramRules() {  
+  var url = `${process.env.REACT_APP_DHIS2_BASE_URL}/api/29/programRules.json?fields=id,name&paging=false`;
   let response = await fetch(url, {
     method: "GET",
     credentials: "include",
