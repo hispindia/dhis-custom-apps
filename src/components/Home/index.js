@@ -6,14 +6,13 @@ import { RingLoader } from "react-spinners";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 
-import { setState } from "../../store/main/main.action";
+import { setState, setTab } from "../../store/main/main.action";
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState("Indicators");
   const [searchQuery, setSearchQuery] = useState("");
   const [allIndicators, setAllIndicators] = useState([]);
   const [allProgramIndicators, setAllProgramIndicators] = useState([]);
-  // const [allDataElement, setAllDataElement] = useState([]);
   const allDataElement = useSelector((state) => state.main.dataElements);
   const [groupindicators, setGroupindicators] = useState([]);
   const [selectedGroupIndicator, setSelectedGroupIndicator] = useState("");
@@ -24,6 +23,7 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Number of items per page
   const [originalAllIndicators, setOriginalAllIndicators] = useState([]);
+  const [programrules, setProgramrules] = useState([]);
   const dispatch = useDispatch();
 
   // Fetch all indicators from API
@@ -110,13 +110,42 @@ const Home = () => {
       setLoading(false);
     }
   };
+  // fetch programRules list data
+  const fetchProgramRules = async () => {
+    setLoading(true);
+    setErrorMessage("");
+    try {
+      const response = await ApiService.getProgramRules();
+      if (
+        response &&
+        response.programRules &&
+        response.programRules.length > 0
+      ) {
+        setProgramrules(response.programRules); // Populate state with data
+      } else {
+        setErrorMessage("No program rules found.");
+      }
+    } catch (error) {
+      setErrorMessage("Error fetching program rules.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchAllIndicators();
     fetchAllProgramIndicators();
     fetchAllDataElement();
     fetchGroupIndicators();
+    fetchProgramRules();
   }, []);
+  // useEffect(() => {
+  //   if (activeTab === "ProgramRules") {
+  //     fetchProgramRules();
+  //   }
+  // }, [activeTab]); // Run effect when tab changes
+
+ 
   // when selectedGroupIndicator then fetch the FilterIndicator that are present in the list
   useEffect(() => {
     const fetchFilterIndicators = async () => {
@@ -144,10 +173,8 @@ const Home = () => {
     fetchFilterIndicators();
   }, [selectedGroupIndicator]);
 
-  // const filteredObjects = allIndicators.filter((indicator) =>
-  //   filterindicator.some((filterItem) => filterItem.id === indicator.id)
-  // ); // filter All Indicatrs according to Groupindicator Id
 
+// filtered indicaator data when selected Group indicator is selected and set to state
   useEffect(() => {
     // Filter and update state when inputs change
     const filtered = allIndicators.filter((indicator) =>
@@ -163,21 +190,26 @@ const Home = () => {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
+    dispatch(setTab(tab));
     setCurrentPage(1); // Reset to the first page when changing tabs
     setSearchQuery("");
     setSelectedGroupIndicator("");
+    console.log("aaaaaaaaaaa", tab)
+    // if(tab == "ProgramRules"){
+    //   navigate(`/programrules`);
+    // }
   };
-
+// GroupIndicators selected and handle change function 
   const handleGroupIndicatorChange = (event) => {
     setSelectedGroupIndicator(event.target.value);
     setSearchQuery("");
     console.log(`Selected Group Indicator: ${event.target.value}`);
   };
-
+// handle search function 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
-
+// handle download function bas
   const handleDownload = () => {
     let dataToDownload;
     if (selectedGroupIndicator) {
@@ -192,7 +224,7 @@ const Home = () => {
       } // when selectedGroupIndicator selected then download will take this part
     } else {
       dataToDownload =
-        activeTab === "Indicators" ? allIndicators : allProgramIndicators;
+        activeTab === "Indicators" ? allIndicators : activeTab === "Program Indicators" ? allProgramIndicators : programrules;
 
       if (dataToDownload.length === 0) {
         alert(`No ${activeTab.toLowerCase()} available for download.`);
@@ -205,27 +237,14 @@ const Home = () => {
       return dataElement ? dataElement.name : id; // Return the name if found, else return the original ID
     };
 
-    // Function to extract and map numerator IDs to names
-    // const mapNumeratorIdsToNames = (numerator) => {
-    //   // Regex to extract the IDs from the numerator
-    //   const numeratorIds = numerator?.match(/#\{([^\}]+)\}/g) || [];
-
-    //   // Map each ID to its corresponding name
-    //   return numeratorIds
-    //     .map((id) => {
-    //       const idValue = id.replace("#{", "").replace("}", ""); // Extract the ID value
-    //       const name = getDataElementNameById(idValue);
-    //       return `#{${name}}`; // Replace with the name in the same format
-    //     })
-    //     .join(" + "); // Join with a + for multiple items
-    // };
+   
     const mapNumeratorIdsToNames = (numerator) => {
       if (!numerator || !allDataElement.length) return "No numerator data available";
-    
+
       // Regex patterns for #{ID} and #{ID.SUFFIX}
       const idPattern1 = /#\{([a-zA-Z0-9]+)\}/g;
       const idPattern2 = /#\{([a-zA-Z0-9]+)\.[a-zA-Z0-9]+\}/g;
-    
+
       // Extract and map the IDs from both patterns
       const mapIds = (pattern) =>
         (numerator.match(pattern) || [])
@@ -235,10 +254,10 @@ const Home = () => {
             return `#{${name}}`;
           })
           .join(" + ");
-    
+
       const mappedPattern1 = mapIds(idPattern1);
       const mappedPattern2 = mapIds(idPattern2);
-    
+
       // Combine both mapped results
       return [mappedPattern1, mappedPattern2].filter(Boolean).join(" + ");
     };
@@ -255,10 +274,10 @@ const Home = () => {
           "Name",
           "Denominator",
         ]
-        : ["ID", "Name", "AggregationType","AnalyticsType"];
+        : activeTab === "Program Indicators" ? ["ID", "Name", "AggregationType", "AnalyticsType"] : ["ID", "Name"];
 
     const rows = dataToDownload.map((item) => {
-      {console.log("item=======",item)}
+      { console.log("item=======", item) }
       if (activeTab === "Indicators") {
         const numeratorNames = mapNumeratorIdsToNames(item?.numerator);
         return [
@@ -270,12 +289,19 @@ const Home = () => {
           item?.name || "N/A",
           item?.denominator || "N/A",
         ];
-      } else {
+      } else if (activeTab === "Program Indicators") {
         return [
-          item?.id || "N/A", 
+          item?.id || "N/A",
           item?.name || "N/A",
           item?.aggregationType || "N/A",
           item?.analyticsType || "N/A",
+        ];
+      }
+      else {
+        return [
+          item?.id || "N/A",
+          item?.name || "N/A",
+
         ];
       }
     });
@@ -310,7 +336,7 @@ const Home = () => {
       return data.slice(startIndex, endIndex);
     } else {
       const data =
-        activeTab === "Indicators" ? allIndicators : allProgramIndicators;
+        activeTab === "Indicators" ? allIndicators : activeTab === "Program Indicators" ? allProgramIndicators : programrules;
       const startIndex = (currentPage - 1) * itemsPerPage;
       const endIndex = startIndex + itemsPerPage;
       return data.slice(startIndex, endIndex);
@@ -319,12 +345,7 @@ const Home = () => {
 
   // Calculate the total number of pages based on the active tab
 
-  const totalPages = Math.ceil(
-    selectedGroupIndicator && activeTab === "Indicators"
-      ? filteredObjects.length / itemsPerPage
-      : (activeTab === "Indicators"
-        ? allIndicators.length
-        : allProgramIndicators.length) / itemsPerPage
+  const totalPages = Math.ceil(selectedGroupIndicator && activeTab === "Indicators" ? filteredObjects.length / itemsPerPage : (activeTab === "Indicators" ? allIndicators.length : activeTab === "Program Indicators" ? allProgramIndicators.length : programrules.length) / itemsPerPage
   ); // count the total pages selectedGroupIndicator conditionally applied
 
   // Navigate to the previous page
@@ -346,13 +367,16 @@ const Home = () => {
 
   console.trace("ggggggggg")
   const handleRowClick = (id) => {
-    if(activeTab === "Indicators"){
+    if (activeTab === "Indicators") {
       navigate(`/IndicatorDetails/${id}`);
     }
-    else{
-      navigate(`/ProgramIndicatorDetails/${id}`); 
+    else if (activeTab === "Indicators"){
+      navigate(`/ProgramIndicatorDetails/${id}`);
     }
-   
+    else{
+      navigate('/')
+    }
+
   };
 
   // Get table headers and row data dynamically based on the active tab
@@ -366,7 +390,7 @@ const Home = () => {
           <th>Denominator Description</th>
         </tr>
       );
-    } else {
+    } else if (activeTab == "Program Indicators") {
       return (
         <tr>
           <th>ID</th>
@@ -375,6 +399,13 @@ const Home = () => {
           <th>AnalyticsType</th>
         </tr>
       );
+    } else {
+      return (
+        <>
+          <th>ID</th>
+          <th>Name</th>
+        </>
+      )
     }
   };
 
@@ -388,7 +419,7 @@ const Home = () => {
           <td onClick={() => handleRowClick(row?.id)} style={{ cursor: 'pointer', }}>{row?.displayDenominatorDescription || "N/A"}</td>
         </>
       );
-    } else {
+    } else if (activeTab == "Program Indicators") {
       return (
         <>
           <td onClick={() => handleRowClick(row?.id)} style={{ cursor: 'pointer', }}>{row?.id || "N/A"}</td>
@@ -399,33 +430,17 @@ const Home = () => {
         </>
       );
     }
+    else {
+      return (
+        <>
+          <td onClick={() => handleRowClick(row?.id)} style={{ cursor: 'pointer', }}>{row?.id || "N/A"}</td>
+          <td onClick={() => handleRowClick(row?.id)} style={{ cursor: 'pointer', }}>{row?.name || "N/A"}</td>
+        </>
+      )
+    }
   };
 
-  // useEffect(() => {
-  //   if(selectedGroupIndicator && searchQuery){
-  //     let filteredResults = filteredObjects.filter(
-  //       (indicator) =>
-  //         indicator.name.toLowerCase().includes(searchQuery.toLowerCase()) || // Match by name
-  //         indicator.displayShortName
-  //           .toLowerCase()
-  //           .includes(searchQuery.toLowerCase()) // Match by display short name
-  //     );
 
-  //     setFilteredObjects(filteredResults); // U  pdate the filtered results
-  //   }
-  //   else if(searchQuery.length > 0) {
-  //     let filteredResults = allIndicators.filter(
-  //       (indicator) =>
-  //         indicator.name.toLowerCase().includes(searchQuery.toLowerCase()) || // Match by name
-  //         indicator.displayShortName
-  //           .toLowerCase()
-  //           .includes(searchQuery.toLowerCase()) // Match by display short name
-  //     );
-
-  //     setAllIndicators(filteredResults); // U  pdate the filtered results
-  //   }
-
-  // }, [searchQuery]); // data filter according to the search query
 
   useEffect(() => {
     if (searchQuery.trim().length === 0) {
@@ -469,7 +484,13 @@ const Home = () => {
           >
             Program Indicators
           </button>
-          
+          <button
+            className={activeTab === "ProgramRules" ? "active" : ""}
+            onClick={() => handleTabChange("ProgramRules")}
+          >
+            ProgramRules
+          </button>
+
           <div className="group-indicator-dropdown">
             <label htmlFor="group-indicator-select">
               Filter by Group Indicator:

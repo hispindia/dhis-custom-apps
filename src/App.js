@@ -12,6 +12,7 @@ import ProgramIndicatorDetails from './components/programIndicatorDetails';
 import IndicatorDetails from './components/IndicatorDetails';
 
 
+
 const MyApp = () => {
   // Simulating data query
   const { loading, error, data } = useDataQuery(InitialQuery);
@@ -35,6 +36,7 @@ const MyApp = () => {
           {/* <Route path="/IndicatorDetails" element={<IndicatorDetails />} /> */}
           <Route path="/IndicatorDetails/:id" element={<IndicatorDetails />} />
           <Route path="/ProgramIndicatorDetails/:id" element={<ProgramIndicatorDetails />} />
+          {/* <Route path="/programrules" element={<ProgramRules />} /> */}
 
           
         </Routes>

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { ApiService } from "../../services/apiService";
 
-import { useParams } from "react-router-dom";
+
+import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
 
 const ProgramIndicatorDetails = () => {
   const { id: programindicatorId } = useParams();
   // const  indicatorId  = location.state.id || {}; // Retrieve the passed state
-
+  const navigate = useNavigate(); // Initialize useNavigate
   const [programindicatorDetails, setProgramindicatorDetails] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -27,6 +28,9 @@ const ProgramIndicatorDetails = () => {
       setLoading(false);
     }
   };
+  const handleBack = () => {
+    navigate(-1); // Go back to the previous page
+  };
   console.log("indicator==========", programindicatorDetails);
   console.log("id======", programindicatorId);
 
@@ -35,6 +39,13 @@ const ProgramIndicatorDetails = () => {
       className="p-8 md:p-12 bg-gray-50 min-h-screen"
       style={{ padding: "15px" }}
     >
+      <button
+        onClick={handleBack}
+        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        style={{background:'#2C6693'}}
+      >
+        Back
+      </button>
       <section className="mb-6">
         <h2 className="text-lg font-semibold">Introduction</h2>
         <p className="text-gray-700">
