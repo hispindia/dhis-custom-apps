@@ -53,6 +53,8 @@ const ProgramIndicatorDetails = () => {
           {programindicatorDetails?.dimensionItemType}.
         </p>
         <p>Identifed by:{programindicatorId}</p>
+        <p> {programindicatorDetails?.favorite} </p>
+        <p>{programindicatorDetails?.externalAccess}</p>
       </section>
 
       <section className="mb-6">

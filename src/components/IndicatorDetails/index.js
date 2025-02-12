@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { ApiService } from "../../services/apiService";
 import { useLocation } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 const IndicatorDetails = () => {
-
+ const navigate = useNavigate(); // Initialize useNavigate
   const { id: indicatorId } = useParams();
   // const  indicatorId  = location.state.id || {}; // Retrieve the passed state
   const allDataElement = useSelector((state) => state.main.dataElements);
@@ -57,14 +57,25 @@ const mapNumeratorIdsToNames = (numerator) => {
       setLoading(false);
     }
   };
+  const handleBack = () => {
+    navigate(-1); // Go back to the previous page
+  };
   console.log("indicator==========", indicatorDetails);
   console.log("id======", indicatorId);
   console.log("allDataElement============", allDataElement);
   return (
     <div className="p-8 md:p-12 bg-gray-50 min-h-screen" style={{padding:'15px'}}>
       
+      <button
+        onClick={handleBack}
+        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        style={{background:'#2C6693'}}
+      >
+        Back
+      </button>
       <section className="mb-6">
         <h2 className="text-lg font-semibold">Introduction</h2>
+        
         <p className="text-gray-700">
           {indicatorDetails?.displayNumeratorDescription} is a {indicatorDetails?.indicatorType?.id == "XVhx9sOUw2X" ? "Total" :'Percent'} indicator, measured by {indicatorDetails?.numeratorDescription} to {indicatorDetails?.denominatorDescription}.
         </p>

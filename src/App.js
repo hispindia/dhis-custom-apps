@@ -10,6 +10,7 @@ import { store } from "./store/store";
 import Main from './components/Main';
 import ProgramIndicatorDetails from './components/programIndicatorDetails';
 import IndicatorDetails from './components/IndicatorDetails';
+import ProgramRuleDetails from './components/ProgramRuleDetails';
 
 
 
@@ -36,7 +37,7 @@ const MyApp = () => {
           {/* <Route path="/IndicatorDetails" element={<IndicatorDetails />} /> */}
           <Route path="/IndicatorDetails/:id" element={<IndicatorDetails />} />
           <Route path="/ProgramIndicatorDetails/:id" element={<ProgramIndicatorDetails />} />
-          {/* <Route path="/programrules" element={<ProgramRules />} /> */}
+          <Route path="/programrulesdetails/:id" element={<ProgramRuleDetails />} />
 
           
         </Routes>

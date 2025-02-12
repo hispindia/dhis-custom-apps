@@ -6,7 +6,9 @@ export const ApiService = {
   getFilterIndicator,
   getIndicatorDetails,
   getProgramDetails,
-  getProgramRules
+  getProgramRules,
+  getProgrruledetails,
+  getprogramIndicatorGroup
  
 };
 // Api for Searching the Sigle Tei using Id (individual App)
@@ -153,6 +155,40 @@ async function getProgramRules() {
   }
 }
 
+async function getProgrruledetails(programruleId) {  
+  var url = `${process.env.REACT_APP_DHIS2_BASE_URL}/api/29/programRules/${programruleId}.json?paging=false&fields=*,`;
+  let response = await fetch(url, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+    },
+  });
 
+  if (response.status == "200") {
+    let data = await response.json();
+    return data;
+  } else {
+    throw "Error: Data generation failed, Please try again!";
+  }
+}
+
+async function getprogramIndicatorGroup() {
+  var url = `${process.env.REACT_APP_DHIS2_BASE_URL}/api/programIndicatorGroups.json?fields=id,name&paging=false`;
+  let response = await fetch(url, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (response.status == "200") {
+    let data = await response.json();
+    return data;
+  } else {
+    throw "Error: Data generation failed, Please try again!";
+  }
+}
 
 

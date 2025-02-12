@@ -5,24 +5,24 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { RingLoader } from "react-spinners";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
-
 import { setState, setTab } from "../../store/main/main.action";
-
 const Home = () => {
   const [activeTab, setActiveTab] = useState("Indicators");
   const [searchQuery, setSearchQuery] = useState("");
   const [allIndicators, setAllIndicators] = useState([]);
   const [allProgramIndicators, setAllProgramIndicators] = useState([]);
   const allDataElement = useSelector((state) => state.main.dataElements);
-  const [groupindicators, setGroupindicators] = useState([]);
-  const [selectedGroupIndicator, setSelectedGroupIndicator] = useState("");
-  const [filterindicator, setFilterindicator] = useState([]);
-  const [filteredObjects, setFilteredObjects] = useState([]);
+  const [groupindicators, setGroupindicators] = useState([]);// indicator Grouping state
+  const [selectedGroupIndicator, setSelectedGroupIndicator] = useState("");// selected indicator Group 
+  const [filterindicator, setFilterindicator] = useState([]);// filter indicator based upon selected indicator Group 
+  const [filteredObjects, setFilteredObjects] = useState([]);// final filter data list based upon selected group indicator 
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false); // Loading state to handle async calls
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Number of items per page
   const [originalAllIndicators, setOriginalAllIndicators] = useState([]);
+  const [originalProgramindicators, setOriginalProgramindicators] = useState([]);
+  const [originalProgramrules, setOriginalProgramrules] = useState([]);
   const [programrules, setProgramrules] = useState([]);
   const dispatch = useDispatch();
 
@@ -58,6 +58,7 @@ const Home = () => {
         response.programIndicators.length > 0
       ) {
         setAllProgramIndicators(response.programIndicators); // Populate state with data
+        setOriginalProgramindicators(response.programIndicators)
       } else {
         setErrorMessage("No program indicators found.");
       }
@@ -90,7 +91,7 @@ const Home = () => {
     }
   };
   // fetch Group indicator for the group select option
-  const fetchGroupIndicators = async () => {
+  const fetchGroupIndicators = async (tab) => {
     setLoading(true);
     setErrorMessage("");
     try {
@@ -101,7 +102,8 @@ const Home = () => {
         response.indicatorGroups.length > 0
       ) {
         setGroupindicators(response.indicatorGroups); // Populate state with data
-      } else {
+      }
+      else {
         setErrorMessage("No program indicators found.");
       }
     } catch (error) {
@@ -122,6 +124,7 @@ const Home = () => {
         response.programRules.length > 0
       ) {
         setProgramrules(response.programRules); // Populate state with data
+        setOriginalProgramrules(response.programRules); // Populate state with
       } else {
         setErrorMessage("No program rules found.");
       }
@@ -139,13 +142,8 @@ const Home = () => {
     fetchGroupIndicators();
     fetchProgramRules();
   }, []);
-  // useEffect(() => {
-  //   if (activeTab === "ProgramRules") {
-  //     fetchProgramRules();
-  //   }
-  // }, [activeTab]); // Run effect when tab changes
 
- 
+
   // when selectedGroupIndicator then fetch the FilterIndicator that are present in the list
   useEffect(() => {
     const fetchFilterIndicators = async () => {
@@ -174,7 +172,7 @@ const Home = () => {
   }, [selectedGroupIndicator]);
 
 
-// filtered indicaator data when selected Group indicator is selected and set to state
+  // filtered indicaator data when selected Group indicator is selected and set to state
   useEffect(() => {
     // Filter and update state when inputs change
     const filtered = allIndicators.filter((indicator) =>
@@ -194,22 +192,19 @@ const Home = () => {
     setCurrentPage(1); // Reset to the first page when changing tabs
     setSearchQuery("");
     setSelectedGroupIndicator("");
-    console.log("aaaaaaaaaaa", tab)
-    // if(tab == "ProgramRules"){
-    //   navigate(`/programrules`);
-    // }
+
   };
-// GroupIndicators selected and handle change function 
+  // GroupIndicators selected and handle change function 
   const handleGroupIndicatorChange = (event) => {
     setSelectedGroupIndicator(event.target.value);
     setSearchQuery("");
     console.log(`Selected Group Indicator: ${event.target.value}`);
   };
-// handle search function 
+  // handle search function 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
-// handle download function bas
+  // handle download function bas
   const handleDownload = () => {
     let dataToDownload;
     if (selectedGroupIndicator) {
@@ -237,7 +232,7 @@ const Home = () => {
       return dataElement ? dataElement.name : id; // Return the name if found, else return the original ID
     };
 
-   
+
     const mapNumeratorIdsToNames = (numerator) => {
       if (!numerator || !allDataElement.length) return "No numerator data available";
 
@@ -370,11 +365,11 @@ const Home = () => {
     if (activeTab === "Indicators") {
       navigate(`/IndicatorDetails/${id}`);
     }
-    else if (activeTab === "Indicators"){
+    else if (activeTab === "Program Indicators") {
       navigate(`/ProgramIndicatorDetails/${id}`);
     }
-    else{
-      navigate('/')
+    else {
+      navigate(`/programrulesdetails/${id}`)
     }
 
   };
@@ -442,24 +437,59 @@ const Home = () => {
 
 
 
+  // useEffect(() => {
+  //   if (searchQuery.trim().length === 0) {
+  //     // Reset to the original indicators when search is cleared
+  //     setAllIndicators(originalAllIndicators);
+  //     return;
+  //   }
+
+  //   const filteredResults = originalAllIndicators.filter(
+  //     (indicator) =>
+  //       indicator.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //       (indicator.displayShortName &&
+  //         indicator.displayShortName
+  //           .toLowerCase()
+  //           .includes(searchQuery.toLowerCase()))
+  //   );
+
+  //   setAllIndicators(filteredResults);
+  // }, [searchQuery]);
+
+  // search code for all tabs 
   useEffect(() => {
     if (searchQuery.trim().length === 0) {
-      // Reset to the original indicators when search is cleared
-      setAllIndicators(originalAllIndicators);
+      // Reset to the original data when search is cleared
+      if (activeTab === "Indicators") { // set initial data on the original state depends on the tab value 
+        setAllIndicators(originalAllIndicators);
+      } else if (activeTab === "Program Indicators") {
+        setAllProgramIndicators(originalProgramindicators);
+      } else if (activeTab === "ProgramRules") {
+        setProgramrules(originalProgramrules)
+      }
       return;
     }
 
-    const filteredResults = originalAllIndicators.filter(
-      (indicator) =>
-        indicator.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (indicator.displayShortName &&
-          indicator.displayShortName
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase()))
-    );
+    // Filter data based on the active tab
+    const filterData = (data, searchKey) => {
+      return data.filter((item) =>
+        item.name.toLowerCase().includes(searchKey.toLowerCase()) ||
+        (item.displayShortName && item.displayShortName.toLowerCase().includes(searchKey.toLowerCase()))
+      );
+    };
 
-    setAllIndicators(filteredResults);
-  }, [searchQuery]);
+    if (activeTab === "Indicators") {
+      const filteredResults = filterData(originalAllIndicators, searchQuery);// pass the parameterrs(data, searchQuery) and filter that results and set to original state
+      setAllIndicators(filteredResults);
+    } else if (activeTab === "Program Indicators") {
+      const filteredResults = filterData(originalProgramindicators, searchQuery);
+      setAllProgramIndicators(filteredResults);
+    } else {
+      const filteredResults = filterData(originalProgramrules, searchQuery);
+
+      setProgramrules(filteredResults)
+    }
+  }, [searchQuery, activeTab]);
 
   return (
     <div className="app">
@@ -490,31 +520,37 @@ const Home = () => {
           >
             ProgramRules
           </button>
+          {/* {activeTab === "Indicators" ? */}
+            <div className="group-indicator-dropdown">
+              <label htmlFor="group-indicator-select">
+                Filter by Group Indicator:
+              </label>
+              <select
+                className="group-indicator-select"
+                value={selectedGroupIndicator}
+                onChange={handleGroupIndicatorChange}
+              >
+                <option value="">Select a Group Indicator</option>
+                {groupindicators.map((group) => (
+                  <option key={group.id} value={group.id}>
+                    {group.name || "Unnamed Group"}
+                  </option>
+                ))}
+              </select>
+            </div> : ''
+          {/* } */}
 
-          <div className="group-indicator-dropdown">
-            <label htmlFor="group-indicator-select">
-              Filter by Group Indicator:
-            </label>
-            <select
-              className="group-indicator-select"
-              value={selectedGroupIndicator}
-              onChange={handleGroupIndicatorChange}
-            >
-              <option value="">Select a Group Indicator</option>
-              {groupindicators.map((group) => (
-                <option key={group.id} value={group.id}>
-                  {group.name || "Unnamed Group"}
-                </option>
-              ))}
-            </select>
-          </div>
 
           <div className="search-bar">
             <input
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
-              placeholder="Search indicator"
+              placeholder={activeTab === "Indicators"
+                ? "Search Indicator"
+                : activeTab === "Program Indicators"
+                ? "Search Program Indicator"
+                : "Search Program Rule"}
             />
             {/* <button onClick={handleSearch}>Search</button> */}
           </div>
