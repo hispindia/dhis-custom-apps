@@ -29,14 +29,13 @@ const Home = () => {
   const [searchValues, setSearchValues] = useState({});
   const [show, setShow] = useState({ value: false, id: "" });
   const [showEventModal, setShowEventModal] = useState({ value: false });
-  const [showTreatmentCardModal, setShowTreatmentCardModal] = useState({
-    value: false,
-  });
+  const [showTreatmentCardModal, setShowTreatmentCardModal] = useState({ value: false, });
   const [eventData, setEventData] = useState([]);
   const [programStages, setProgramStages] = useState([]);
   const [dataElements, setDataElements] = useState([]);
   const [programName, setProgramName] = useState("");
-  
+  const [downloadOpen, setDownloadOpen] = useState(false)
+
 
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("darkMode") === "true"
@@ -45,7 +44,9 @@ const Home = () => {
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
+
   const componentRef = useRef(null);
+
   const toggleMode = () => {
     setDarkMode(!darkMode);
   };
@@ -76,23 +77,29 @@ const Home = () => {
   console.log("programStages>>>>>>>", programStages);
   console.log("eventData>>>>>", eventData);
   console.log("dataElements>>>>>>", dataElements);
+
   useEffect(() => {
     if (show.value == true) {
       fetchRecords();
     }
   }, [show]);
+
   useEffect(() => {
     fetchProgramOptions();
     fetchRecordsAll();
   }, []);
+
   useEffect(() => {
     tableDatafetch();
 
     tableHeaderDatafetch();
   }, [selectedProgramValue]);
+
   useEffect(() => {
     HeaderData(header1);
   }, [header1]);
+
+
   async function fetchRecordsAll() {
     const AllprogramStages = await OPDService.ProgramStages();
     const allDataElements = await OPDService.AllDataelement();
@@ -247,6 +254,7 @@ const Home = () => {
   //     return null; // Handle case where event is undefined or empty
   //   }
   // };
+
   const val = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -294,7 +302,7 @@ const Home = () => {
             >
               <div>
                 <button
-                  onClick={() =>downloadPDF("printing")}
+                  onClick={() => setDownloadOpen(true)}
                   style={{ padding: "5px 10px", fontSize: "12px" }}
                 >
                   Download
@@ -380,6 +388,11 @@ const Home = () => {
   };
   return (
     <>
+      <TBTreatmentCard
+        setOpen={setDownloadOpen}
+        open={downloadOpen}
+        selectedProgramValue={selectedProgramValue} />
+
       <div
         className={darkMode ? classes["dark-mode"] : classes["light-mode"]}
         style={{ overflow: "auto" }}
@@ -409,7 +422,7 @@ const Home = () => {
             </button>
           </div>
           <Modal
-            show={show.value} onClose={() => setShow({ value: false })} 
+            show={show.value} onClose={() => setShow({ value: false })}
           >
             <Table>
               <TableRow onClick={() => setShowEventModal({ value: true })} >
@@ -525,7 +538,7 @@ const Home = () => {
                   ) : (
                     <>
                       {val && val()?.length > 0 ? val() : null}
-
+                      {/* 
                       <Modal
                         // show={show.value && show.id === "modal2"}
                         // onClose={() => setShow({ value: false })}
@@ -534,8 +547,8 @@ const Home = () => {
                           setShowTreatmentCardModal({ value: false })
                         }
                       >
-                        <TBTreatmentCard />
-                      </Modal>
+                        <TBTreatmentCard open={rowClickedRecord} />
+                      </Modal> */}
                     </>
                   )}
                 </TableBody>

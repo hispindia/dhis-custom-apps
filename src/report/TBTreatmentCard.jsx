@@ -2,30 +2,65 @@ import React, { useState, useEffect, useRef } from "react";
 import "./style.css";
 import { hospitalLogo, hospitalSymbal } from "../images";
 import { OPDService } from "../Services/api";
+import { downloadPDF } from "../export/export";
 
-const TbTreatmentCard = ({ selectedProgramValue }) => {
-  const [trackedEntity, setTrackedEntity] = useState(null);
-  
+const TbTreatmentCard = ({ open, setOpen, selectedProgramValue }) => {
+
+  console.log('open:>>>', open)
+
+  const [fetchData, setFetchedData] = useState({});
 
   async function fetchTrackedEntityInstances() {
-    if (!selectedProgramValue) return; 
+    if (!selectedProgramValue) return;
 
-    const allTrackedEntities = await OPDService.trackedEntityInstances(selectedProgramValue);
-      console.log("Fetched Data:", allTrackedEntities); 
-      setTrackedEntity(allTrackedEntities?.trackedEntityInstances); 
-   
+    try {
+      const allTrackedEntities = await OPDService.trackedEntityInstancesMultipleStages(selectedProgramValue);
+
+      let objectedData = {};
+
+      allTrackedEntities?.enrollments.map(enroll => {
+        enroll.events.map(event => event.dataValues.map((row) => objectedData[row.dataElement] = {
+          value: row.value,
+          date: row?.created?.slice(0, 10)?.split('-')?.reverse()?.join('-'),
+        }))
+        enroll.attributes.map((row) => objectedData[row.attribute] = {
+          value: row.value,
+          date: row?.created?.slice(0, 10)?.split('-')?.reverse()?.join('-'),
+        })
+      });
+
+      allTrackedEntities.attributes.map(attr => objectedData[attr.attribute] = {
+        value: attr.value,
+        date: attr?.created?.slice(0, 10)?.split('-')?.reverse()?.join('-'),
+      });
+
+      console.log("Fetched Data:", objectedData);
+      setFetchedData(objectedData);
+
+      // open pdf after 1 second to show the page........
+      setTimeout(() => { downloadPDF("printing") }, 1000)
+
+      setOpen(false)
+
+    } catch (error) {
+      console.log('error', error)
+      setFetchedData({});
+      alert(error?.message || 'failled api');
+    }
+
   }
 
   useEffect(() => {
-    console.log("selectedProgramValue:", selectedProgramValue);
-    fetchTrackedEntityInstances();
-  }, [selectedProgramValue]);
+    if (open) {
+      fetchTrackedEntityInstances();
+    }
+  }, [open]);
 
   return (
     <div
       id="printing"
       className="page_border"
-      style={{ border: "4px solid black" }}
+      style={{ border: "4px solid black", display: 'none' }}
     >
       <div className="logo">
         <div>
@@ -53,23 +88,19 @@ const TbTreatmentCard = ({ selectedProgramValue }) => {
                 <tr>
                   <td style={{ border: "none" }}>Complete Name:</td>
                   <td style={{ border: "none" }}>
-                    <input className="input-bottom-border" 
-                    value={trackedEntity?.attributes?.find(attr => attr.displayName === "Complete Name")?.value || ""}
-                    />
+                    {fetchData['kcLrIgGhPMM']?.value || ''}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ border: "none" }}>Sex:</td>
                   <td style={{ border: "none" }}>
-                    <input type="checkbox" checked={trackedEntity?.attributes?.find(attr => attr.displayName === "Gender")?.value === "Male"} readOnly  /> Male
-                    <input type="checkbox" checked={trackedEntity?.attributes?.find(attr => attr.displayName === "Gender")?.value === "Female"} readOnly  /> Female
+                    {fetchData['e1YAEOJgkfx']?.value || ''}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ border: "none" }}>Age:</td>
                   <td style={{ border: "none" }}>
-                    <input type="text" className="input-bottom-border"
-                    value={trackedEntity?.attributes?.find(attr => attr.displayName === "Age")?.value || ""} />
+                    {fetchData['Nanz6h218xh']?.value || ''}
                   </td>
                 </tr>
                 <tr>
@@ -77,8 +108,7 @@ const TbTreatmentCard = ({ selectedProgramValue }) => {
                     Address and Telephone Number:
                   </td>
                   <td style={{ border: "none" }}>
-                    <input type="text" className="input-bottom-border" 
-                    value={trackedEntity?.attributes?.find(attr => attr.displayName === "Permanent address")?.value || ""}/>
+                    {fetchData['s9skUqn98W8']?.value || ''} ,{fetchData['tCYcDHdqoEc']?.value || ''}
                   </td>
                 </tr>
                 <tr>
@@ -86,7 +116,7 @@ const TbTreatmentCard = ({ selectedProgramValue }) => {
                     Name, Address and Personal Contact Number:
                   </td>
                   <td style={{ border: "none" }}>
-                    <input type="text" className="input-bottom-border" />
+                    {fetchData['kcLrIgGhPMM']?.value || ''},  {fetchData['s9skUqn98W8']?.value || ''}, {fetchData['HkdYrf7NPbr']?.value || ''}
                   </td>
                 </tr>
                 <tr>
@@ -104,7 +134,7 @@ const TbTreatmentCard = ({ selectedProgramValue }) => {
                   </td>
                   <td style={{ border: "none" }}>
                     <input type="text" className="input-bottom-border"
-                    value={trackedEntity?.attributes?.find(attr => attr.displayName === "TB Treatment History")?.value || ""}
+                    // value={trackedEntity?.attributes?.find(attr => attr.displayName === "TB Treatment History")?.value || ""}
                     />
                   </td>
                 </tr>
@@ -121,16 +151,13 @@ const TbTreatmentCard = ({ selectedProgramValue }) => {
               </thead>
               <tbody>
                 <tr>
-                  <td>Pulmonary</td>
-                  <td>
-                    <input type="text" className="input-bottom-border" />
-                  </td>
+                  <td colSpan="2"> {fetchData['LTwo15geiNf']?.value || ''}</td>
                 </tr>
                 <tr>
-                  <td>Extra Pulmonary</td>
-                  <td>
+                  <td>Site:</td>
+                  {/* <td>
                     <input type="text" className="input-bottom-border" />
-                  </td>
+                  </td> */}
                 </tr>
               </tbody>
             </table>
@@ -144,17 +171,18 @@ const TbTreatmentCard = ({ selectedProgramValue }) => {
                     Type of Patient
                   </th>
                 </tr>
+
               </thead>
               <tbody>
                 <tr>
                   <td>
-                    <input type="checkbox" /> New
-                  </td>
-                  <td>
-                    <input type="checkbox" /> T. then LTFU
+                    {fetchData['dP1vchhcUQH']?.value || 'N/A'}
                   </td>
                 </tr>
                 <tr>
+                  <td>Site:</td>
+                </tr>
+                {/* <tr>
                   <td>
                     <input type="checkbox" /> Relapse
                   </td>
@@ -167,12 +195,12 @@ const TbTreatmentCard = ({ selectedProgramValue }) => {
                     <input type="checkbox" /> T. Failure
                   </td>
                   <td></td>
-                </tr>
+                </tr> */}
               </tbody>
             </table>
           </div>
 
-          <div className="table">
+          {/* <div className="table">
             <table id="border_less">
               <thead>
                 <tr>
@@ -202,18 +230,16 @@ const TbTreatmentCard = ({ selectedProgramValue }) => {
                 </tr>
               </tbody>
             </table>
-          </div>
+          </div> */}
 
           <div className="table">
             <table style={{ marginTop: "30px" }}>
               <tbody>
                 <tr>
                   <td style={{ border: "none", fontWeight: 600 }}>
-                    I. INTENSIVE PHASE(Date)
+                    I. INTENSIVE PHASE(Date):
                   </td>
-                  <td style={{ border: "none" }}>
-                    <input type="text" className="input-bottom-border" />
-                  </td>
+                  <td style={{ border: "none" }}>{fetchData['Y8bBePB3Mqo']?.value || 'N/A'}  </td>
                 </tr>
               </tbody>
             </table>
@@ -254,12 +280,11 @@ const TbTreatmentCard = ({ selectedProgramValue }) => {
             <table>
               <tbody>
                 <tr style={{ textAlign: "center" }}>
-                  <th rowSpan="2">Position of DOT Provider:</th>
-                  <td colSpan="3">
-                    <input type="checkbox" />
-                    Health Care Worker
+                  <th >Position of DOT Provider: </th>
+                  <td colSpan="7">
+                    {fetchData['rafHJbDBMc2']?.value || 'N/A'}
                   </td>
-                  <td colSpan="3">
+                  {/* <td colSpan="3">
                     <input type="checkbox" />
                     NGO Staff
                   </td>
@@ -280,17 +305,19 @@ const TbTreatmentCard = ({ selectedProgramValue }) => {
                   <td colSpan="3">
                     <input type="checkbox" />
                     Family
-                  </td>
+                  </td> */}
                 </tr>
                 <tr>
                   <td rowSpan="2">Month</td>
-                  <td colSpan="3">Microscope Sputum</td>
-                  <td colSpan="3">XpertUltra</td>
-                  <td rowSpan="2" colSpan="1">
-                    Body Weight(kg)
+                  <td colSpan="2">Productive Cough Microscopy:{fetchData['hTeeEA3luAl']?.value || 'N/A'}</td>
+                  <td colSpan="2"> Date: {fetchData['hTeeEA3luAl']?.date || 'N/A'}
                   </td>
+                  <td colSpan="2">XpertUltra: {fetchData['XpertUltra ']?.value || ''}</td>
+                  {/* <td rowSpan="2" colSpan="1">
+                    Body Weight(kg)
+                  </td> */}
                 </tr>
-                <tr>
+                {/* <tr>
                   <td>Date</td>
                   <td>Lab No.</td>
                   <td>Result</td>
@@ -327,7 +354,7 @@ const TbTreatmentCard = ({ selectedProgramValue }) => {
                   <td></td>
                   <td></td>
                   <td colSpan="2"></td>
-                </tr>
+                </tr> */}
               </tbody>
             </table>
             <p>
@@ -353,23 +380,23 @@ const TbTreatmentCard = ({ selectedProgramValue }) => {
                 </tr>
                 <tr>
                   <td>HIV Test</td>
-                  <td></td>
-                  <td></td>
+                  <td>{fetchData['wsYLk5j39R1']?.date || ''}</td>
+                  <td>{fetchData['wsYLk5j39R1']?.value || ''}</td>
                 </tr>
                 <tr>
                   <td>Initiate CPT</td>
-                  <td></td>
-                  <td></td>
+                  <td>{fetchData['T48HXW0TTdB']?.date || ''}</td>
+                  <td>{fetchData['T48HXW0TTdB']?.value || ''}</td>
                 </tr>
                 <tr>
                   <td>Initiate ART</td>
-                  <td></td>
-                  <td></td>
+                  <td>{fetchData['qMj31r5XxDF']?.date || ''}</td>
+                  <td>{fetchData['qMj31r5XxDF']?.value || ''}</td>
                 </tr>
                 <tr>
                   <td>CD4 Result</td>
-                  <td></td>
-                  <td></td>
+                  <td>{fetchData['PPtWbZprTON']?.date || ''}</td>
+                  <td>{fetchData['PPtWbZprTON']?.value || ''}</td>
                 </tr>
                 <tr>
                   <td>ART Reg. No. & Date</td>
@@ -382,7 +409,7 @@ const TbTreatmentCard = ({ selectedProgramValue }) => {
         </section>
 
         <h4 style={{ textAlign: "center" }}>
-          REGIMENT and DOSAGE ( Circle appropriately to the below category
+          REGIMENT and DOSAGE ( Circle appropriately to the below category: {fetchData['F7pEZBWhMTN']?.value || 'N/A'}
         </h4>
         <section className="container3">
           <div className="table">
@@ -427,17 +454,18 @@ const TbTreatmentCard = ({ selectedProgramValue }) => {
               </thead>
               <tbody>
                 <tr>
-                  <td>FBS</td>
-                  <td>RBS</td>
+                  <td>{fetchData['Lkt9XYo3YcP']?.value || 'N/A'}</td>
+                  {/* <td>FBS</td>
+                  <td>RBS</td> */}
                 </tr>
-                <tr>
+                {/* <tr>
                   <td>=126 mg/ dl or =7 mmol</td>
                   <td>At least 2 hrs after meal, =200mg/ dl or =11 mmol</td>
                 </tr>
                 <tr>
                   <td></td>
                   <td></td>
-                </tr>
+                </tr> */}
               </tbody>
             </table>
           </div>

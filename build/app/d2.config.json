@@ -1,0 +1,10 @@
+{
+  "type": "app",
+  "name": "tb-treatment-card",
+  "version": "1.0.0",
+  "description": "",
+  "title": "tb-treatment-card",
+  "entryPoints": {
+    "app": "index.html"
+  }
+}

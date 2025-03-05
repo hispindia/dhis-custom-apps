@@ -1,0 +1,43 @@
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.desgin {
+  max-width: 100%;
+  margin: 0 auto;
+  position: relative;
+  border-radius: 10px;
+}
+.zebraStriping {
+  background: none !important;
+}
+.darkTable {
+  background-color: #25284b !important;
+  color: white !important;
+}
+.lightTable {
+  background-color: white !important;
+  color: black !important;
+}
+
+.light-mode {
+  background-color: white !important;
+  color: black !important;
+}
+
+.dark-mode {
+  background-color: #25284b !important;
+  color: white !important;
+}
+.itemAlign{
+  text-align: center;
+}
+.searchBackground{
+  background-color: #25284b !important ;
+}
