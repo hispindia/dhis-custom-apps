@@ -365,20 +365,47 @@ const Home = () => {
     onClose: () => setShow({
       value: false
     })
-  }, /*#__PURE__*/React.createElement(Table, null, /*#__PURE__*/React.createElement(TableRow, {
-    onClick: () => setShowEventModal({
-      value: true
-    })
-  }, /*#__PURE__*/React.createElement(TableCell, null, "Selected Program:"), /*#__PURE__*/React.createElement(TableCell, null, programName ? programName : "")), eventData === null || eventData === void 0 ? void 0 : (_eventData$events = eventData.events) === null || _eventData$events === void 0 ? void 0 : _eventData$events.map((event, index) => {
+  }, /*#__PURE__*/React.createElement(Table, {
+    className: darkMode ? classes.darkTable : classes.lightTable
+  }, /*#__PURE__*/React.createElement(TableRow, null, /*#__PURE__*/React.createElement(TableCell, null, "Selected Program:"), /*#__PURE__*/React.createElement(TableCell, null, programName ? programName : "")), eventData === null || eventData === void 0 ? void 0 : (_eventData$events = eventData.events) === null || _eventData$events === void 0 ? void 0 : _eventData$events.map((event, index) => {
     var _event$dataValues, _event$dataValues2;
-    return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(TableRow, null, /*#__PURE__*/React.createElement(TableCell, null, "Program Stage:"), /*#__PURE__*/React.createElement(TableCell, null, getNameProgameStage(event === null || event === void 0 ? void 0 : event.programStage))), /*#__PURE__*/React.createElement(TableRow, {
+    return /*#__PURE__*/React.createElement(React.Fragment, {
+      key: index
+    }, /*#__PURE__*/React.createElement(TableRow, {
       className: classes.zebraStriping
-    }, /*#__PURE__*/React.createElement(TableCell, null, "Event Date:"), /*#__PURE__*/React.createElement(TableCell, null, event.eventDate ? event.eventDate.split("T")[0] : "")), /*#__PURE__*/React.createElement(TableRow, null, /*#__PURE__*/React.createElement(TableCell, null, "Status:"), /*#__PURE__*/React.createElement(TableCell, null, event.status)), (event === null || event === void 0 ? void 0 : (_event$dataValues = event.dataValues) === null || _event$dataValues === void 0 ? void 0 : _event$dataValues.length) > 0 && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", null, "DataElements"), /*#__PURE__*/React.createElement(TableRow, {
+    }, /*#__PURE__*/React.createElement(TableCell, {
+      className: classes.borderRemove
+    }, "Program Stage:"), /*#__PURE__*/React.createElement(TableCell, {
+      className: classes.borderRemove
+    }, getNameProgameStage(event === null || event === void 0 ? void 0 : event.programStage))), /*#__PURE__*/React.createElement(TableRow, {
       className: classes.zebraStriping
-    }, event === null || event === void 0 ? void 0 : (_event$dataValues2 = event.dataValues) === null || _event$dataValues2 === void 0 ? void 0 : _event$dataValues2.map((dataValue, idx) => /*#__PURE__*/React.createElement(TableRow, {
+    }, /*#__PURE__*/React.createElement(TableCell, {
+      className: classes.borderRemove
+    }, "Event Date:"), /*#__PURE__*/React.createElement(TableCell, {
+      className: classes.borderRemove
+    }, event.eventDate ? event.eventDate.split("T")[0] : "")), /*#__PURE__*/React.createElement(TableRow, {
+      className: classes.zebraStriping
+    }, /*#__PURE__*/React.createElement(TableCell, {
+      className: classes.borderRemove
+    }, "Status:"), /*#__PURE__*/React.createElement(TableCell, {
+      className: classes.borderRemove
+    }, event.status)), (event === null || event === void 0 ? void 0 : (_event$dataValues = event.dataValues) === null || _event$dataValues === void 0 ? void 0 : _event$dataValues.length) > 0 && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(TableRow, {
+      className: classes.zebraStriping
+    }, /*#__PURE__*/React.createElement(TableCell, {
+      colSpan: 2,
+      style: {
+        marginLeft: "12px",
+        lineHeight: "35px"
+      },
+      className: classes.borderRemove
+    }, "DataElements")), event === null || event === void 0 ? void 0 : (_event$dataValues2 = event.dataValues) === null || _event$dataValues2 === void 0 ? void 0 : _event$dataValues2.map((dataValue, idx) => /*#__PURE__*/React.createElement(TableRow, {
       key: idx,
       className: classes.zebraStriping
-    }, /*#__PURE__*/React.createElement(TableCell, null, getNameDataElement(dataValue === null || dataValue === void 0 ? void 0 : dataValue.dataElement), ":"), /*#__PURE__*/React.createElement(TableCell, null, " ", dataValue.value))))));
+    }, /*#__PURE__*/React.createElement(TableCell, {
+      className: classes.borderRemove
+    }, getNameDataElement(dataValue === null || dataValue === void 0 ? void 0 : dataValue.dataElement), ":"), /*#__PURE__*/React.createElement(TableCell, {
+      className: classes.borderRemove
+    }, dataValue.value === "true" ? "YES" : dataValue.value === "false" ? "NO" : dataValue.value)))));
   }))), /*#__PURE__*/React.createElement("div", {
     className: classes.desgin
   }, /*#__PURE__*/React.createElement("a", {

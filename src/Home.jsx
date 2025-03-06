@@ -421,7 +421,7 @@ const Home = () => {
               Export Data
             </button>
           </div>
-          <Modal
+          {/* <Modal
             show={show.value} onClose={() => setShow({ value: false })}
           >
             <Table>
@@ -466,7 +466,72 @@ const Home = () => {
                 </div>
               ))}
             </Table>
-          </Modal>
+          </Modal> */}
+            <Modal show={show.value} onClose={() => setShow({ value: false })}>
+              <Table
+                className={darkMode ? classes.darkTable : classes.lightTable}
+              >
+                <TableRow>
+                  <TableCell>Selected Program:</TableCell>
+                  <TableCell>{programName ? programName : ""}</TableCell>
+                </TableRow>
+                {eventData?.events?.map((event, index) => (
+                  <React.Fragment key={index}>
+                    <TableRow className={classes.zebraStriping}>
+                      <TableCell className={classes.borderRemove}>
+                        Program Stage:
+                      </TableCell>
+                      <TableCell className={classes.borderRemove}>
+                        {getNameProgameStage(event?.programStage)}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className={classes.zebraStriping}>
+                      <TableCell className={classes.borderRemove}>
+                        Event Date:
+                      </TableCell>
+                      <TableCell className={classes.borderRemove}>
+                        {event.eventDate ? event.eventDate.split("T")[0] : ""}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className={classes.zebraStriping}>
+                      <TableCell className={classes.borderRemove}>
+                        Status:
+                      </TableCell>
+                      <TableCell className={classes.borderRemove}>
+                        {event.status}
+                      </TableCell>
+                    </TableRow>
+                    {event?.dataValues?.length > 0 && (
+                      <React.Fragment>
+                        <TableRow className={classes.zebraStriping}>
+                          <TableCell
+                            colSpan={2}
+                            style={{ marginLeft: "12px", lineHeight: "35px" }}
+                            className={classes.borderRemove}
+                          >
+                            DataElements
+                          </TableCell>
+                        </TableRow>
+                        {event?.dataValues?.map((dataValue, idx) => (
+                          <TableRow key={idx} className={classes.zebraStriping}>
+                            <TableCell className={classes.borderRemove}>
+                              {getNameDataElement(dataValue?.dataElement)}:
+                            </TableCell>
+                            <TableCell className={classes.borderRemove}>
+                              {dataValue.value === "true"
+                                ? "YES"
+                                : dataValue.value === "false"
+                                ? "NO"
+                                : dataValue.value}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </React.Fragment>
+                    )}
+                  </React.Fragment>
+                ))}
+              </Table>
+            </Modal>
 
           <div className={classes.desgin}>
             <a id="dlink"></a>
