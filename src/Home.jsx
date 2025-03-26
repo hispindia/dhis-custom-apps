@@ -12,11 +12,11 @@ import {
 import ReactPaginate from "react-js-pagination";
 import { CircularProgress } from "@material-ui/core";
 import classes from "./App.module.css";
-import Modal from "./common/Modal/Modal";
 import "./Pagination.css"; // Custom CSS file for pagination
 import { OPDService } from "./Services/api";
 import TBTreatmentCard from "./report/TBTreatmentCard";
 import { downloadPDF } from "./export/export";
+import ModelComponent from "./common/Modal/Model.component";
 
 const Home = () => {
   const [options, setOptions] = useState([]);
@@ -28,14 +28,13 @@ const Home = () => {
   const [result, setResult] = useState([]);
   const [searchValues, setSearchValues] = useState({});
   const [show, setShow] = useState({ value: false, id: "" });
-  const [showEventModal, setShowEventModal] = useState({ value: false });
-  const [showTreatmentCardModal, setShowTreatmentCardModal] = useState({ value: false, });
   const [eventData, setEventData] = useState([]);
   const [programStages, setProgramStages] = useState([]);
   const [dataElements, setDataElements] = useState([]);
   const [programName, setProgramName] = useState("");
   const [downloadOpen, setDownloadOpen] = useState(false)
 
+  // console.log('downloadOpen:>>>', downloadOpen);
 
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("darkMode") === "true"
@@ -74,9 +73,6 @@ const Home = () => {
     };
   })();
 
-  console.log("programStages>>>>>>>", programStages);
-  console.log("eventData>>>>>", eventData);
-  console.log("dataElements>>>>>>", dataElements);
 
   useEffect(() => {
     if (show.value == true) {
@@ -107,9 +103,10 @@ const Home = () => {
     setDataElements(allDataElements);
   }
   async function fetchRecords() {
+    setIsLoading(true);
     const eventResponse = await OPDService.EventAPi(selectedProgramValue, show);
-
     setEventData(eventResponse);
+    setIsLoading(false);
   }
   async function fetchProgramOptions() {
     const programResponse = await OPDService.Programoptions();
@@ -276,6 +273,7 @@ const Home = () => {
         .slice(indexOfFirstItem, indexOfLastItem);
 
       return filteredData.map((ele, index) => {
+        let teiId = ''
         return (
           <TableRow key={index} className={classes.zebraStriping}>
             {header1?.programTrackedEntityAttributes?.map((attribute) => {
@@ -284,6 +282,7 @@ const Home = () => {
                   attr.attribute === attribute?.trackedEntityAttribute?.id
               );
               const TrackID = ele.trackedEntityInstance;
+              teiId = ele.trackedEntityInstance;
 
               return (
                 <TableCell
@@ -296,19 +295,23 @@ const Home = () => {
                 </TableCell>
               );
             })}
-            <TableCell
+            {programName == 'TB Health Facility Surveillance' ? <TableCell
+              id={teiId}
               style={{ whiteSpace: "nowrap" }}
               className={classes.itemAlign}
             >
-              <div>
-                <button
-                  onClick={() => setDownloadOpen(true)}
-                  style={{ padding: "5px 10px", fontSize: "12px" }}
-                >
-                  Download
-                </button>
-              </div>
-            </TableCell>
+              <button
+                type="button"
+                class="btn btn-success"
+                onClick={() => {
+                  setDownloadOpen(true);
+                  setShow({ id: teiId })
+                }}
+                style={{ padding: "5px 10px", fontSize: "12px" }}
+              >
+                View Report
+              </button>
+            </TableCell> : ""}
           </TableRow>
         );
       });
@@ -388,150 +391,196 @@ const Home = () => {
   };
   return (
     <>
-      <TBTreatmentCard
+
+      <ModelComponent
         setOpen={setDownloadOpen}
-        open={downloadOpen}
-        selectedProgramValue={selectedProgramValue} />
+        title='TB Treatment Card Report'
+        actionFunctionCallBack={() => downloadPDF("printing")}
+        actionType='Download'
+        open={downloadOpen}>
+        <TBTreatmentCard
+          tie={show.id}
+          selectedProgramValue={selectedProgramValue}
+        />
+      </ModelComponent>
+
 
       <div
         className={darkMode ? classes["dark-mode"] : classes["light-mode"]}
-        style={{ overflow: "auto" }}
+        style={{ overflow: "auto", minHeight: '95vh' }}
       >
         <div style={{ padding: "5px" }}>
-          <div>
-            {options.length > 0 && (
-              <select onChange={handleSelectChange}>
-                <option value="">Select Program for Event List</option>
-                {options.map((option) => (
-                  <option
-                    key={option[0]}
-                    value={JSON.stringify({ id: option[0], name: option[1] })}
+          <div class='my-3'>
+
+            <div class="container">
+              <div class="row g-3 w-100">
+                <div class="col-8">
+                  {options.length > 0 && (
+                    <select class="form-select w-100" aria-label="Default select example" onChange={handleSelectChange}>
+                      <option value="">Select Program for Event List</option>
+                      {options.map((option) => (
+                        <option
+                          key={option[0]}
+                          value={JSON.stringify({ id: option[0], name: option[1] })}
+                        >
+                          {option[1]}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+                <div class="col-2">
+                  <button
+                    type="button" class="btn btn-secondary w-100"
+                    onClick={toggleMode}>
+                    {darkMode ? "Light Mode" : "Dark Mode"}
+                  </button>
+                </div>
+                <div class="col-2">
+                  <button
+                    type="button"
+                    class="btn btn-success w-100"
+                    onClick={() => tableToExcel("report-table", "Timor Event List")}
                   >
-                    {option[1]}
-                  </option>
-                ))}
-              </select>
-            )}
-            <button onClick={toggleMode}>
-              {darkMode ? "Light Mode" : "Dark Mode"}
-            </button>
-            <button
-              onClick={() => tableToExcel("report-table", "Timor Event List")}
-            >
-              Export Data
-            </button>
+                    Export Data
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-          {/* <Modal
-            show={show.value} onClose={() => setShow({ value: false })}
-          >
-            <Table>
-              <TableRow onClick={() => setShowEventModal({ value: true })} >
+
+
+          <ModelComponent open={show.value} title='Details' setOpen={() => setShow({ value: false })}>
+            <Table
+              className={darkMode ? classes.darkTable : classes.lightTable}
+            >
+              <TableRow>
                 <TableCell>Selected Program:</TableCell>
                 <TableCell>{programName ? programName : ""}</TableCell>
               </TableRow>
               {eventData?.events?.map((event, index) => (
-                <div>
-                  <TableRow>
-                    <TableCell>Program Stage:</TableCell>
-                    <TableCell>
+                <React.Fragment key={index}>
+                  <TableRow className={classes.zebraStriping}>
+                    <TableCell className={classes.borderRemove}>
+                      Program Stage:
+                    </TableCell>
+                    <TableCell className={classes.borderRemove}>
                       {getNameProgameStage(event?.programStage)}
                     </TableCell>
                   </TableRow>
-
                   <TableRow className={classes.zebraStriping}>
-                    <TableCell>Event Date:</TableCell>
-                    <TableCell>
+                    <TableCell className={classes.borderRemove}>
+                      Event Date:
+                    </TableCell>
+                    <TableCell className={classes.borderRemove}>
                       {event.eventDate ? event.eventDate.split("T")[0] : ""}
                     </TableCell>
                   </TableRow>
-                  <TableRow>
-                    <TableCell>Status:</TableCell>
-                    <TableCell>{event.status}</TableCell>
+                  <TableRow className={classes.zebraStriping}>
+                    <TableCell className={classes.borderRemove}>
+                      Status:
+                    </TableCell>
+                    <TableCell className={classes.borderRemove}>
+                      {event.status}
+                    </TableCell>
                   </TableRow>
                   {event?.dataValues?.length > 0 && (
-                    <>
-                      <span>DataElements</span>
+                    <React.Fragment>
                       <TableRow className={classes.zebraStriping}>
-                        {event?.dataValues?.map((dataValue, idx) => (
-                          <TableRow key={idx} className={classes.zebraStriping}>
-                            <TableCell>
-                              {getNameDataElement(dataValue?.dataElement)}:
-                            </TableCell>
-                            <TableCell> {dataValue.value}</TableCell>
-                          </TableRow>
-                        ))}
+                        <TableCell
+                          colSpan={2}
+                          style={{ marginLeft: "12px", lineHeight: "35px" }}
+                          className={classes.borderRemove}
+                        >
+                          DataElements
+                        </TableCell>
                       </TableRow>
-                    </>
+                      {event?.dataValues?.map((dataValue, idx) => (
+                        <TableRow key={idx} className={classes.zebraStriping}>
+                          <TableCell className={classes.borderRemove}>
+                            {getNameDataElement(dataValue?.dataElement)}:
+                          </TableCell>
+                          <TableCell className={classes.borderRemove}>
+                            {dataValue.value === "true"
+                              ? "YES"
+                              : dataValue.value === "false"
+                                ? "NO"
+                                : dataValue.value}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </React.Fragment>
                   )}
-                </div>
+                </React.Fragment>
+              ))}
+            </Table>
+          </ModelComponent>
+
+          {/* <Modal show={show.value} onClose={() => setShow({ value: false })}>
+            <Table
+              className={darkMode ? classes.darkTable : classes.lightTable}
+            >
+              <TableRow>
+                <TableCell>Selected Program:</TableCell>
+                <TableCell>{programName ? programName : ""}</TableCell>
+              </TableRow>
+              {eventData?.events?.map((event, index) => (
+                <React.Fragment key={index}>
+                  <TableRow className={classes.zebraStriping}>
+                    <TableCell className={classes.borderRemove}>
+                      Program Stage:
+                    </TableCell>
+                    <TableCell className={classes.borderRemove}>
+                      {getNameProgameStage(event?.programStage)}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow className={classes.zebraStriping}>
+                    <TableCell className={classes.borderRemove}>
+                      Event Date:
+                    </TableCell>
+                    <TableCell className={classes.borderRemove}>
+                      {event.eventDate ? event.eventDate.split("T")[0] : ""}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow className={classes.zebraStriping}>
+                    <TableCell className={classes.borderRemove}>
+                      Status:
+                    </TableCell>
+                    <TableCell className={classes.borderRemove}>
+                      {event.status}
+                    </TableCell>
+                  </TableRow>
+                  {event?.dataValues?.length > 0 && (
+                    <React.Fragment>
+                      <TableRow className={classes.zebraStriping}>
+                        <TableCell
+                          colSpan={2}
+                          style={{ marginLeft: "12px", lineHeight: "35px" }}
+                          className={classes.borderRemove}
+                        >
+                          DataElements
+                        </TableCell>
+                      </TableRow>
+                      {event?.dataValues?.map((dataValue, idx) => (
+                        <TableRow key={idx} className={classes.zebraStriping}>
+                          <TableCell className={classes.borderRemove}>
+                            {getNameDataElement(dataValue?.dataElement)}:
+                          </TableCell>
+                          <TableCell className={classes.borderRemove}>
+                            {dataValue.value === "true"
+                              ? "YES"
+                              : dataValue.value === "false"
+                                ? "NO"
+                                : dataValue.value}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </React.Fragment>
+                  )}
+                </React.Fragment>
               ))}
             </Table>
           </Modal> */}
-            <Modal show={show.value} onClose={() => setShow({ value: false })}>
-              <Table
-                className={darkMode ? classes.darkTable : classes.lightTable}
-              >
-                <TableRow>
-                  <TableCell>Selected Program:</TableCell>
-                  <TableCell>{programName ? programName : ""}</TableCell>
-                </TableRow>
-                {eventData?.events?.map((event, index) => (
-                  <React.Fragment key={index}>
-                    <TableRow className={classes.zebraStriping}>
-                      <TableCell className={classes.borderRemove}>
-                        Program Stage:
-                      </TableCell>
-                      <TableCell className={classes.borderRemove}>
-                        {getNameProgameStage(event?.programStage)}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow className={classes.zebraStriping}>
-                      <TableCell className={classes.borderRemove}>
-                        Event Date:
-                      </TableCell>
-                      <TableCell className={classes.borderRemove}>
-                        {event.eventDate ? event.eventDate.split("T")[0] : ""}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow className={classes.zebraStriping}>
-                      <TableCell className={classes.borderRemove}>
-                        Status:
-                      </TableCell>
-                      <TableCell className={classes.borderRemove}>
-                        {event.status}
-                      </TableCell>
-                    </TableRow>
-                    {event?.dataValues?.length > 0 && (
-                      <React.Fragment>
-                        <TableRow className={classes.zebraStriping}>
-                          <TableCell
-                            colSpan={2}
-                            style={{ marginLeft: "12px", lineHeight: "35px" }}
-                            className={classes.borderRemove}
-                          >
-                            DataElements
-                          </TableCell>
-                        </TableRow>
-                        {event?.dataValues?.map((dataValue, idx) => (
-                          <TableRow key={idx} className={classes.zebraStriping}>
-                            <TableCell className={classes.borderRemove}>
-                              {getNameDataElement(dataValue?.dataElement)}:
-                            </TableCell>
-                            <TableCell className={classes.borderRemove}>
-                              {dataValue.value === "true"
-                                ? "YES"
-                                : dataValue.value === "false"
-                                ? "NO"
-                                : dataValue.value}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </React.Fragment>
-                    )}
-                  </React.Fragment>
-                ))}
-              </Table>
-            </Modal>
 
           <div className={classes.desgin}>
             <a id="dlink"></a>
@@ -551,12 +600,12 @@ const Home = () => {
                           <b>{ele?.trackedEntityAttribute?.name}</b>
                         </TableCell>
                       ))}
-                      <TableCell
+                      {programName == 'TB Health Facility Surveillance' ? <TableCell
                         style={{ whiteSpace: "nowrap" }}
                         className={classes.itemAlign}
                       >
                         <b>Download TB Treatment Card</b>
-                      </TableCell>
+                      </TableCell> : ''}
                     </TableRow>
                   )}
                 </TableHead>
@@ -576,6 +625,7 @@ const Home = () => {
                         >
                           <input
                             type="text"
+                            class="form-control"
                             placeholder={`Search ${ele?.trackedEntityAttribute?.name}`}
                             onChange={(e) =>
                               handleSearchChange(
@@ -603,17 +653,7 @@ const Home = () => {
                   ) : (
                     <>
                       {val && val()?.length > 0 ? val() : null}
-                      {/* 
-                      <Modal
-                        // show={show.value && show.id === "modal2"}
-                        // onClose={() => setShow({ value: false })}
-                        show={showTreatmentCardModal.value}
-                        onClose={() =>
-                          setShowTreatmentCardModal({ value: false })
-                        }
-                      >
-                        <TBTreatmentCard open={rowClickedRecord} />
-                      </Modal> */}
+
                     </>
                   )}
                 </TableBody>

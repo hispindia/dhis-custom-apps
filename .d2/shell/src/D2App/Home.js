@@ -5,11 +5,11 @@ import { Table, TableBody, TableRow, TableCell, TableHead, Button } from "@dhis2
 import ReactPaginate from "react-js-pagination";
 import { CircularProgress } from "@material-ui/core";
 import classes from "./App.module.css";
-import Modal from "./common/Modal/Modal";
 import "./Pagination.css"; // Custom CSS file for pagination
 import { OPDService } from "./Services/api";
 import TBTreatmentCard from "./report/TBTreatmentCard";
 import { downloadPDF } from "./export/export";
+import ModelComponent from "./common/Modal/Model.component";
 const Home = () => {
   var _eventData$events, _header1$programTrack7, _header1$programTrack8, _header1$programTrack9, _header1$programTrack10, _header1$programTrack11, _val;
   const [options, setOptions] = useState([]);
@@ -24,17 +24,14 @@ const Home = () => {
     value: false,
     id: ""
   });
-  const [showEventModal, setShowEventModal] = useState({
-    value: false
-  });
-  const [showTreatmentCardModal, setShowTreatmentCardModal] = useState({
-    value: false
-  });
   const [eventData, setEventData] = useState([]);
   const [programStages, setProgramStages] = useState([]);
   const [dataElements, setDataElements] = useState([]);
   const [programName, setProgramName] = useState("");
   const [downloadOpen, setDownloadOpen] = useState(false);
+
+  // console.log('downloadOpen:>>>', downloadOpen);
+
   const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "true");
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode);
@@ -65,9 +62,6 @@ const Home = () => {
       document.getElementById("dlink").click();
     };
   }();
-  console.log("programStages>>>>>>>", programStages);
-  console.log("eventData>>>>>", eventData);
-  console.log("dataElements>>>>>>", dataElements);
   useEffect(() => {
     if (show.value == true) {
       fetchRecords();
@@ -91,8 +85,10 @@ const Home = () => {
     setDataElements(allDataElements);
   }
   async function fetchRecords() {
+    setIsLoading(true);
     const eventResponse = await OPDService.EventAPi(selectedProgramValue, show);
     setEventData(eventResponse);
+    setIsLoading(false);
   }
   async function fetchProgramOptions() {
     var _programResponse$list;
@@ -250,6 +246,7 @@ const Home = () => {
       }).slice(indexOfFirstItem, indexOfLastItem);
       return filteredData.map((ele, index) => {
         var _header1$programTrack;
+        let teiId = '';
         return /*#__PURE__*/React.createElement(TableRow, {
           key: index,
           className: classes.zebraStriping
@@ -260,6 +257,7 @@ const Home = () => {
             return attr.attribute === (attribute === null || attribute === void 0 ? void 0 : (_attribute$trackedEnt = attribute.trackedEntityAttribute) === null || _attribute$trackedEnt === void 0 ? void 0 : _attribute$trackedEnt.id);
           });
           const TrackID = ele.trackedEntityInstance;
+          teiId = ele.trackedEntityInstance;
           return /*#__PURE__*/React.createElement(TableCell, {
             key: attribute === null || attribute === void 0 ? void 0 : (_attribute$trackedEnt2 = attribute.trackedEntityAttribute) === null || _attribute$trackedEnt2 === void 0 ? void 0 : _attribute$trackedEnt2.id,
             className: classes.itemAlign
@@ -269,18 +267,26 @@ const Home = () => {
               id: TrackID
             })
           }, foundAttribute ? foundAttribute.value : ""));
-        }), /*#__PURE__*/React.createElement(TableCell, {
+        }), programName == 'TB Health Facility Surveillance' ? /*#__PURE__*/React.createElement(TableCell, {
+          id: teiId,
           style: {
             whiteSpace: "nowrap"
           },
           className: classes.itemAlign
-        }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("button", {
-          onClick: () => setDownloadOpen(true),
+        }, /*#__PURE__*/React.createElement("button", {
+          type: "button",
+          class: "btn btn-success",
+          onClick: () => {
+            setDownloadOpen(true);
+            setShow({
+              id: teiId
+            });
+          },
           style: {
             padding: "5px 10px",
             fontSize: "12px"
           }
-        }, "Download"))));
+        }, "View Report")) : "");
       });
     } else {
       return null;
@@ -333,20 +339,36 @@ const Home = () => {
     const dataelementName = dataElements === null || dataElements === void 0 ? void 0 : (_dataElements$dataEle = dataElements.dataElements) === null || _dataElements$dataEle === void 0 ? void 0 : _dataElements$dataEle.find(stage => stage.id === id);
     return dataelementName ? dataelementName.name : "Unknown";
   };
-  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(TBTreatmentCard, {
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(ModelComponent, {
     setOpen: setDownloadOpen,
-    open: downloadOpen,
+    title: "TB Treatment Card Report",
+    actionFunctionCallBack: () => downloadPDF("printing"),
+    actionType: "Download",
+    open: downloadOpen
+  }, /*#__PURE__*/React.createElement(TBTreatmentCard, {
+    tie: show.id,
     selectedProgramValue: selectedProgramValue
-  }), /*#__PURE__*/React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: darkMode ? classes["dark-mode"] : classes["light-mode"],
     style: {
-      overflow: "auto"
+      overflow: "auto",
+      minHeight: '95vh'
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       padding: "5px"
     }
-  }, /*#__PURE__*/React.createElement("div", null, options.length > 0 && /*#__PURE__*/React.createElement("select", {
+  }, /*#__PURE__*/React.createElement("div", {
+    class: "my-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    class: "container"
+  }, /*#__PURE__*/React.createElement("div", {
+    class: "row g-3 w-100"
+  }, /*#__PURE__*/React.createElement("div", {
+    class: "col-8"
+  }, options.length > 0 && /*#__PURE__*/React.createElement("select", {
+    class: "form-select w-100",
+    "aria-label": "Default select example",
     onChange: handleSelectChange
   }, /*#__PURE__*/React.createElement("option", {
     value: ""
@@ -356,13 +378,22 @@ const Home = () => {
       id: option[0],
       name: option[1]
     })
-  }, option[1]))), /*#__PURE__*/React.createElement("button", {
+  }, option[1])))), /*#__PURE__*/React.createElement("div", {
+    class: "col-2"
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    class: "btn btn-secondary w-100",
     onClick: toggleMode
-  }, darkMode ? "Light Mode" : "Dark Mode"), /*#__PURE__*/React.createElement("button", {
+  }, darkMode ? "Light Mode" : "Dark Mode")), /*#__PURE__*/React.createElement("div", {
+    class: "col-2"
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    class: "btn btn-success w-100",
     onClick: () => tableToExcel("report-table", "Timor Event List")
-  }, "Export Data")), /*#__PURE__*/React.createElement(Modal, {
-    show: show.value,
-    onClose: () => setShow({
+  }, "Export Data"))))), /*#__PURE__*/React.createElement(ModelComponent, {
+    open: show.value,
+    title: "Details",
+    setOpen: () => setShow({
       value: false
     })
   }, /*#__PURE__*/React.createElement(Table, {
@@ -423,12 +454,12 @@ const Home = () => {
       },
       className: classes.itemAlign
     }, /*#__PURE__*/React.createElement("b", null, ele === null || ele === void 0 ? void 0 : (_ele$trackedEntityAtt2 = ele.trackedEntityAttribute) === null || _ele$trackedEntityAtt2 === void 0 ? void 0 : _ele$trackedEntityAtt2.name));
-  }), /*#__PURE__*/React.createElement(TableCell, {
+  }), programName == 'TB Health Facility Surveillance' ? /*#__PURE__*/React.createElement(TableCell, {
     style: {
       whiteSpace: "nowrap"
     },
     className: classes.itemAlign
-  }, /*#__PURE__*/React.createElement("b", null, "Download TB Treatment Card")))), /*#__PURE__*/React.createElement(TableBody, null, (header1 === null || header1 === void 0 ? void 0 : (_header1$programTrack9 = header1.programTrackedEntityAttributes) === null || _header1$programTrack9 === void 0 ? void 0 : _header1$programTrack9.length) > 0 && /*#__PURE__*/React.createElement(TableRow, null, header1 === null || header1 === void 0 ? void 0 : (_header1$programTrack10 = header1.programTrackedEntityAttributes) === null || _header1$programTrack10 === void 0 ? void 0 : _header1$programTrack10.map(ele => {
+  }, /*#__PURE__*/React.createElement("b", null, "Download TB Treatment Card")) : '')), /*#__PURE__*/React.createElement(TableBody, null, (header1 === null || header1 === void 0 ? void 0 : (_header1$programTrack9 = header1.programTrackedEntityAttributes) === null || _header1$programTrack9 === void 0 ? void 0 : _header1$programTrack9.length) > 0 && /*#__PURE__*/React.createElement(TableRow, null, header1 === null || header1 === void 0 ? void 0 : (_header1$programTrack10 = header1.programTrackedEntityAttributes) === null || _header1$programTrack10 === void 0 ? void 0 : _header1$programTrack10.map(ele => {
     var _ele$trackedEntityAtt3, _ele$trackedEntityAtt4;
     return /*#__PURE__*/React.createElement(TableCell, {
       key: ele === null || ele === void 0 ? void 0 : (_ele$trackedEntityAtt3 = ele.trackedEntityAttribute) === null || _ele$trackedEntityAtt3 === void 0 ? void 0 : _ele$trackedEntityAtt3.id,
@@ -438,6 +469,7 @@ const Home = () => {
       className: darkMode ? `${classes.searchBackground} ${classes.itemAlign}` : `${classes.itemAlign}`
     }, /*#__PURE__*/React.createElement("input", {
       type: "text",
+      class: "form-control",
       placeholder: `Search ${ele === null || ele === void 0 ? void 0 : (_ele$trackedEntityAtt4 = ele.trackedEntityAttribute) === null || _ele$trackedEntityAtt4 === void 0 ? void 0 : _ele$trackedEntityAtt4.name}`,
       onChange: e => {
         var _ele$trackedEntityAtt5;

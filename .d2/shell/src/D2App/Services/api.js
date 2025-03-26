@@ -34,7 +34,7 @@ _defineProperty(OPDService, "tableDataplot", async selectedProgramValue => {
   const requestOptions = {
     method: 'GET'
   };
-  let response = await fetch(`../../trackedEntityInstances.json?ou=Fn51zf6ifbm&program=${encodeURIComponent(selectedProgramValue)}&ouMode=DESCENDANTS`, requestOptions);
+  let response = await fetch(`../../trackedEntityInstances.json?skipPaging=true&ou=Fn51zf6ifbm&program=${encodeURIComponent(selectedProgramValue)}&ouMode=DESCENDANTS`, requestOptions);
   return response.json();
 });
 _defineProperty(OPDService, "tableHeaderData", async selectedProgramValue => {
@@ -53,11 +53,20 @@ _defineProperty(OPDService, "trackedEntityInstances", async selectedProgramValue
   return response.json();
 });
 // found records with single programe and multiple stages........ 
-_defineProperty(OPDService, "trackedEntityInstancesMultipleStages", async selectedProgramValue => {
+_defineProperty(OPDService, "trackedEntityInstancesMultipleStages", async (selectedProgramValue, tie) => {
   const requestOptions = {
     method: 'GET'
   };
-  let response = await fetch(`../../trackedEntityInstances/t8hYOJDA2Od.json?program=${selectedProgramValue}&fields=*`, requestOptions);
+  let response = await fetch(`../../trackedEntityInstances/${tie}.json?program=${selectedProgramValue}&fields=*`, requestOptions);
+  return new Promise((resolve, reject) => {
+    if (response.status == 200) resolve(response.json());else reject({});
+  });
+});
+_defineProperty(OPDService, "screeningCloseRelations", async tie => {
+  const requestOptions = {
+    method: 'GET'
+  };
+  let response = await fetch(`../../relationships.json?tei=${tie}`, requestOptions);
   return new Promise((resolve, reject) => {
     if (response.status == 200) resolve(response.json());else reject({});
   });

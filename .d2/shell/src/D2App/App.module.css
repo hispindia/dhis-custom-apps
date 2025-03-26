@@ -37,6 +37,7 @@
 }
 .itemAlign{
   text-align: center;
+  min-width: 200px!important;
 }
 .searchBackground{
   background-color: #25284b !important ;

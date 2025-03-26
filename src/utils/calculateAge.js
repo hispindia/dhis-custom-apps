@@ -1,14 +1,16 @@
-export class CalculateAge {
-    constructor(dob) {
-        this.dob = new Date(dob || new Date());
+export function calculateAge(dob) {
+    if(!dob) return '';
+    const birthDate = new Date(dob);
+    const today = new Date();
+    
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    const dayDiff = today.getDate() - birthDate.getDate();
+
+    // Adjust age if birthdate hasn't occurred yet this year
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
     }
-    getAge() {
-        const today = new Date();
-        const age = today.getFullYear() - this.dob.getFullYear();
-        const m = today.getMonth() - this.dob.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < this.dob.getDate())) {
-            age--;
-        }
-        return age;
-    }
+
+    return age;
 }
