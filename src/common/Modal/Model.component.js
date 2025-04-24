@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function ModelComponent({ setOpen, open, title = '', actionType, children, actionFunctionCallBack = null, }, props) {
+export default function ModelComponent({ setOpen, open, title = '', actionType, children, actionFunctionCallBack = null, }, ...props) {
     return (
         <>
             {open && (

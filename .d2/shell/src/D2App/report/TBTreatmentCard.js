@@ -3,7 +3,27 @@ import "./style.css";
 import { hospitalLogo, hospitalSymbal } from "../images";
 import { OPDService } from "../Services/api";
 import { calculateAge } from "../utils/calculateAge";
+import { posOrNeg, yesOrNo } from "../utils/common";
+import { CircularLoader } from "@dhis2/ui-core";
 const DAM_VALUE = ['kcLrIgGhPMM', 'Nanz6h218xh', 'hprn97zZAaO', 'gGi8Wtiphc6'];
+const styles = {
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    // background fade
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 9999,
+    // Make sure it's on top
+    backdropFilter: 'blur(4px)' // optional: adds a blur effect
+  }
+};
+
 const TbTreatmentCard = _ref => {
   var _fetchData$kcLrIgGhPM, _fetchData$e1YAEOJgkf, _fetchData$hb6APG0UBM, _fetchData$ch4SP6NLy, _fetchData$HkdYrf7NPb, _fetchData$LTwo15geiN, _fetchData$dP1vchhcUQ, _fetchData$Lkt9XYo3Yc, _fetchData$rafHJbDBMc, _fetchData$hTeeEA3luA, _fetchData$hTeeEA3luA2, _fetchData$hTeeEA3luA3, _fetchData$wsYLk5j39R, _fetchData$wsYLk5j39R2, _fetchData$T48HXW0TTd, _fetchData$T48HXW0TTd2, _fetchData$qMj31r5XxD, _fetchData$qMj31r5XxD2, _fetchData$PPtWbZprTO, _fetchData$PPtWbZprTO2, _fetchData$DdksjaW6MW, _fetchData$DdksjaW6MW2, _fetchData$F7pEZBWhMT, _fetchData$Ms2aNVW7fo2;
   let {
@@ -13,8 +33,10 @@ const TbTreatmentCard = _ref => {
   const [fetchData, setFetchedData] = useState({});
   const [observation, setObservation] = useState('');
   const [relation, setRelation] = useState([]);
+  const [cardLoading, setCardLoading] = useState(false);
   async function fetchTrackedEntityInstances() {
     if (!selectedProgramValue) return;
+    setCardLoading(true);
     try {
       const allTrackedEntities = await OPDService.trackedEntityInstancesMultipleStages(selectedProgramValue, tie);
       const allRelations = await OPDService.screeningCloseRelations(tie);
@@ -56,7 +78,9 @@ const TbTreatmentCard = _ref => {
       console.log("Fetched Data:", rel);
       setFetchedData(objectedData);
       setRelation(rel);
+      setCardLoading(false);
     } catch (error) {
+      setCardLoading(false);
       console.log('error', error);
       setFetchedData({});
       alert((error === null || error === void 0 ? void 0 : error.message) || 'failled api');
@@ -69,7 +93,9 @@ const TbTreatmentCard = _ref => {
   useEffect(() => {
     fetchTrackedEntityInstances();
   }, []);
-  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/React.createElement(React.Fragment, null, cardLoading && /*#__PURE__*/React.createElement("div", {
+    style: styles.overlay
+  }, /*#__PURE__*/React.createElement(CircularLoader, null)), /*#__PURE__*/React.createElement("div", {
     id: "printing",
     className: "modal-info"
   }, /*#__PURE__*/React.createElement("div", {
@@ -138,7 +164,7 @@ const TbTreatmentCard = _ref => {
     style: {
       border: "none"
     }
-  })), /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
+  }, "                    ")), /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
     style: {
       border: "none"
     }
@@ -146,7 +172,7 @@ const TbTreatmentCard = _ref => {
     style: {
       border: "none"
     }
-  }))))), /*#__PURE__*/React.createElement("div", {
+  }, "                    "))))), /*#__PURE__*/React.createElement("div", {
     className: "table"
   }, /*#__PURE__*/React.createElement("table", {
     id: "border_less"
@@ -235,8 +261,8 @@ const TbTreatmentCard = _ref => {
     className: "col-12"
   }, "Screening to close contact (Children, Adults, and PLHIV contacts)"), /*#__PURE__*/React.createElement("div", {
     className: "col-12 w-100"
-  }, /*#__PURE__*/React.createElement("table", null, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "No"), /*#__PURE__*/React.createElement("th", null, "Complete Name"), /*#__PURE__*/React.createElement("th", null, "Age"), /*#__PURE__*/React.createElement("th", null, "Screening Date"), /*#__PURE__*/React.createElement("th", null, "Result"), /*#__PURE__*/React.createElement("th", null, "TPT"))), /*#__PURE__*/React.createElement("tbody", null, relation.map((item, index) => /*#__PURE__*/React.createElement("tr", {
+  }, /*#__PURE__*/React.createElement("table", null, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "No"), /*#__PURE__*/React.createElement("th", null, "Complete Name"), /*#__PURE__*/React.createElement("th", null, "Age"), /*#__PURE__*/React.createElement("th", null, "TB screening date"), /*#__PURE__*/React.createElement("th", null, "Result"), /*#__PURE__*/React.createElement("th", null, "TPT initiated"))), /*#__PURE__*/React.createElement("tbody", null, relation.map((item, index) => /*#__PURE__*/React.createElement("tr", {
     key: index
-  }, /*#__PURE__*/React.createElement("td", null, index + 1), /*#__PURE__*/React.createElement("td", null, item['kcLrIgGhPMM'] || ''), /*#__PURE__*/React.createElement("td", null, item['Nanz6h218xh'] || ''), /*#__PURE__*/React.createElement("td", null, item['date'] || ''), /*#__PURE__*/React.createElement("td", null, item['hprn97zZAaO'] || ''), /*#__PURE__*/React.createElement("td", null, item['gGi8Wtiphc6'] || '')))))))));
+  }, /*#__PURE__*/React.createElement("td", null, index + 1), /*#__PURE__*/React.createElement("td", null, item['kcLrIgGhPMM'] || ''), /*#__PURE__*/React.createElement("td", null, item['Nanz6h218xh'] || ''), /*#__PURE__*/React.createElement("td", null, item['date'] || ''), /*#__PURE__*/React.createElement("td", null, posOrNeg(item['hprn97zZAaO']) || ''), /*#__PURE__*/React.createElement("td", null, yesOrNo(item['gGi8Wtiphc6']) || '')))))))));
 };
 export default TbTreatmentCard;

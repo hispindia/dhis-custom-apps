@@ -1,5 +1,5 @@
 import React from 'react';
-export default function ModelComponent(_ref, props) {
+export default function ModelComponent(_ref) {
   let {
     setOpen,
     open,

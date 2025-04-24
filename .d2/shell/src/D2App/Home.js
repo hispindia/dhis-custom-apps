@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Table, TableBody, TableRow, TableCell, TableHead, Button } from "@dhis2/ui-core";
+import { Table, TableBody, TableRow, TableCell, TableHead, Button, CircularLoader } from "@dhis2/ui-core";
 import ReactPaginate from "react-js-pagination";
 import { CircularProgress } from "@material-ui/core";
 import classes from "./App.module.css";
@@ -10,6 +10,24 @@ import { OPDService } from "./Services/api";
 import TBTreatmentCard from "./report/TBTreatmentCard";
 import { downloadPDF } from "./export/export";
 import ModelComponent from "./common/Modal/Model.component";
+const styles = {
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    // background fade
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 9999,
+    // Make sure it's on top
+    backdropFilter: 'blur(4px)' // optional: adds a blur effect
+  }
+};
+
 const Home = () => {
   var _eventData$events, _header1$programTrack7, _header1$programTrack8, _header1$programTrack9, _header1$programTrack10, _header1$programTrack11, _val;
   const [options, setOptions] = useState([]);
@@ -97,9 +115,11 @@ const Home = () => {
   }
   async function tableDatafetch() {
     var _allTableData$tracked;
+    setIsLoading(true);
     const allTableData = await OPDService.tableDataplot(selectedProgramValue);
     setEvent(allTableData === null || allTableData === void 0 ? void 0 : allTableData.trackedEntityInstances);
     setData(allTableData === null || allTableData === void 0 ? void 0 : (_allTableData$tracked = allTableData.trackedEntityInstances) === null || _allTableData$tracked === void 0 ? void 0 : _allTableData$tracked.length);
+    setIsLoading(false);
   }
   async function tableHeaderDatafetch() {
     const allTableHeaderData = await OPDService.tableHeaderData(selectedProgramValue);
@@ -476,12 +496,14 @@ const Home = () => {
         return handleSearchChange(ele === null || ele === void 0 ? void 0 : (_ele$trackedEntityAtt5 = ele.trackedEntityAttribute) === null || _ele$trackedEntityAtt5 === void 0 ? void 0 : _ele$trackedEntityAtt5.id, e.target.value);
       }
     }));
-  })), isLoading ? /*#__PURE__*/React.createElement(TableRow, null, /*#__PURE__*/React.createElement(TableCell, {
+  })), isLoading ? /*#__PURE__*/React.createElement("div", {
+    style: styles.overlay
+  }, /*#__PURE__*/React.createElement(TableRow, null, /*#__PURE__*/React.createElement(TableCell, {
     colSpan: (header1 === null || header1 === void 0 ? void 0 : (_header1$programTrack11 = header1.programTrackedEntityAttributes) === null || _header1$programTrack11 === void 0 ? void 0 : _header1$programTrack11.length) + 1,
     style: {
       textAlign: "center"
     }
-  }, /*#__PURE__*/React.createElement(CircularProgress, null))) : /*#__PURE__*/React.createElement(React.Fragment, null, val && ((_val = val()) === null || _val === void 0 ? void 0 : _val.length) > 0 ? val() : null)))), /*#__PURE__*/React.createElement(ReactPaginate, {
+  }, /*#__PURE__*/React.createElement(CircularProgress, null)))) : /*#__PURE__*/React.createElement(React.Fragment, null, val && ((_val = val()) === null || _val === void 0 ? void 0 : _val.length) > 0 ? val() : null)))), /*#__PURE__*/React.createElement(ReactPaginate, {
     activePage: currentPage,
     itemsCountPerPage: itemsPerPage,
     totalItemsCount: Data,

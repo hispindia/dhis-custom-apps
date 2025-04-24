@@ -13,6 +13,7 @@ export class OPDService {
         let response = await fetch(`../../programStages.json?paging=false&fields=id,name`, requestOptions)
         return response.json();
     }
+    
     static AllDataelement = async () => {
         const requestOptions = { method: 'GET' };
 

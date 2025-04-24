@@ -3,16 +3,37 @@ import "./style.css";
 import { hospitalLogo, hospitalSymbal } from "../images";
 import { OPDService } from "../Services/api";
 import { calculateAge } from "../utils/calculateAge";
+import { posOrNeg, yesOrNo } from "../utils/common";
+import { CircularLoader } from "@dhis2/ui-core";
 
 const DAM_VALUE = ['kcLrIgGhPMM', 'Nanz6h218xh', 'hprn97zZAaO', 'gGi8Wtiphc6']
+
+const styles = {
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)', // background fade
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 9999, // Make sure it's on top
+    backdropFilter: 'blur(4px)', // optional: adds a blur effect
+  },
+}
 
 const TbTreatmentCard = ({ selectedProgramValue, tie }) => {
   const [fetchData, setFetchedData] = useState({});
   const [observation, setObservation] = useState('');
-  const [relation, setRelation] = useState([])
+  const [relation, setRelation] = useState([]);
+  const [cardLoading, setCardLoading] = useState(false);
 
   async function fetchTrackedEntityInstances() {
     if (!selectedProgramValue) return;
+
+    setCardLoading(true)
 
     try {
       const allTrackedEntities = await OPDService.trackedEntityInstancesMultipleStages(selectedProgramValue, tie);
@@ -51,7 +72,9 @@ const TbTreatmentCard = ({ selectedProgramValue, tie }) => {
       console.log("Fetched Data:", rel);
       setFetchedData(objectedData);
       setRelation(rel);
+      setCardLoading(false)
     } catch (error) {
+      setCardLoading(false)
       console.log('error', error)
       setFetchedData({});
       alert(error?.message || 'failled api');
@@ -67,8 +90,14 @@ const TbTreatmentCard = ({ selectedProgramValue, tie }) => {
     fetchTrackedEntityInstances();
   }, []);
 
+
   return (
     <>
+      {cardLoading &&
+        <div style={styles.overlay}>
+          <CircularLoader />
+        </div>
+      }
       <div
         id="printing"
         className="modal-info"
@@ -324,9 +353,9 @@ const TbTreatmentCard = ({ selectedProgramValue, tie }) => {
                   <th >No</th>
                   <th >Complete Name</th>
                   <th >Age</th>
-                  <th >Screening Date</th>
+                  <th >TB screening date</th>
                   <th >Result</th>
-                  <th >TPT</th>
+                  <th >TPT initiated</th>
                 </tr>
               </thead>
               <tbody>
@@ -336,8 +365,8 @@ const TbTreatmentCard = ({ selectedProgramValue, tie }) => {
                     <td >{item['kcLrIgGhPMM'] || ''}</td>
                     <td >{item['Nanz6h218xh'] || ''}</td>
                     <td >{item['date'] || ''}</td>
-                    <td >{item['hprn97zZAaO'] || ''}</td>
-                    <td >{item['gGi8Wtiphc6'] || ''}</td>
+                    <td >{posOrNeg(item['hprn97zZAaO']) || ''}</td>
+                    <td >{yesOrNo(item['gGi8Wtiphc6']) || ''}</td>
                   </tr>
                 ))}
               </tbody>

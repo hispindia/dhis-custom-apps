@@ -8,6 +8,7 @@ import {
   TableCell,
   TableHead,
   Button,
+  CircularLoader,
 } from "@dhis2/ui-core";
 import ReactPaginate from "react-js-pagination";
 import { CircularProgress } from "@material-ui/core";
@@ -17,6 +18,23 @@ import { OPDService } from "./Services/api";
 import TBTreatmentCard from "./report/TBTreatmentCard";
 import { downloadPDF } from "./export/export";
 import ModelComponent from "./common/Modal/Model.component";
+
+
+const styles = {
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)', // background fade
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 9999, // Make sure it's on top
+    backdropFilter: 'blur(4px)', // optional: adds a blur effect
+  },
+}
 
 const Home = () => {
   const [options, setOptions] = useState([]);
@@ -113,9 +131,11 @@ const Home = () => {
     setOptions(programResponse?.listGrid?.rows);
   }
   async function tableDatafetch() {
+    setIsLoading(true)
     const allTableData = await OPDService.tableDataplot(selectedProgramValue);
     setEvent(allTableData?.trackedEntityInstances);
     setData(allTableData?.trackedEntityInstances?.length);
+    setIsLoading(false)
   }
   async function tableHeaderDatafetch() {
     const allTableHeaderData = await OPDService.tableHeaderData(
@@ -392,6 +412,7 @@ const Home = () => {
   return (
     <>
 
+
       <ModelComponent
         setOpen={setDownloadOpen}
         title='TB Treatment Card Report'
@@ -640,16 +661,19 @@ const Home = () => {
                   )}
 
                   {isLoading ? (
-                    <TableRow>
-                      <TableCell
-                        colSpan={
-                          header1?.programTrackedEntityAttributes?.length + 1
-                        }
-                        style={{ textAlign: "center" }}
-                      >
-                        <CircularProgress />
-                      </TableCell>
-                    </TableRow>
+                    <div style={styles.overlay}>
+
+                      <TableRow>
+                        <TableCell
+                          colSpan={
+                            header1?.programTrackedEntityAttributes?.length + 1
+                          }
+                          style={{ textAlign: "center" }}
+                        >
+                          <CircularProgress />
+                        </TableCell>
+                      </TableRow>
+                    </div>
                   ) : (
                     <>
                       {val && val()?.length > 0 ? val() : null}
