@@ -4,30 +4,31 @@ import { hospitalLogo, hospitalSymbal } from "../images";
 import { OPDService } from "../Services/api";
 import { calculateAge } from "../utils/calculateAge";
 import { posOrNeg, yesOrNo } from "../utils/common";
-import { CircularLoader } from "@dhis2/ui-core";
+import { CunstomLoader } from "../components/Loader";
+// import { CircularLoader } from "@dhis2/ui-core";
+
 const DAM_VALUE = ['kcLrIgGhPMM', 'Nanz6h218xh', 'hprn97zZAaO', 'gGi8Wtiphc6'];
-const styles = {
-  overlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100vw',
-    height: '100vh',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    // background fade
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 9999,
-    // Make sure it's on top
-    backdropFilter: 'blur(4px)' // optional: adds a blur effect
-  }
-};
+
+// const styles = {
+//   overlay: {
+//     position: 'fixed',
+//     top: 0,
+//     left: 0,
+//     width: '100vw',
+//     height: '100vh',
+//     backgroundColor: 'rgba(0, 0, 0, 0.4)', // background fade
+//     display: 'flex',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     zIndex: 9999, // Make sure it's on top
+//     backdropFilter: 'blur(4px)', // optional: adds a blur effect
+//   },
+// }
 
 const TbTreatmentCard = _ref => {
-  var _fetchData$kcLrIgGhPM, _fetchData$e1YAEOJgkf, _fetchData$hb6APG0UBM, _fetchData$ch4SP6NLy, _fetchData$HkdYrf7NPb, _fetchData$LTwo15geiN, _fetchData$dP1vchhcUQ, _fetchData$Lkt9XYo3Yc, _fetchData$rafHJbDBMc, _fetchData$hTeeEA3luA, _fetchData$hTeeEA3luA2, _fetchData$hTeeEA3luA3, _fetchData$wsYLk5j39R, _fetchData$wsYLk5j39R2, _fetchData$T48HXW0TTd, _fetchData$T48HXW0TTd2, _fetchData$qMj31r5XxD, _fetchData$qMj31r5XxD2, _fetchData$PPtWbZprTO, _fetchData$PPtWbZprTO2, _fetchData$DdksjaW6MW, _fetchData$DdksjaW6MW2, _fetchData$F7pEZBWhMT, _fetchData$Ms2aNVW7fo2;
+  var _fetchData$kcLrIgGhPM, _fetchData$e1YAEOJgkf, _fetchData$hb6APG0UBM, _fetchData$ch4SP6NLy, _fetchData$HkdYrf7NPb, _fetchData$LTwo15geiN, _fetchData$dP1vchhcUQ, _fetchData$Lkt9XYo3Yc, _fetchData$rafHJbDBMc, _fetchData$hTeeEA3luA, _fetchData$hTeeEA3luA2, _fetchData$hTeeEA3luA3, _fetchData$wsYLk5j39R, _fetchData$wsYLk5j39R2, _fetchData$T48HXW0TTd, _fetchData$T48HXW0TTd2, _fetchData$qMj31r5XxD, _fetchData$qMj31r5XxD2, _fetchData$PPtWbZprTO, _fetchData$PPtWbZprTO2, _fetchData$DdksjaW6MW, _fetchData$DdksjaW6MW2, _fetchData$F7pEZBWhMT, _fetchData$FgDYimjlKa2;
   let {
-    selectedProgramValue,
+    pId,
     tie
   } = _ref;
   const [fetchData, setFetchedData] = useState({});
@@ -35,10 +36,10 @@ const TbTreatmentCard = _ref => {
   const [relation, setRelation] = useState([]);
   const [cardLoading, setCardLoading] = useState(false);
   async function fetchTrackedEntityInstances() {
-    if (!selectedProgramValue) return;
+    if (!pId) return;
     setCardLoading(true);
     try {
-      const allTrackedEntities = await OPDService.trackedEntityInstancesMultipleStages(selectedProgramValue, tie);
+      const allTrackedEntities = await OPDService.trackedEntityInstancesMultipleStages(pId, tie);
       const allRelations = await OPDService.screeningCloseRelations(tie);
       let objectedData = {};
       let rel = [];
@@ -93,14 +94,18 @@ const TbTreatmentCard = _ref => {
   useEffect(() => {
     fetchTrackedEntityInstances();
   }, []);
-  return /*#__PURE__*/React.createElement(React.Fragment, null, cardLoading && /*#__PURE__*/React.createElement("div", {
-    style: styles.overlay
-  }, /*#__PURE__*/React.createElement(CircularLoader, null)), /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/React.createElement(React.Fragment, null, cardLoading && /*#__PURE__*/React.createElement(CunstomLoader, null)
+  // <div style={styles.overlay}>
+  //   <CircularLoader />
+  // </div>
+  , /*#__PURE__*/React.createElement("div", {
     id: "printing",
     className: "modal-info"
   }, /*#__PURE__*/React.createElement("div", {
     className: "logo"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", null, "FORMATU TB 4")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("img", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", {
+    className: "text-dark"
+  }, "FORMATU TB 4")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("img", {
     src: hospitalSymbal,
     alt: "symbol"
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("img", {
@@ -109,8 +114,10 @@ const TbTreatmentCard = _ref => {
   }))), /*#__PURE__*/React.createElement("div", {
     className: "header"
   }, /*#__PURE__*/React.createElement("span", {
-    className: "no-bold"
-  }, "NATIONAL PROGRAM FOR TUBERCULOSE CONTROL"), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("i", null, "TUBERCULOSE TREATMENT CARD")), /*#__PURE__*/React.createElement("div", {
+    className: "no-bold text-dark"
+  }, "NATIONAL PROGRAM FOR TUBERCULOSE CONTROL"), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("i", {
+    className: "text-dark"
+  }, "TUBERCULOSE TREATMENT CARD")), /*#__PURE__*/React.createElement("div", {
     className: "row g-2"
   }, /*#__PURE__*/React.createElement("section", {
     className: "col-6"
@@ -245,20 +252,20 @@ const TbTreatmentCard = _ref => {
   }, "Result")), /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, "HIV Test"), /*#__PURE__*/React.createElement("td", null, ((_fetchData$wsYLk5j39R = fetchData['wsYLk5j39R1']) === null || _fetchData$wsYLk5j39R === void 0 ? void 0 : _fetchData$wsYLk5j39R.date) || ''), /*#__PURE__*/React.createElement("td", null, ((_fetchData$wsYLk5j39R2 = fetchData['wsYLk5j39R1']) === null || _fetchData$wsYLk5j39R2 === void 0 ? void 0 : _fetchData$wsYLk5j39R2.value) || '')), /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, "Initiate CPT"), /*#__PURE__*/React.createElement("td", null, ((_fetchData$T48HXW0TTd = fetchData['T48HXW0TTdB']) === null || _fetchData$T48HXW0TTd === void 0 ? void 0 : _fetchData$T48HXW0TTd.date) || ''), /*#__PURE__*/React.createElement("td", null, ((_fetchData$T48HXW0TTd2 = fetchData['T48HXW0TTdB']) === null || _fetchData$T48HXW0TTd2 === void 0 ? void 0 : _fetchData$T48HXW0TTd2.value) || '')), /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, "Initiate ART"), /*#__PURE__*/React.createElement("td", null, ((_fetchData$qMj31r5XxD = fetchData['qMj31r5XxDF']) === null || _fetchData$qMj31r5XxD === void 0 ? void 0 : _fetchData$qMj31r5XxD.date) || ''), /*#__PURE__*/React.createElement("td", null, ((_fetchData$qMj31r5XxD2 = fetchData['qMj31r5XxDF']) === null || _fetchData$qMj31r5XxD2 === void 0 ? void 0 : _fetchData$qMj31r5XxD2.value) || '')), /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, "CD4 Result"), /*#__PURE__*/React.createElement("td", null, ((_fetchData$PPtWbZprTO = fetchData['PPtWbZprTON']) === null || _fetchData$PPtWbZprTO === void 0 ? void 0 : _fetchData$PPtWbZprTO.date) || ''), /*#__PURE__*/React.createElement("td", null, ((_fetchData$PPtWbZprTO2 = fetchData['PPtWbZprTON']) === null || _fetchData$PPtWbZprTO2 === void 0 ? void 0 : _fetchData$PPtWbZprTO2.value) || '')), /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, "ART Reg. No. & Date"), /*#__PURE__*/React.createElement("td", null), /*#__PURE__*/React.createElement("td", null)))))), /*#__PURE__*/React.createElement("div", {
     className: "col-6"
   }, /*#__PURE__*/React.createElement("table", null, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "Treatment Result"), /*#__PURE__*/React.createElement("th", null, "Decided Date"))), /*#__PURE__*/React.createElement("tbody", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, ((_fetchData$DdksjaW6MW = fetchData['DdksjaW6MWf']) === null || _fetchData$DdksjaW6MW === void 0 ? void 0 : _fetchData$DdksjaW6MW.value) || ''), /*#__PURE__*/React.createElement("td", null, ((_fetchData$DdksjaW6MW2 = fetchData['DdksjaW6MWf']) === null || _fetchData$DdksjaW6MW2 === void 0 ? void 0 : _fetchData$DdksjaW6MW2.date) || ''))))), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("h6", {
-    className: "col-12 my-2"
+    className: "col-12 my-2 text-black"
   }, "REGIMENT: ", ((_fetchData$F7pEZBWhMT = fetchData['F7pEZBWhMTN']) === null || _fetchData$F7pEZBWhMT === void 0 ? void 0 : _fetchData$F7pEZBWhMT.value) || 'N/A'), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("h6", {
-    className: "col-12",
+    className: "col-12 text-black",
     onClick: () => {
-      var _fetchData$Ms2aNVW7fo;
-      return openInNewTab(((_fetchData$Ms2aNVW7fo = fetchData['Ms2aNVW7foI']) === null || _fetchData$Ms2aNVW7fo === void 0 ? void 0 : _fetchData$Ms2aNVW7fo.value) || '');
+      var _fetchData$FgDYimjlKa;
+      return openInNewTab(((_fetchData$FgDYimjlKa = fetchData['FgDYimjlKap']) === null || _fetchData$FgDYimjlKa === void 0 ? void 0 : _fetchData$FgDYimjlKa.value) || '');
     }
   }, "Calendar: ", /*#__PURE__*/React.createElement("span", {
     className: "text-primary ",
     style: {
       cursor: 'pointer'
     }
-  }, ((_fetchData$Ms2aNVW7fo2 = fetchData['Ms2aNVW7foI']) === null || _fetchData$Ms2aNVW7fo2 === void 0 ? void 0 : _fetchData$Ms2aNVW7fo2.value) || 'N/A')), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("h6", {
-    className: "col-12"
+  }, ((_fetchData$FgDYimjlKa2 = fetchData['FgDYimjlKap']) === null || _fetchData$FgDYimjlKa2 === void 0 ? void 0 : _fetchData$FgDYimjlKa2.value) || 'N/A')), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("h6", {
+    className: "col-12 text-dark"
   }, "Screening to close contact (Children, Adults, and PLHIV contacts)"), /*#__PURE__*/React.createElement("div", {
     className: "col-12 w-100"
   }, /*#__PURE__*/React.createElement("table", null, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "No"), /*#__PURE__*/React.createElement("th", null, "Complete Name"), /*#__PURE__*/React.createElement("th", null, "Age"), /*#__PURE__*/React.createElement("th", null, "TB screening date"), /*#__PURE__*/React.createElement("th", null, "Result"), /*#__PURE__*/React.createElement("th", null, "TPT initiated"))), /*#__PURE__*/React.createElement("tbody", null, relation.map((item, index) => /*#__PURE__*/React.createElement("tr", {

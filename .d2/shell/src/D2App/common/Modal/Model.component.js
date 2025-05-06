@@ -18,7 +18,7 @@ export default function ModelComponent(_ref) {
   }, /*#__PURE__*/React.createElement("div", {
     className: "modal-header"
   }, /*#__PURE__*/React.createElement("h5", {
-    className: "modal-title"
+    className: "modal-title text-dark"
   }, title || ''), /*#__PURE__*/React.createElement("button", {
     type: "button",
     className: "btn-close",
@@ -31,9 +31,9 @@ export default function ModelComponent(_ref) {
     type: "button",
     className: "btn btn-secondary",
     onClick: () => setOpen(false)
-  }, "Close"), actionType && /*#__PURE__*/React.createElement("button", {
+  }, "Close"), actionType ? /*#__PURE__*/React.createElement("button", {
     onClick: () => actionFunctionCallBack(),
     type: "button",
     className: "btn btn-success"
-  }, actionType || '', " "))))));
+  }, actionType || '', " ") : "")))));
 }

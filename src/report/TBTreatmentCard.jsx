@@ -4,39 +4,41 @@ import { hospitalLogo, hospitalSymbal } from "../images";
 import { OPDService } from "../Services/api";
 import { calculateAge } from "../utils/calculateAge";
 import { posOrNeg, yesOrNo } from "../utils/common";
-import { CircularLoader } from "@dhis2/ui-core";
+import { CunstomLoader } from "../components/Loader";
+// import { CircularLoader } from "@dhis2/ui-core";
 
 const DAM_VALUE = ['kcLrIgGhPMM', 'Nanz6h218xh', 'hprn97zZAaO', 'gGi8Wtiphc6']
 
-const styles = {
-  overlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100vw',
-    height: '100vh',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)', // background fade
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 9999, // Make sure it's on top
-    backdropFilter: 'blur(4px)', // optional: adds a blur effect
-  },
-}
+// const styles = {
+//   overlay: {
+//     position: 'fixed',
+//     top: 0,
+//     left: 0,
+//     width: '100vw',
+//     height: '100vh',
+//     backgroundColor: 'rgba(0, 0, 0, 0.4)', // background fade
+//     display: 'flex',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     zIndex: 9999, // Make sure it's on top
+//     backdropFilter: 'blur(4px)', // optional: adds a blur effect
+//   },
+// }
 
-const TbTreatmentCard = ({ selectedProgramValue, tie }) => {
+const TbTreatmentCard = ({ pId, tie }) => {
+
   const [fetchData, setFetchedData] = useState({});
   const [observation, setObservation] = useState('');
   const [relation, setRelation] = useState([]);
   const [cardLoading, setCardLoading] = useState(false);
 
   async function fetchTrackedEntityInstances() {
-    if (!selectedProgramValue) return;
+    if (!pId) return;
 
     setCardLoading(true)
 
     try {
-      const allTrackedEntities = await OPDService.trackedEntityInstancesMultipleStages(selectedProgramValue, tie);
+      const allTrackedEntities = await OPDService.trackedEntityInstancesMultipleStages(pId, tie);
       const allRelations = await OPDService.screeningCloseRelations(tie);
 
       let objectedData = {};
@@ -73,6 +75,7 @@ const TbTreatmentCard = ({ selectedProgramValue, tie }) => {
       setFetchedData(objectedData);
       setRelation(rel);
       setCardLoading(false)
+
     } catch (error) {
       setCardLoading(false)
       console.log('error', error)
@@ -93,18 +96,19 @@ const TbTreatmentCard = ({ selectedProgramValue, tie }) => {
 
   return (
     <>
-      {cardLoading &&
-        <div style={styles.overlay}>
-          <CircularLoader />
-        </div>
+      {cardLoading && <CunstomLoader />
+        // <div style={styles.overlay}>
+        //   <CircularLoader />
+        // </div>
       }
+
       <div
         id="printing"
         className="modal-info"
       >
         <div className="logo">
           <div>
-            <strong>FORMATU TB 4</strong>
+            <strong className="text-dark">FORMATU TB 4</strong>
           </div>
           <div>
             <img src={hospitalSymbal} alt="symbol" />
@@ -114,11 +118,11 @@ const TbTreatmentCard = ({ selectedProgramValue, tie }) => {
           </div>
         </div>
         <div className="header">
-          <span className="no-bold">
+          <span className="no-bold text-dark">
             NATIONAL PROGRAM FOR TUBERCULOSE CONTROL
           </span>
           <br />
-          <i>TUBERCULOSE TREATMENT CARD</i>
+          <i className="text-dark">TUBERCULOSE TREATMENT CARD</i>
         </div>
         <div className="row g-2">
 
@@ -335,17 +339,17 @@ const TbTreatmentCard = ({ selectedProgramValue, tie }) => {
           </div>
 
           <br ></br>
-          <h6 className="col-12 my-2">
+          <h6 className="col-12 my-2 text-black">
             REGIMENT: {fetchData['F7pEZBWhMTN']?.value || 'N/A'}
           </h6>
           <br ></br>
-          <h6 className="col-12" onClick={() => openInNewTab(fetchData['Ms2aNVW7foI']?.value || '')} >Calendar: <span className="text-primary " style={{ cursor: 'pointer' }}>{fetchData['Ms2aNVW7foI']?.value || 'N/A'}</span></h6>
+          <h6 className="col-12 text-black" onClick={() => openInNewTab(fetchData['FgDYimjlKap']?.value || '')} >Calendar: <span className="text-primary " style={{ cursor: 'pointer' }}>{fetchData['FgDYimjlKap']?.value || 'N/A'}</span></h6>
 
 
           <hr />
 
           {/* Screening Table */}
-          <h6 className="col-12">Screening to close contact (Children, Adults, and PLHIV contacts)</h6>
+          <h6 className="col-12 text-dark">Screening to close contact (Children, Adults, and PLHIV contacts)</h6>
           <div className="col-12 w-100">
             <table>
               <thead>

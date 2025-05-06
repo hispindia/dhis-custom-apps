@@ -9,7 +9,7 @@ export default function ModelComponent({ setOpen, open, title = '', actionType, 
                     <div className="modal-dialog modal-xl" >
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title">{title || ''}</h5>
+                                <h5 className="modal-title text-dark">{title || ''}</h5>
                                 <button
                                     type="button"
                                     className="btn-close"
@@ -27,7 +27,7 @@ export default function ModelComponent({ setOpen, open, title = '', actionType, 
                                 >
                                     Close
                                 </button>
-                                {actionType && <button onClick={() => actionFunctionCallBack()} type="button" className="btn btn-success">{actionType || ''} </button>}
+                                {actionType ? <button onClick={() => actionFunctionCallBack()} type="button" className="btn btn-success">{actionType || ''} </button>:""}
                             </div>
                         </div>
                     </div>

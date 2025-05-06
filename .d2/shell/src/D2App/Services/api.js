@@ -1,12 +1,12 @@
-function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return typeof key === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (typeof input !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (typeof res !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 export class OPDService {}
-_defineProperty(OPDService, "EventAPi", async (selectedProgramValue, show) => {
+_defineProperty(OPDService, "EventAPi", async (pId, tIid) => {
   const requestOptions = {
     method: 'GET'
   };
-  let response = await fetch(`../../events.json?skipPaging=true&program=${selectedProgramValue}&trackedEntityInstance=${show.id}&fields=dataValues[dataElement,value],eventDate,programStage,status`, requestOptions);
+  let response = await fetch(`../../events.json?skipPaging=true&program=${pId}&trackedEntityInstance=${tIid}&fields=dataValues[dataElement,value],eventDate,programStage,status`, requestOptions);
   return response.json();
 });
 _defineProperty(OPDService, "ProgramStages", async () => {
@@ -30,11 +30,22 @@ _defineProperty(OPDService, "Programoptions", async () => {
   let response = await fetch(`../../29/sqlViews/oZAXWFlZgI7/data?paging=false`, requestOptions);
   return response.json();
 });
-_defineProperty(OPDService, "tableDataplot", async selectedProgramValue => {
+_defineProperty(OPDService, "tableDataplot", async _ref => {
+  let {
+    id,
+    page,
+    filter
+  } = _ref;
+  let url = `../../tracker/trackedEntities.json?orgUnit=Fn51zf6ifbm&program=${id}&ouMode=DESCENDANTS&page=${page}&totalPages=true`;
+  if (filter) {
+    for (const key in filter) {
+      url += "&filter=" + key + ":eq:" + filter[key];
+    }
+  }
   const requestOptions = {
     method: 'GET'
   };
-  let response = await fetch(`../../trackedEntityInstances.json?skipPaging=true&ou=Fn51zf6ifbm&program=${encodeURIComponent(selectedProgramValue)}&ouMode=DESCENDANTS`, requestOptions);
+  let response = await fetch(url, requestOptions);
   return response.json();
 });
 _defineProperty(OPDService, "tableHeaderData", async selectedProgramValue => {
@@ -42,6 +53,13 @@ _defineProperty(OPDService, "tableHeaderData", async selectedProgramValue => {
     method: 'GET'
   };
   let response = await fetch(`../../programs/${selectedProgramValue}.json?fields=programTrackedEntityAttributes%5BtrackedEntityAttribute%5Bid,name,formName,attributeValues%5Battribute%5Bid,name,code%5D,value%5D%5D%5D`, requestOptions);
+  return response.json();
+});
+_defineProperty(OPDService, "collectAttributes", async pId => {
+  const requestOptions = {
+    method: 'GET'
+  };
+  let response = await fetch(`../../programs/${pId}.json?fields=programTrackedEntityAttributes%5BtrackedEntityAttribute%5Bid,name,formName,attributeValues%5Battribute%5Bid,name,code%5D,value%5D%5D%5D`, requestOptions);
   return response.json();
 });
 //working on this api........

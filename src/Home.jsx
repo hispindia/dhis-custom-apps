@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
   Table,
@@ -7,8 +6,6 @@ import {
   TableRow,
   TableCell,
   TableHead,
-  Button,
-  CircularLoader,
 } from "@dhis2/ui-core";
 import ReactPaginate from "react-js-pagination";
 import { CircularProgress } from "@material-ui/core";
@@ -18,6 +15,7 @@ import { OPDService } from "./Services/api";
 import TBTreatmentCard from "./report/TBTreatmentCard";
 import { downloadPDF } from "./export/export";
 import ModelComponent from "./common/Modal/Model.component";
+import ThemeButton from "./components/ThemeButton";
 
 
 const styles = {
@@ -411,8 +409,6 @@ const Home = () => {
   };
   return (
     <>
-
-
       <ModelComponent
         setOpen={setDownloadOpen}
         title='TB Treatment Card Report'
@@ -451,11 +447,12 @@ const Home = () => {
                   )}
                 </div>
                 <div class="col-2">
-                  <button
+                  {/* <button
                     type="button" class="btn btn-secondary w-100"
                     onClick={toggleMode}>
                     {darkMode ? "Light Mode" : "Dark Mode"}
-                  </button>
+                  </button> */}
+                  <ThemeButton /> 
                 </div>
                 <div class="col-2">
                   <button

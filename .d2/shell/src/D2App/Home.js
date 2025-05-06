@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Table, TableBody, TableRow, TableCell, TableHead, Button, CircularLoader } from "@dhis2/ui-core";
+import { Table, TableBody, TableRow, TableCell, TableHead } from "@dhis2/ui-core";
 import ReactPaginate from "react-js-pagination";
 import { CircularProgress } from "@material-ui/core";
 import classes from "./App.module.css";
@@ -10,6 +9,7 @@ import { OPDService } from "./Services/api";
 import TBTreatmentCard from "./report/TBTreatmentCard";
 import { downloadPDF } from "./export/export";
 import ModelComponent from "./common/Modal/Model.component";
+import ThemeButton from "./components/ThemeButton";
 const styles = {
   overlay: {
     position: 'fixed',
@@ -27,7 +27,6 @@ const styles = {
     backdropFilter: 'blur(4px)' // optional: adds a blur effect
   }
 };
-
 const Home = () => {
   var _eventData$events, _header1$programTrack7, _header1$programTrack8, _header1$programTrack9, _header1$programTrack10, _header1$programTrack11, _val;
   const [options, setOptions] = useState([]);
@@ -348,7 +347,6 @@ const Home = () => {
       }
     }
   }
-
   const getNameProgameStage = id => {
     var _programStages$progra;
     const programStage = programStages === null || programStages === void 0 ? void 0 : (_programStages$progra = programStages.programStages) === null || _programStages$progra === void 0 ? void 0 : _programStages$progra.find(stage => stage.id === id);
@@ -400,11 +398,7 @@ const Home = () => {
     })
   }, option[1])))), /*#__PURE__*/React.createElement("div", {
     class: "col-2"
-  }, /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    class: "btn btn-secondary w-100",
-    onClick: toggleMode
-  }, darkMode ? "Light Mode" : "Dark Mode")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(ThemeButton, null)), /*#__PURE__*/React.createElement("div", {
     class: "col-2"
   }, /*#__PURE__*/React.createElement("button", {
     type: "button",

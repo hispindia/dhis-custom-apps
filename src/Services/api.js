@@ -1,9 +1,9 @@
 export class OPDService {
 
-    static EventAPi = async (selectedProgramValue, show) => {
+    static EventAPi = async (pId, tIid) => {
         const requestOptions = { method: 'GET' };
 
-        let response = await fetch(`../../events.json?skipPaging=true&program=${selectedProgramValue}&trackedEntityInstance=${show.id}&fields=dataValues[dataElement,value],eventDate,programStage,status`, requestOptions)
+        let response = await fetch(`../../events.json?skipPaging=true&program=${pId}&trackedEntityInstance=${tIid}&fields=dataValues[dataElement,value],eventDate,programStage,status`, requestOptions)
         return response.json();
     }
 
@@ -13,7 +13,7 @@ export class OPDService {
         let response = await fetch(`../../programStages.json?paging=false&fields=id,name`, requestOptions)
         return response.json();
     }
-    
+
     static AllDataelement = async () => {
         const requestOptions = { method: 'GET' };
 
@@ -27,16 +27,31 @@ export class OPDService {
         let response = await fetch(`../../29/sqlViews/oZAXWFlZgI7/data?paging=false`, requestOptions)
         return response.json();
     }
-    static tableDataplot = async (selectedProgramValue) => {
+    static tableDataplot = async ({ id, page, filter }) => {
+        let url = `../../tracker/trackedEntities.json?orgUnit=Fn51zf6ifbm&program=${id}&ouMode=DESCENDANTS&page=${page}&totalPages=true`
+
+        if (filter) {
+            for (const key in filter) {
+                url += "&filter=" + key + ":eq:" + filter[key]
+            }
+        }
+
         const requestOptions = { method: 'GET' };
 
-        let response = await fetch(`../../trackedEntityInstances.json?skipPaging=true&ou=Fn51zf6ifbm&program=${encodeURIComponent(selectedProgramValue)}&ouMode=DESCENDANTS`, requestOptions)
+        let response = await fetch(url, requestOptions)
         return response.json();
     }
     static tableHeaderData = async (selectedProgramValue) => {
         const requestOptions = { method: 'GET' };
 
         let response = await fetch(`../../programs/${selectedProgramValue}.json?fields=programTrackedEntityAttributes%5BtrackedEntityAttribute%5Bid,name,formName,attributeValues%5Battribute%5Bid,name,code%5D,value%5D%5D%5D`, requestOptions)
+        return response.json();
+    }
+
+    static collectAttributes = async (pId) => {
+        const requestOptions = { method: 'GET' };
+
+        let response = await fetch(`../../programs/${pId}.json?fields=programTrackedEntityAttributes%5BtrackedEntityAttribute%5Bid,name,formName,attributeValues%5Battribute%5Bid,name,code%5D,value%5D%5D%5D`, requestOptions)
         return response.json();
     }
 
@@ -69,8 +84,6 @@ export class OPDService {
             else reject({});
         })
     };
-
-
 }
 
 
