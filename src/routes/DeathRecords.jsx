@@ -4,11 +4,14 @@ import React, { useEffect, useState } from "react";
 import styles from '../App.module.css';
 import { fetchDeathCertficateRecords } from "../API/DeathCertAPI";
 import { useNavigate } from "react-router-dom";
+import { TablePagination } from "@mui/material";
 
 function DeathRecords() {
   const [searchQuery, setSearchQuery] = useState("");
   const [deathRecords, setDeathRecords] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const[rowsPerPage, setRowsPerPage] = useState(3);
   const navigate = useNavigate();
 
 
@@ -30,6 +33,20 @@ function DeathRecords() {
   const filteredRecords = deathRecords.filter((r) =>
    (r["FL9N3yXzucT.aTbE3kYe98D"] || "").includes(searchQuery.toLowerCase())
   );
+
+  const paginatedRecords = filteredRecords.slice(
+      page * rowsPerPage,
+      page * rowsPerPage + rowsPerPage
+  )
+
+  const handlePageChange = (event, newPage) => {
+      setPage(newPage);
+  }
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10))
+  }
+
 
   return (
     <div className={styles.main}>
@@ -56,7 +73,7 @@ function DeathRecords() {
             </tr>
           </thead>
           <tbody>
-            {filteredRecords.map((record, index) => (
+            {paginatedRecords.map((record, index) => (
               <tr key={index}>
                 {/* <td>{new Date().toLocaleDateString()}</td> */}
                  {/* date of report*/} <td>{record?.["FL9N3yXzucT.jGGNvNYhu47"] || ""}</td>    
@@ -74,6 +91,16 @@ function DeathRecords() {
             ))}
           </tbody>
         </table>
+        <TablePagination 
+         component="div"
+         count={filteredRecords.length}
+         page={page}
+         onPageChange={handlePageChange}
+         rowsPerPage={rowsPerPage}
+         onRowsPerPageChange={handleChangeRowsPerPage}
+         
+        
+        />
       </div>
     </div>
   );

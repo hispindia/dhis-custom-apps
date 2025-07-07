@@ -3,11 +3,15 @@ import styles from '../App.module.css';
 // import { fetchBirthRecords } from "../API/BirthAPI";
 import { useNavigate } from "react-router-dom";
 import { fetchBirthCertificateRecords } from "../API/BirthCertAPI";
+import { TablePagination } from "@mui/material";
 
 function BirthRecords() {
   const [searchQuery, setSearchQuery] = useState("");
   const [certificate, setCertificate] = useState([]);
   const [loading, setLoading] = useState(false);
+  const[page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
   const navigate = useNavigate();
 
 
@@ -30,6 +34,25 @@ function BirthRecords() {
   const filteredRecords = certificate.filter((r) =>
     (r["EUfz92HiiVD.R43kdns3YYL"] || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+
+
+//showing only first 10 records
+  const paginatedRecords = filteredRecords.slice(
+      page * rowsPerPage,
+      page * rowsPerPage + rowsPerPage
+  )
+
+//update page change 
+   const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+   }
+
+   const handleChangeRowsPerPage = (event) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);
+   }
+  
 
  
 
@@ -58,7 +81,7 @@ function BirthRecords() {
             </tr>
           </thead>
           <tbody>
-            {filteredRecords.map((record, index) => (
+            {paginatedRecords.map((record, index) => (
               <tr key={index}>
                 <td>{record?.["EUfz92HiiVD.R43kdns3YYL"] || ""}</td> { /* infant name */}
                 <td>{record?.["eventdate"] ? record["eventdate"].split(" ")[0]: ""}</td> { /* dob */}
@@ -73,6 +96,20 @@ function BirthRecords() {
             ))}
           </tbody>
         </table>
+
+        {/* pagination */}
+        <TablePagination 
+            component="div"
+            count={filteredRecords.length}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            rowsPerPageOption={[5, 10, 25, 50, 100]}
+        />
+
+
+        
       </div>
     </div>
   );
