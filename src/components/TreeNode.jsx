@@ -1,23 +1,35 @@
 import React, { useState } from "react";
 import styles from '../App.module.css';
 
-function TreeNode({ node }) {
+function TreeNode({ node, orgUnits }) {
   const [isOpen, setIsOpen] = useState(false);
 
+  const children = orgUnits.find(orgUnit=> orgUnit.id == node.id).children;
 
   return (
     <div className={styles.tree-node}>
-      <span onClick={() => setIsOpen(!isOpen)}>
-        {node.children ? (isOpen ? "▼" : "▶") : "•"}
-      </span>
-      <span>{node.name}</span>
-      {node.children && isOpen && (
-        <div style={{ paddingLeft: "20px" }}>
-          {node.children.map((child, index) => (
-            <TreeNode key={index} node={child} />
+      <div 
+        style={{cursor: children.length ? "pointer" : "default", display:"flex", alignItems: "center"}}
+        onClick={() => children.length && setIsOpen(!isOpen)}
+      >
+
+        <span style={{marginRight: 6}}>
+          {children.length ? (isOpen ? "▼" : "▶") : "•"}
+        </span> 
+
+       <span>{node.name}</span>
+
+      </div>
+     
+     {children.length && isOpen && (
+      <div style={{paddingLeft: "20px"}}>
+          {children.map((child) => (
+            <TreeNode key={child.id} node={child} orgUnits={orgUnits}/>
           ))}
-        </div>
-      )}
+      </div>
+
+     )}
+
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, BrowserRouter, useLocation } from "react-router-dom";
+import { Routes, Route, BrowserRouter, useLocation, useNavigate } from "react-router-dom";
 
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
@@ -12,12 +12,14 @@ import DeathCertificate from "./routes/DeathCertificate";
 function AppContent() {
   const location = useLocation();
   const hideSidebar = location.pathname === "/downloadBirthCertificate";
-
+  const navigate = useNavigate();
   return (
+
     <>
-      <Header />
+      {/* <Header /> */}
       <div className={styles.container}>
         {!hideSidebar && <Sidebar />}
+
         <Routes>
           <Route path="/birth" element={<BirthRecords />} />
           <Route path="/death" element={<DeathRecords />} />
@@ -31,7 +33,7 @@ function AppContent() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/myr_registry/api/apps/birth-death-certificate/">
       <AppContent />
     </BrowserRouter>
   );

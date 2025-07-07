@@ -47,6 +47,10 @@ const styles = {
         borderBottom: "2px solid black",
         width: "100%",
     },
+    borderBlack: {
+        borderBottom: "2px solid black",
+        width: "100%"
+    },
     borderGray: {
         borderBottom: "2px solid #e5e7eb",
         width: "100%",
@@ -280,7 +284,7 @@ const DeathCertificate = () => {
 
                     <hr style={styles.hr} />
                     <h3 style={styles.h3}>Particulars of Deceased</h3>
-                    <hr style={styles.hrGray} />
+                    <hr style={styles.hr} />
 
                     <table style={styles.table}>
                         <tbody>
@@ -293,11 +297,8 @@ const DeathCertificate = () => {
                                 <td style={styles.td}>2. Sex: {certificate?.["FL9N3yXzucT.wxrDsUO1ELy"] || ""}</td>
                                 <td style={styles.td}>8. Citizenship: {certificate?.["FL9N3yXzucT.aTbE3kYe98D"] || ""}</td>
                             </tr>
-                            <tr>
-                                <td colSpan={4}>
-                                    <div style={styles.borderSolid}></div>
-                                </td>
-                            </tr>
+                           
+
                             <tr>
                                 <td style={styles.td}>3. Date of death: {certificate?.["FL9N3yXzucT.jGGNvNYhu47"] || ""}</td>
                                 <td style={styles.td}>9. Religion: {certificate?.["FL9N3yXzucT.b9BVo7x8248"] || ""}</td>
@@ -307,11 +308,7 @@ const DeathCertificate = () => {
                                 <td style={styles.td}>4. Place of death: {certificate?.["FL9N3yXzucT.MOV6uMBMkph"] || ""}</td>
                                 <td style={styles.td}>10. Permanent Address: {certificate?.["FL9N3yXzucT.iXXvJAxbOtd"] || ""}</td>
                             </tr>
-                            <tr>
-                                <td colSpan={4}>
-                                    <div style={styles.borderSolid}></div>
-                                </td>
-                            </tr>
+                           
                             <tr>
                                 <td style={styles.td}>5. Age: {certificate?.["FL9N3yXzucT.KFGxB6wpRxi"] || ""}</td>
                                 <td style={styles.td}>11. Name of Father of the deceased: {certificate?.["FL9N3yXzucT.OpzRl6KIFVU"] || ""}</td>
@@ -321,19 +318,12 @@ const DeathCertificate = () => {
                                 <td style={styles.td}>6. Occupation: {certificate?.["FL9N3yXzucT.s3wKlMmBs8p"] || ""}</td>
                                 <td style={styles.td}>12. Name of Mother of the deceased: {certificate?.["FL9N3yXzucT.xHcmoS3icZD"] || ""}</td>
                             </tr>
-                            <tr>
-                                <td colSpan={4}>
-                                    <div style={styles.borderSolid}></div>
-                                </td>
-                            </tr>
+                           
                             <tr>
                                 <td style={styles.td}>13. Cause of Death: {certificate?.["FL9N3yXzucT.XXDApzQFycS"] || ""}</td>
+                                <td></td>
                             </tr>
-                            <tr>
-                                <td colSpan={4}>
-                                    <div style={styles.borderSolid}></div>
-                                </td>
-                            </tr>
+                           
                             <tr>
                                 <td style={styles.td}>14. Informat's Signature</td>
                                 <td style={styles.td}>Relationship to deceased: {certificate?.["FL9N3yXzucT.qa5eIb216nF"] || ""}</td>
@@ -342,11 +332,7 @@ const DeathCertificate = () => {
                                 <td style={{ ...styles.td, ...styles.pt4 }}>Name: {certificate?.["FL9N3yXzucT.YdNUYjH3rct"] || ""}</td>
                                 <td style={{ ...styles.td, ...styles.pt4 }}>Address: {certificate?.["FL9N3yXzucT.rRpqp6TPWlh"] || ""}</td>
                             </tr>
-                            <tr>
-                                <td colSpan={4}>
-                                    <div style={styles.borderSolid}></div>
-                                </td>
-                            </tr>
+                         
                             <tr>
                                 <td style={styles.td}>15. Cause of Death Certifiers:  {certificate?.["FL9N3yXzucT.aTbE3kYe98D"] || ""}</td>
                                 <td style={styles.td}>
@@ -365,11 +351,7 @@ const DeathCertificate = () => {
                                     Designation {certificate?.["FL9N3yXzucT.NxtfpJnOOHx"] || ""} <span style={styles.w17}></span>
                                 </td>
                             </tr>
-                            <tr>
-                                <td colSpan={4}>
-                                    <div style={styles.borderSolid}></div>
-                                </td>
-                            </tr>
+                           
                         </tbody>
                     </table>
 
