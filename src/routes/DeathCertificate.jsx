@@ -128,9 +128,6 @@ const DeathCertificate = ({orgUnit, orgUnits}) => {
         path: orgUnit.path.split('/').map(ou => orgUnitObj[ou] ? orgUnitObj[ou] : ou)
     }
 
-    console.log("OrgUnit", orgUnit);
-    
-
 
     useEffect(() => {
         if (state?.record) {
@@ -186,7 +183,7 @@ const DeathCertificate = ({orgUnit, orgUnits}) => {
           }}
         >
           {/* Left Section */}
-          <section style={{ color: '#000', fontSize: 16, width: "30%" }}>
+          <section style={{ color: '#000', fontSize: 16, width: "50%" }}>
             <p style={{ marginBottom: 4, marginTop: 12, fontWeight: 'normal' }}>V.R. Form 203</p>
             <div>
               <p style={{ marginBottom: 4, marginTop: 16, fontWeight: 'normal' }}>
@@ -236,8 +233,8 @@ const DeathCertificate = ({orgUnit, orgUnits}) => {
 
             <div>
               <p style={{ fontWeight: 'normal' }}>
-                Ward / Village-tract 
-                  <span style={{
+                Ward / Village-tract ............
+                  {/* <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted black',
                     width: 90,
@@ -245,7 +242,7 @@ const DeathCertificate = ({orgUnit, orgUnits}) => {
                     marginLeft: 8
                   }}>
                     {orgUnit.path[5] ? orgUnit.path[5] : ''}
-                  </span>
+                  </span> */}
               </p>
             </div>
           </section>
