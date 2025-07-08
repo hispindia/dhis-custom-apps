@@ -113,11 +113,24 @@ const styles = {
     mt2Text: { marginTop: "0.5rem" },
 };
 
-const DeathCertificate = () => {
+const DeathCertificate = ({orgUnit, orgUnits}) => {
 
     const { state } = useLocation();
     const [certificate, setCertificate] = useState(state?.record || null);
     const pdfRef = useRef();
+    const orgUnitObj = {};
+    orgUnits.forEach(ou => {
+        orgUnitObj[ou.id] = ou.name;
+    })
+
+    orgUnit = {
+        ...orgUnit, 
+        path: orgUnit.path.split('/').map(ou => orgUnitObj[ou] ? orgUnitObj[ou] : ou)
+    }
+
+    console.log("OrgUnit", orgUnit);
+    
+
 
     useEffect(() => {
         if (state?.record) {
@@ -177,47 +190,62 @@ const DeathCertificate = () => {
             <p style={{ marginBottom: 4, marginTop: 12, fontWeight: 'normal' }}>V.R. Form 203</p>
             <div>
               <p style={{ marginBottom: 4, marginTop: 16, fontWeight: 'normal' }}>
-                State / Division ...........
-                {/* <span style={{
+                State / Division
+                <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted black',
                     width: '31%',
                     verticalAlign: 'middle',
                     marginLeft: 8
-                  }}></span> */}
+                  }}>
+                    {orgUnit.path[2] ? orgUnit.path[2] : ''}
+                  </span>
               </p>
             </div>
             <div>
               <p style={{ fontWeight: 'normal' }}>
-                District ...........
-                {/* <span style={{
+                District 
+                <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted black',
                     width: 90,
                     verticalAlign: 'middle',
                     marginLeft: 8
-                  }}></span> */}
+                  }}>
+                    {orgUnit.path[3] ? orgUnit.path[3] : ''}
+                  </span>
               </p>
 
             </div>
 
             <div>
               <p style={{ fontWeight: 'normal' }}>
-                Township ...........
-                {/* <span style={{
+                Township 
+                <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted black',
                     width: 90,
                     verticalAlign: 'middle',
                     marginLeft: 8
-                  }}></span> */}
+                  }}>
+                    {orgUnit.path[4] ? orgUnit.path[4] : ''}
+                  </span>
               </p>
 
             </div>
 
             <div>
               <p style={{ fontWeight: 'normal' }}>
-                Ward / Village-tract ....
+                Ward / Village-tract 
+                  <span style={{
+                    display: 'inline-block',
+                    borderBottom: '2px dotted black',
+                    width: 90,
+                    verticalAlign: 'middle',
+                    marginLeft: 8
+                  }}>
+                    {orgUnit.path[5] ? orgUnit.path[5] : ''}
+                  </span>
               </p>
             </div>
           </section>

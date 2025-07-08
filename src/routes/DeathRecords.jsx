@@ -6,31 +6,33 @@ import { fetchDeathCertficateRecords } from "../API/DeathCertAPI";
 import { useNavigate } from "react-router-dom";
 import { TablePagination } from "@mui/material";
 
-function DeathRecords() {
+function DeathRecords({orgUnit}) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [deathRecords, setDeathRecords] = useState([]);
+  const [certificate, setCertificate] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const[rowsPerPage, setRowsPerPage] = useState(3);
+  const[rowsPerPage, setRowsPerPage] = useState(10);
+
+
   const navigate = useNavigate();
 
 
   useEffect(() => {
     setLoading(true);
-          fetchDeathCertficateRecords()
+          fetchDeathCertficateRecords(orgUnit.id)
           .then(data => {      
            const headers = data.headers.map(h => h.name);
            const records = data.rows.map( row => 
               Object.fromEntries(row.map((value, i) => [headers[i], value]))
          );
-            setDeathRecords(records);
+            setCertificate(records);
           })
-          .catch(data => setDeathRecords([]))
+          .catch(data => setCertificate([]))
           .finally(() => setLoading(false));
     
-  }, [])
+  }, [orgUnit])
 
-  const filteredRecords = deathRecords.filter((r) =>
+  const filteredRecords = certificate.filter((r) =>
    (r["FL9N3yXzucT.aTbE3kYe98D"] || "").includes(searchQuery.toLowerCase())
   );
 

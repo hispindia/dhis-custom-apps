@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchBirthCertificateRecords } from "../API/BirthCertAPI";
 import { TablePagination } from "@mui/material";
 
-function BirthRecords() {
+function BirthRecords({orgUnit}) {
   const [searchQuery, setSearchQuery] = useState("");
   const [certificate, setCertificate] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -17,7 +17,7 @@ function BirthRecords() {
 
   useEffect(() => {
      setLoading(true);
-      fetchBirthCertificateRecords()
+      fetchBirthCertificateRecords(orgUnit.id)
        .then(data => {      
         const headers = data.headers.map(h => h.name);
         const records = data.rows.map( row => 
@@ -28,7 +28,7 @@ function BirthRecords() {
        .catch(data => setCertificate([]))
        .finally(() => setLoading(false));
  
-   }, []);
+   }, [orgUnit]);
 
 
   const filteredRecords = certificate.filter((r) =>
