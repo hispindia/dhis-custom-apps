@@ -77,14 +77,14 @@ function DeathRecords({orgUnit}) {
           <tbody>
             {paginatedRecords.map((record, index) => (
               <tr key={index}>
-                {/* <td>{new Date().toLocaleDateString()}</td> */}
-                 {/* date of report*/} <td>{record?.["FL9N3yXzucT.jGGNvNYhu47"] || ""}</td>    
-              {/* date of death*/} <td>{record?.["FL9N3yXzucT.jGGNvNYhu47"] || ""}</td>
-                {/* Name */} <td>{record?.["FL9N3yXzucT.aTbE3kYe98D"] || ""}</td>
-              {/* gender */} <td>{record?.["FL9N3yXzucT.wxrDsUO1ELy"] || ""}</td>
-                 {/* age */} <td>{record?.["FL9N3yXzucT.KFGxB6wpRxi"] || ""}</td>
-               {/*permanent address */} <td>{record?.["FL9N3yXzucT.iXXvJAxbOtd"] || ""}</td>
-                {/* cause of death */} <td>{record?.["FL9N3yXzucT.XXDApzQFycS"] || ""}</td>
+               
+              <td>{record?.["FL9N3yXzucT.jGGNvNYhu47"] ? record["FL9N3yXzucT.jGGNvNYhu47"].split(" ")[0]: ""}</td>     {/* date of report*/}
+              <td>{record?.["FL9N3yXzucT.jGGNvNYhu47"] ? record["FL9N3yXzucT.jGGNvNYhu47"].split(" ")[0]: ""}</td>  {/* date of death*/}
+              <td>{record?.["FL9N3yXzucT.aTbE3kYe98D"] || ""}</td>  {/* date of death*/}
+              <td>{record?.["FL9N3yXzucT.wxrDsUO1ELy"] || ""}</td>  {/* date of death*/}
+              <td>{record?.["FL9N3yXzucT.KFGxB6wpRxi"] || ""}</td>  {/* date of death*/}
+              <td>{record?.["FL9N3yXzucT.iXXvJAxbOtd"] || ""}</td>  {/*permanent address */} 
+              <td>{record?.["FL9N3yXzucT.XXDApzQFycS"] || ""}</td>   {/* cause of death */} 
                  <td>
                   <button className="button" onClick={() => navigate('/death-certificate', {state: {record}})}>
                     ⬇️ Generate Certificate </button>

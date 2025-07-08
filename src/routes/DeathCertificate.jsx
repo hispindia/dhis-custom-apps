@@ -325,7 +325,7 @@ const DeathCertificate = ({orgUnit, orgUnits}) => {
                            
 
                             <tr>
-                                <td style={styles.td}>3. Date of death: {certificate?.["FL9N3yXzucT.jGGNvNYhu47"] || ""}</td>
+                                <td style={styles.td}>3. Date of death: {certificate?.["FL9N3yXzucT.jGGNvNYhu47"] ? certificate["FL9N3yXzucT.jGGNvNYhu47"].split(" ")[0]: ""}</td>
                                 <td style={styles.td}>9. Religion: {certificate?.["FL9N3yXzucT.b9BVo7x8248"] || ""}</td>
                             </tr>
                             
