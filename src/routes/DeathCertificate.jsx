@@ -248,7 +248,7 @@ const DeathCertificate = ({orgUnit, orgUnits}) => {
           </section>
 
           {/* Right Section */}
-          <section style={{ marginTop: 40, color: '#000', fontSize: 16, width: "30%" }}>
+          <section style={{ marginTop: 40, color: '#000', fontSize: 16,  width: "30%" }}>
             <p style={{ fontWeight: 'normal' }}>
               Page No............
               {/* <span style={{

@@ -25,23 +25,39 @@ const Sidebar = ({setOrgUnit, userOrgunit, orgUnits}) => {
     <div className={styles.sidebar}>
       <div className="card">
         {/* <h3>🔍 Search Records</h3> */}
-        <Link to="/birth"
+        <Link to="/born-alive"
          className="button" 
          style={{
            marginBottom: "0.5rem", 
            display: "block", 
-           backgroundColor: selectedTab === "birth" ? "#e0f7fa":"transparent",
+           backgroundColor: selectedTab === "born-alive" ? "#e0f7fa":"transparent",
            borderRadius: "4px",
            padding: "6px 10px",
            transition: "background-color 0.3s ease",
-           border: selectedTab === "birth" ? "1px solid green" : "",
+           border: selectedTab === "born-alive" ? "1px solid green" : "",
            textDecoration: "none",
            }}
-            onClick={() => setSelectedTab("birth")}
+            onClick={() => setSelectedTab("born-alive")}
            >
           Birth Records
         </Link>
 
+        <Link to="/still-born"
+         className="button" 
+         style={{
+           marginBottom: "0.5rem", 
+           display: "block", 
+           backgroundColor: selectedTab === "still-birth" ? "#e0f7fa":"transparent",
+           borderRadius: "4px",
+           padding: "6px 10px",
+           transition: "background-color 0.3s ease",
+           border: selectedTab === "still-birth" ? "1px solid green" : "",
+           textDecoration: "none",
+           }}
+            onClick={() => setSelectedTab("still-birth")}
+          >
+          Still Born Birth Records
+        </Link>
 
         <Link to="/death"
          className="button"

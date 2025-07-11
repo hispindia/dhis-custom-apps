@@ -5,8 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { fetchBirthCertificateRecords } from "../API/BirthCertAPI";
 import { TablePagination } from "@mui/material";
 
-function BirthRecords({orgUnit}) {
- 
+const LateFoetalDeathRecord = ({orgUnit}) => {
+//   const [searchQuery, setSearchQuery] = useState("");
+
   const [certificate, setCertificate] = useState([]);
   const [loading, setLoading] = useState(false);
   const[page, setPage] = useState(0);
@@ -30,6 +31,10 @@ function BirthRecords({orgUnit}) {
  
    }, [orgUnit]);
 
+
+//   const filteredRecords = certificate.filter((r) =>
+//     (r["EUfz92HiiVD.R43kdns3YYL"] || "").toLowerCase().includes(searchQuery.toLowerCase())
+//   );
 
 
 
@@ -58,7 +63,7 @@ function BirthRecords({orgUnit}) {
     <div className={styles.main}>
       <div className={styles.card}>
         <h3> Birth Certificate Records</h3>
-       
+        
         <table>
           <thead>
             <tr>
@@ -79,7 +84,7 @@ function BirthRecords({orgUnit}) {
                 <td>{record?.["EUfz92HiiVD.UYmZMZt32hZ"] || ""}</td> { /* Mothers Name */}
                 <td>{record?.["EUfz92HiiVD.RKs8td9BnNj"] || ""}</td>   { /* Fathers Name */}
                 <td>
-                  <button className="button" onClick={() => navigate('/birth-certificate', {state: {record}})}>
+                  <button className="button" onClick={() => navigate('/late-Foetal-death-certificate', {state: {record}})}>
                     ⬇️ Generate Certificate </button>
                 </td>
               </tr>
@@ -105,4 +110,4 @@ function BirthRecords({orgUnit}) {
   );
 }
 
-export default BirthRecords;
+export default  LateFoetalDeathRecord;

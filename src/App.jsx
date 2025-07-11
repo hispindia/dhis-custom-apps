@@ -10,6 +10,8 @@ import BirthCertificate from "./routes/BirthCertificate";
 import DeathCertificate from "./routes/DeathCertificate";
 import { useState, useEffect } from "react";
 import { fetchOrgUnits } from "./API/OrganizationAPI";
+import LateFoetalDeathRecord from "./routes/LateFoetalDeathRecord";
+import LateFoetalDeathCert from "./routes/lateFoetalDeathCert";
 
 function AppContent() {
   const location = useLocation();
@@ -46,10 +48,12 @@ function AppContent() {
         {!hideSidebar && <Sidebar  setOrgUnit={setOrgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>}
 
         <Routes>
-          <Route path="/birth" element={<BirthRecords orgUnit={orgUnit} />} />
+          <Route path="/born-alive" element={<BirthRecords orgUnit={orgUnit} />} />
           <Route path="/death" element={<DeathRecords orgUnit={orgUnit}/>} />
+          <Route path="/still-born" element={<LateFoetalDeathRecord orgUnit={orgUnit}/>} />
           <Route path="/birth-certificate" element={<BirthCertificate orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>} />
           <Route path="/death-certificate" element={<DeathCertificate orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>} />
+          <Route path="/late-Foetal-death-certificate" element={<LateFoetalDeathCert orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>} />
         </Routes>
       </div>
     </>

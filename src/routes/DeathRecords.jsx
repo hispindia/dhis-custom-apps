@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { TablePagination } from "@mui/material";
 
 function DeathRecords({orgUnit}) {
-  const [searchQuery, setSearchQuery] = useState("");
+  
   const [certificate, setCertificate] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -32,11 +32,9 @@ function DeathRecords({orgUnit}) {
     
   }, [orgUnit])
 
-  const filteredRecords = certificate.filter((r) =>
-   (r["FL9N3yXzucT.aTbE3kYe98D"] || "").includes(searchQuery.toLowerCase())
-  );
+  
 
-  const paginatedRecords = filteredRecords.slice(
+  const paginatedRecords = certificate.slice(
       page * rowsPerPage,
       page * rowsPerPage + rowsPerPage
   )
@@ -54,13 +52,7 @@ function DeathRecords({orgUnit}) {
     <div className={styles.main}>
       <div className={styles.card}>
         <h3> Death Certificate Records</h3>
-        <input
-          type="text"
-          placeholder="Search records..."
-          style={{ width: "100%", padding: "0.5rem", marginBottom: "1rem" }}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+      
         <table>
           <thead>
             <tr>
@@ -75,7 +67,7 @@ function DeathRecords({orgUnit}) {
             </tr>
           </thead>
           <tbody>
-            {paginatedRecords.map((record, index) => (
+            {certificate.map((record, index) => (
               <tr key={index}>
                
               <td>{record?.["FL9N3yXzucT.jGGNvNYhu47"] ? record["FL9N3yXzucT.jGGNvNYhu47"].split(" ")[0]: ""}</td>     {/* date of report*/}
@@ -95,7 +87,7 @@ function DeathRecords({orgUnit}) {
         </table>
         <TablePagination 
          component="div"
-         count={filteredRecords.length}
+         count={certificate.length}
          page={page}
          onPageChange={handlePageChange}
          rowsPerPage={rowsPerPage}

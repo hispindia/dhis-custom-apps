@@ -3,25 +3,25 @@ import html2pdf from "html2pdf.js";
 import { fetchBirthCertificateRecords } from "../API/BirthCertAPI";
 import { data } from "autoprefixer";
 import { useLocation, useParams } from "react-router-dom";
-import { red } from "@mui/material/colors";
+
 
 
 const borderDotted = {
   display: "inline-block",
-  borderBottom: "2px dotted red",
+  borderBottom: "2px dotted blue",
   verticalAlign: "middle",
 };
 const borderSolid = {
-  borderBottom: "2px solid red",
+  borderBottom: "2px solid blue",
   width: "100%",
 };
 const borderGray = {
-  borderBottom: "2px solid red",
+  borderBottom: "2px solid blue",
   width: "100%",
 };
 
 const borderBlack = {
-  borderBottom: "2px dotted red",
+  borderBottom: "2px dotted blue",
   width: "100%"
 }
 
@@ -32,7 +32,7 @@ const styles = {
     alignItems: 'flex-start',
     gap: '350px',
     marginBottom: '1.5rem',
-    color: 'red'
+    color: 'blue'
   },
   section: {
     fontWeight: 'normal',
@@ -50,7 +50,7 @@ const styles = {
   },
   dottedLine: {
     display: 'inline-block',
-    borderBottom: '2px dotted red',
+    borderBottom: '2px dotted blue',
     verticalAlign: 'middle',
     marginLeft: '5px',
   },
@@ -66,7 +66,7 @@ const styles = {
   dateBox: {
     display: 'inline-block',
     width: '0.75rem',
-    borderBottom: '2px dotted red',
+    borderBottom: '2px dotted blue',
     marginLeft: '5px',
     verticalAlign: 'middle',
   },
@@ -75,7 +75,7 @@ const styles = {
   },
 };
 
-const BirthCertificate = ({orgUnit, orgUnits}) => {
+const LateFoetalDeathCert = ({orgUnit, orgUnits}) => {
   // const {eventId} = useParams();
   const { state } = useLocation();
   const [certificate, setCertificate] = useState(state?.record || null);
@@ -125,7 +125,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
           zIndex: 10,
           padding: "8px 16px",
           background: "#1976d2",
-          color: "red",
+          color: "#000",
           border: "none",
           borderRadius: 4,
           cursor: "pointer",
@@ -136,7 +136,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
       </button>
 
       <main ref={pdfRef} style={{ margin: "1rem", width: "100%" }}>
-        <h2 style={{ fontSize: 24, color: "red", fontWeight: "bold", textAlign: "center", marginBottom: 8 }}>BIRTH CERTIFICATE</h2>
+        <h2 style={{ fontSize: 24, color: "blue", fontWeight: "bold", textAlign: "center", marginBottom: 8 }}>LATE FOETAL DEATH CERTIFICATE</h2>
         {/* Header for main certificate */}
         <header
           style={{
@@ -144,19 +144,19 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
             justifyContent: 'space-between',
             alignItems: 'flex-start',
             marginBottom: '1.5rem',
-            color: 'red', 
+            color: 'blue', 
             backgroundColor: '#fff'
           }}
         >
           {/* Left Section */}
           <section style={{ color: '#000', fontSize: 16, width: "30%" }}>
-            <p style={{ marginBottom: 4, marginTop: 12, fontWeight: 'normal', color:'red' }}>V.R. Form 203</p>
+            <p style={{ marginBottom: 4, marginTop: 12, fontWeight: 'normal', color:'blue' }}>V.R. Form 153</p>
             <div>
-              <p style={{ marginBottom: 4, marginTop: 16, fontWeight: 'normal', color:'red'}}>
+              <p style={{ marginBottom: 4, marginTop: 16, fontWeight: 'normal', color:'blue'}}>
                 State / Division
                 <span style={{
                     display: 'inline-block',
-                    borderBottom: '2px dotted red',
+                    borderBottom: '2px dotted blue',
                     width: '31%',
                     verticalAlign: 'middle',
                     marginLeft: 8
@@ -166,11 +166,11 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
               </p>
             </div>
             <div>
-              <p style={{ fontWeight: 'normal', color: 'red' }}>
+              <p style={{ fontWeight: 'normal', color: 'blue' }}>
                 District 
                 <span style={{
                     display: 'inline-block',
-                    borderBottom: '2px dotted red',
+                    borderBottom: '2px dotted blue',
                     width: '31%',
                     verticalAlign: 'middle',
                     marginLeft: 8
@@ -182,11 +182,11 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
             </div>
 
             <div>
-              <p style={{ fontWeight: 'normal', color:'red'}}>
+              <p style={{ fontWeight: 'normal', color:'blue'}}>
                 Township 
                <span style={{
                     display: 'inline-block',
-                    borderBottom: '2px dotted red',
+                    borderBottom: '2px dotted blue',
                     width: '31%',
                     verticalAlign: 'middle',
                     marginLeft: 8
@@ -199,7 +199,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
             </div>
 
             <div>
-              <p style={{ fontWeight: 'normal', color: 'red'}}>
+              <p style={{ fontWeight: 'normal', color: 'blue'}}>
                 Ward / Village-tract  ............
                 {/* <span style={{
                     display: 'inline-block',
@@ -215,7 +215,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
           </section>
 
           {/* Right Section */}
-          <section style={{ marginTop: 40, color: 'red', fontSize: 16, width: "30%" }}>
+          <section style={{ marginTop: 40, color: 'blue', fontSize: 16, width: "30%" }}>
             <p style={{ fontWeight: 'normal' }}>
               Page No ............
               {/* <span style={{
@@ -228,7 +228,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                     {orgUnit.path[5] ? orgUnit.path[5] : '............'}
                   </span> */}
             </p>
-            <p style={{ fontWeight: 'normal', color: 'red' }}>
+            <p style={{ fontWeight: 'normal', color: 'blue' }}>
               Book No............
               {/* <span style={{
                   display: 'inline-block',
@@ -238,7 +238,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                   marginLeft: 8
                 }}></span> */}
             </p>
-            <p style={{ marginBottom: 4, fontWeight: 'normal', color: 'red' }}>
+            <p style={{ marginBottom: 4, fontWeight: 'normal', color: 'blue' }}>
               Entry No...........
               {/* <span style={{
                   display: 'inline-block',
@@ -248,7 +248,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                   marginLeft: 8
                 }}></span> */}
             </p>
-            <p style={{ marginBottom: 4, fontWeight: 'normal', color:'red'}}>
+            <p style={{ marginBottom: 4, fontWeight: 'normal', color:'blue'}}>
               Date of Registration..../.../
               {/* <span style={{
                   display: 'inline-block',
@@ -282,25 +282,25 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
           <div>
             <div style={borderSolid}></div>
             <div style={{ display: "flex" }}>
-              <div style={{ width: "25%", textAlign: "center", fontWeight: "600", color: 'red', display: "flex", alignItems: "center", justifyContent: "center", paddingRight: 16, borderRight: "2px solid red" }}>
+              <div style={{ width: "25%", textAlign: "center", fontWeight: "600", color: 'blue', display: "flex", alignItems: "center", justifyContent: "center", paddingRight: 16, borderRight: "2px solid blue" }}>
                 Particular of Child
               </div>
               <div style={{ width: "75%" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: "8px" }}>
 
 
-                  <div style={{ width: "50%", paddingBottom: 4, color: 'red'}}>1. Name : {certificate?.["EUfz92HiiVD.R43kdns3YYL"] || ""} </div>  {/* Name - 1 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: 'blue'}}>1. Sex : {certificate?.["EUfz92HiiVD.R43kdns3YYL"] || ""} </div>  {/* Name - 1 index */}
 
 
-                  <div style={{ width: "50%", paddingBottom: 4, color: 'red' }}>3. Date of Birth: {certificate?.["eventdate"] ? certificate["eventdate"].split(" ")[0] : ""}</div>   {/* dob 0th index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: 'blue' }}>3. Place of Birth: {certificate?.["eventdate"] ? certificate["eventdate"].split(" ")[0] : ""}</div>   {/* dob 0th index */}
 
 
                 </div>
 
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%",color: 'red' }}>2. Sex:  {certificate?.["EUfz92HiiVD.wxrDsUO1ELy"] || ""}</div> {/* gender - 2 index */}
-                  <div style={{ width: "50%", color: 'red' }}>4. Place of Birth: {certificate?.["EUfz92HiiVD.JAU9NM7UqQP"] || ""}</div> {/* 4 index */}
+                  <div style={{ width: "50%",color: 'blue' }}>2. Date of Birth:  {certificate?.["EUfz92HiiVD.wxrDsUO1ELy"] || ""}</div> {/* gender - 2 index */}
+                  {/* <div style={{ width: "50%", color: 'blue' }}>4. Place of Birth: {certificate?.["EUfz92HiiVD.JAU9NM7UqQP"] || ""}</div> 4 index */}
                 </div>
               </div>
             </div>
@@ -310,22 +310,22 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
           {/* Particular of Father */}
           <div>
             <div style={{ display: "flex" }}>
-              <div style={{ width: "25%", textAlign: "center",color: "red", fontWeight: "600", display: "flex", alignItems: "center", justifyContent: "center", paddingRight: 16, borderRight: "2px solid red" }}>
+              <div style={{ width: "25%", textAlign: "center",color: "blue", fontWeight: "600", display: "flex", alignItems: "center", justifyContent: "center", paddingRight: 16, borderRight: "2px solid blue" }}>
                 Particular of Father
               </div>
               <div style={{ width: "75%" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color:"red" }}>5. Name: {certificate?.["EUfz92HiiVD.RKs8td9BnNj"] || ""}</div> {/*  5 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color:"red" }}>8. Religion: {certificate?.["EUfz92HiiVD.m4b4SSlipKJ"] || ""}</div> {/*  8 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color:"blue" }}>5. Name: {certificate?.["EUfz92HiiVD.RKs8td9BnNj"] || ""}</div> {/*  5 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color:"blue" }}>8. Religion: {certificate?.["EUfz92HiiVD.m4b4SSlipKJ"] || ""}</div> {/*  8 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color: "red"}}>6. Race: {certificate?.["EUfz92HiiVD.mIRVmCzC7Tt"] || ""}</div> {/*  6 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color: "red"}}>9. Occupation: {certificate?.["EUfz92HiiVD.CjjgDMbqfXX"] || ""}</div> {/*  9 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue"}}>6. Race: {certificate?.["EUfz92HiiVD.mIRVmCzC7Tt"] || ""}</div> {/*  6 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue"}}>9. Occupation: {certificate?.["EUfz92HiiVD.CjjgDMbqfXX"] || ""}</div> {/*  9 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div>
-                  <div style={{ width: "50%", padding: '8px', color: "red"}}>7. Citizenship: {certificate?.["EUfz92HiiVD.ed2RBrhMhnN"] || ""}</div> {/*  7 index */}
+                  <div style={{ width: "50%", padding: '8px', color: "blue"}}>7. Citizenship: {certificate?.["EUfz92HiiVD.ed2RBrhMhnN"] || ""}</div> {/*  7 index */}
                 </div>
               </div>
             </div>
@@ -335,43 +335,66 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
           {/* Particular of Mother */}
           <div>
             <div style={{ display: "flex" }}>
-              <div style={{ width: "25%", textAlign: "center", color: "red", fontWeight: "600", display: "flex", alignItems: "center", justifyContent: "center", paddingRight: 16, borderRight: "2px solid red" }}>
+              <div style={{ width: "25%", textAlign: "center", color: "blue", fontWeight: "600", display: "flex", alignItems: "center", justifyContent: "center", paddingRight: 16, borderRight: "2px solid blue" }}>
                 Particular of Mother
               </div>
               <div style={{ width: "75%" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color: "red" }}>5. Name: {certificate?.["EUfz92HiiVD.UYmZMZt32hZ"] || ""}</div> {/*  10 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color: "red" }}>8. Religion: {certificate?.["EUfz92HiiVD.QsUp6BSb8Du"] || ""}</div> {/*  13 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>5. Name: {certificate?.["EUfz92HiiVD.UYmZMZt32hZ"] || ""}</div> {/*  10 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>8. Religion: {certificate?.["EUfz92HiiVD.QsUp6BSb8Du"] || ""}</div> {/*  13 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color: "red" }}>6. Race: {certificate?.["EUfz92HiiVD.XFmGvaRAJqP"] || ""}</div> {/*  11 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color: "red" }}>9. Occupation: {certificate?.["EUfz92HiiVD.vg5hhREmzXe"] || ""}</div> {/*  14 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>6. Race: {certificate?.["EUfz92HiiVD.XFmGvaRAJqP"] || ""}</div> {/*  11 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>9. Occupation: {certificate?.["EUfz92HiiVD.vg5hhREmzXe"] || ""}</div> {/*  14 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", color: "red"}}>7. Citizenship: {certificate?.["EUfz92HiiVD.r8oFvT4PZwL"] || ""}</div> {/*  12 index */}
-                  <div style={{ width: "50%", color: "red"}}>10. Permanent Address: {certificate?.["EUfz92HiiVD.bVyrfnpCd6i"] || ""}</div> {/*  15 index */}
+                  <div style={{ width: "50%", color: "blue"}}>7. Citizenship: {certificate?.["EUfz92HiiVD.r8oFvT4PZwL"] || ""}</div> {/*  12 index */}
+                  <div style={{ width: "50%", color: "blue"}}>10. Permanent Address: {certificate?.["EUfz92HiiVD.bVyrfnpCd6i"] || ""}</div> {/*  15 index */}
                 </div>
               </div>
             </div>
             <div style={borderGray}></div>
           </div>
 
+          {/* Particular of person who certify that the child was still born */}
+          <div>
+            <div style={{ display: "flex" }}>
+              <div style={{ width: "25%", textAlign: "center", color: "blue", fontWeight: "600", display: "flex", alignItems: "center", justifyContent: "center", paddingRight: 16, borderRight: "2px solid blue" }}>
+                Particular of Person who certifys that the child was still born
+              </div>
+              <div style={{ width: "75%" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>Signature: {certificate?.["EUfz92HiiVD.UYmZMZt32hZ"] || ""}</div> {/*  10 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>Qualification: {certificate?.["EUfz92HiiVD.QsUp6BSb8Du"] || ""}</div> {/*  13 index */}
+                </div>
+                <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
+                <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>Name: {certificate?.["EUfz92HiiVD.XFmGvaRAJqP"] || ""}</div> {/*  11 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>Address: {certificate?.["EUfz92HiiVD.vg5hhREmzXe"] || ""}</div> {/*  14 index */}
+                </div>
+               
+              </div>
+            </div>
+            <div style={borderGray}></div>
+          </div>
+
+
           {/* Particular of Informant */}
           <div>
             <div style={{ display: "flex" }}>
-              <div style={{ width: "25%",color: "red", textAlign: "center", fontWeight: "600", display: "flex", alignItems: "center", justifyContent: "center", paddingRight: 16, borderRight: "2px solid red" }}>
+              <div style={{ width: "25%",color: "blue", textAlign: "center", fontWeight: "600", display: "flex", alignItems: "center", justifyContent: "center", paddingRight: 16, borderRight: "2px solid blue" }}>
                 Particular of Informant
               </div>
               <div style={{ width: "75%" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", color: "red" }}>Signature</div>
-                  <div style={{ width: "50%", color: "red" }}>Relationship to Child: {certificate?.["EUfz92HiiVD.eYh3U6sXrTQ"] || ""}</div> {/*  17 index */}
+                  <div style={{ width: "50%", color: "blue" }}>Signature</div>
+                  <div style={{ width: "50%", color: "blue" }}>Relationship to Child: {certificate?.["EUfz92HiiVD.eYh3U6sXrTQ"] || ""}</div> {/*  17 index */}
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", paddingTop: '16' }}>
-                  <div style={{ width: "50%", padding: "8px", color: "red" }}>Name: {certificate?.["EUfz92HiiVD.YdNUYjH3rct"] || ""}</div> {/*  16 index */}
-                  <div style={{ width: "50%", padding: "8px", color: "red" }}>Address: {certificate?.["EUfz92HiiVD.rRpqp6TPWlh"] || ""}</div> {/*  18 index */}
+                  <div style={{ width: "50%", padding: "8px", color: "blue" }}>Name: {certificate?.["EUfz92HiiVD.YdNUYjH3rct"] || ""}</div> {/*  16 index */}
+                  <div style={{ width: "50%", padding: "8px", color: "blue" }}>Address: {certificate?.["EUfz92HiiVD.rRpqp6TPWlh"] || ""}</div> {/*  18 index */}
                 </div>
               </div>
             </div>
@@ -382,17 +405,17 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
         {/* Footer */}
         <footer>
           <div style={{ marginTop: 16, fontSize: 14 }}>
-            <p style={{ width: "100%",color: "red", display: "block", marginBottom: 8 }}>
-              I, the undersigned, do hereby certify that the above mentioned child was born alive at the time and
+            <p style={{ width: "100%",color: "blue", display: "block", marginBottom: 8 }}>
+              I, the undersigned, do hereby certify that the above mentioned child was still born at the time and
               place mentioned above and registered with the Entry No
-              ........ in the Birth Register which is in my legal custody. </p>
+              ........ in the Lat Foetal Death which is in my legal custody. </p>
               {/* <span style={{ ...borderDotted, width: "9%" }}></span> */}
-               <p style={{ width: "100%", color: "red", display: "block", marginBottom: 8 }}>
+               <p style={{ width: "100%", color: "blue", display: "block", marginBottom: 8 }}>
               Any person who (1) falsifies any of the particulars on this certificate or (2) used it as true, knowing it
               to be false is liable to prosecution.
             </p>
           </div>
-          <div style={{ display: "flex", alignItems: "flex-start", marginTop: 16, justifyContent: "space-between", color: "red"}}>
+          <div style={{ display: "flex", alignItems: "flex-start", marginTop: 16, justifyContent: "space-between", color: "blue"}}>
             <div>
               <p style={{ marginTop: 16, fontWeight: "600" }}>
                 Date of issue <span style={{ display: "inline-block", width: 24, verticalAlign: "middle" }}></span>
@@ -422,4 +445,4 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
   );
 };
 
-export default BirthCertificate;
+export default LateFoetalDeathCert;
