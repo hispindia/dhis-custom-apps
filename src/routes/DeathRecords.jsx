@@ -129,8 +129,8 @@ const DeathRecords = ({orgUnit}) => {
       <div className={styles.card}>
         <h3> Death Certificate Records</h3>
       
-        <table>
-          <thead>
+    <table>
+    <thead>
     <tr>
       <th>{renderFilterField("dateOfReporting", "Date of Reporting")}</th>
       <th>{renderFilterField("dateOfDeath", "Date of Death")}</th>
