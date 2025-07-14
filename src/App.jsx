@@ -12,31 +12,57 @@ import { useState, useEffect } from "react";
 import { fetchOrgUnits } from "./API/OrganizationAPI";
 import LateFoetalDeathRecord from "./routes/LateFoetalDeathRecord";
 import LateFoetalDeathCert from "./routes/lateFoetalDeathCert";
+import { useDataQuery } from "@dhis2/app-runtime";
+import { InitialQuery } from "./components/constants";
 
 function AppContent() {
   const location = useLocation();
   const hideSidebar = location.pathname === "/downloadBirthCertificate";
   const navigate = useNavigate();
   const [orgUnit, setOrgUnit] = useState({id:'', name: ''})
+  const [dataElements, setDataElements] = useState({});
 
   const[userOrgunit, setUserOrgunit] = useState(null);
-  const [orgUnits, setOrgUnits] = useState([])
-  
+  const [orgUnits, setOrgUnits] = useState([]);
+
+  const { loading, error, data } = useDataQuery(InitialQuery);
+
       useEffect(()=> {
-        const getOrgData = async() => {
-          try {
-            const allOrgUnit = await fetchOrgUnits();
-            const myanmar = allOrgUnit.find(unit => unit.name === "Myanmar");
-              // console.log(allOrgUnit.map(u => u.name))
-              setUserOrgunit(myanmar);
-              setOrgUnits(allOrgUnit);
-          } catch (error) {
-            console.log("Error while fetching data");
+        // const getOrgData = async() => {
+        //   try {
+        //     const allOrgUnit = await fetchOrgUnits();
+        //     const myanmar = allOrgUnit.find(unit => unit.name === "Myanmar");
+        //       // console.log(allOrgUnit.map(u => u.name))
+        //       setUserOrgunit(myanmar);
+        //       setOrgUnits(allOrgUnit);
+        //   } catch (error) {
+        //     console.log("Error while fetching data");
+        //   }
+        // }
+        if(data) {
+          if(data.me) {
+            setUserOrgunit(data.me.organisationUnits[0]);
+          }
+          if(data.ouList) {
+            setOrgUnits(data.ouList.organisationUnits)
+          }
+          if(data.dataElements && data.optionSets) {
+            var de = {};
+            data.dataElements.dataElements.forEach(dataElement => {
+              if(dataElement.optionSetValue) {
+                de[dataElement.id] = {};
+                const optionSet = data.optionSets.optionSets.find(option => option.id == dataElement.optionSet.id)
+                optionSet.options.forEach(option => {
+                  de[dataElement.id][option.code] = option.name;
+                })
+              }
+            })
+            setDataElements(de);
           }
         }
   
-        getOrgData();
-      }, [])
+        // getOrgData();
+      }, [data])
 
 
 
@@ -49,7 +75,7 @@ function AppContent() {
 
         <Routes>
           <Route path="/born-alive" element={<BirthRecords orgUnit={orgUnit} status={'Live-Birth'}/>} />
-          <Route path="/death" element={<DeathRecords orgUnit={orgUnit}/>} />
+          <Route path="/death" element={<DeathRecords orgUnit={orgUnit} dataElements={dataElements}/>} />
           <Route path="/still-born" element={<LateFoetalDeathRecord orgUnit={orgUnit} status={'Still Birth'}/>} />
           <Route path="/birth-certificate" element={<BirthCertificate orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>} />
           <Route path="/death-certificate" element={<DeathCertificate orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>} />

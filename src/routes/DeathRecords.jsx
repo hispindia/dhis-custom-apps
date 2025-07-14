@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { TablePagination, TextField } from "@mui/material";
   import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-const DeathRecords = ({orgUnit}) => {
+const DeathRecords = ({orgUnit, dataElements}) => {
   
   const [certificate, setCertificate] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -154,7 +154,7 @@ const DeathRecords = ({orgUnit}) => {
               <td>{record["wxrDsUO1ELy"] || ""}</td>  {/* gender*/}
               <td>{record["KFGxB6wpRxi"] || ""}</td>  {/* age */}
               <td>{record["iXXvJAxbOtd"] || ""}</td>  {/*permanent address */} 
-              <td>{record["XXDApzQFycS"] || ""}</td>   {/* cause of death */} 
+              <td>{(dataElements['nQy5xQrOMXj'] && dataElements['nQy5xQrOMXj'][record["nQy5xQrOMXj"]]) ? dataElements['nQy5xQrOMXj'][record["nQy5xQrOMXj"]] : ""}</td>   {/* cause of death */} 
                  <td>
                   <button className="button" onClick={() => navigate('/death-certificate', {state: {record}})}>
                     ⬇️ Generate Certificate </button>
