@@ -393,26 +393,26 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
         {/* Footer */}
         <footer>
           <div style={{ marginTop: 16, fontSize: 14 }}>
-            <p style={{ width: "100%",color: "red", display: "block", marginBottom: 8 }}>
+            <p style={{ width: "100%",color: "red"}}>
               I, the undersigned, do hereby certify that the above mentioned child  was born
               alive at the time and place mentioned above and registered with the Entry No ........ 
               in the Birth Register which is in my legal custody. <br />
               အထက်ဖော်ပြပါ ကလေးသည် ဖော်ပြပါဒေသနှင့် အချိန်တွင် အမှန်မွေးဖွားပြီး ကျွန်ုပ် ၏ လက်ဝယ်တွင် 
-              အထက်ပါဒေသအတွက် တရားဝင်ထားရှိသည့် အရှင်မွေး မှတ်ပုံ တင်စာအုပ်၌ အမှတ်စဉ်________________ဖြင့်
-               မှတ်ပုံတင်ပြီး‌ကြောင်း သက်သေခံ လက်မှတ် ရေးထိုးလိုက်သည်။
+              အထက်ပါဒေသအတွက် တရားဝင်ထားရှိသည့် အရှင်မွေး မှတ်ပုံ
+             တင်စာအုပ်၌ အမှတ်စဉ်________________ဖြင့် မှတ်ပုံတင်ပြီး‌ကြောင်း သက်သေခံ လက်မှတ် ရေးထိုးလိုက်သည်။
 
              </p>
               {/* <span style={{ ...borderDotted, width: "9%" }}></span> */}
-               <p style={{ width: "100%", color: "red", display: "block", marginBottom: 8 }}>
+               <p style={{ width: "100%", color: "red", display: "block"}}>
               Any person who (1) falsifies any of the particulars on this certificate or (2) used it as true, knowing it
               to be false is liable to prosecution.
               <br />
               ဤသက်သေခံလက်မှတ်တွင် (၁) အကြောင်းအရာ လိမ်လည်ထည့်သွင်းသောသူ (၂) လိမ်လည်ထားမှန်းသိလျက်နှင့် အမှန်ကဲ့သို့ အသုံးပြုသောသူများအား တရားစွဲဆိုလိမ့်မည်။
             </p>
           </div>
-          <div style={{ display: "flex", alignItems: "flex-start", marginTop: 16, justifyContent: "space-between", color: "red"}}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", color: "red"}}>
             <div>
-              <p style={{ marginTop: 16, fontWeight: "600" }}>
+              <p style={{ marginTop: 5, fontWeight: "600" }}>
                 Date of issue <br />ထုတ်ပေးသည့်ရက်စွဲ <span style={{ display: "inline-block", width: 24, verticalAlign: "middle" }}></span>
                 / <span style={{ display: "inline-block", width: 24, verticalAlign: "middle" }}></span> /
               </p>
@@ -424,10 +424,10 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
               <span style={{ fontWeight: "600" }}>
                 Signature <br /> လက်မှတ် <span style={{ ...borderDotted, width: 80 }}></span>
               </span>
-              <span style={{ fontWeight: "600", marginTop: 8 }}>
+              <span style={{ fontWeight: "600", marginTop: 2 }}>
                 Name <br />အမည်<span style={{ ...borderDotted, width: 80 }}></span>
               </span>
-              <span style={{ fontWeight: "600", marginTop: 8 }}>
+              <span style={{ fontWeight: "600", marginTop: 2 }}>
                 Designation <br />ရာထူး <span style={{ ...borderDotted, width: 80 }}></span>
               </span>
             </div>
