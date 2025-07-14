@@ -6,7 +6,7 @@
   import { TablePagination, TextField } from "@mui/material";
   import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-  const BirthRecords = ({orgUnit}) => {
+  const BirthRecords = ({orgUnit, status}) => {
 
   
     const [certificate, setCertificate] = useState([]);
@@ -15,25 +15,18 @@
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const[showField, setShowField] = useState(null);
 
-    const [filters, setFilters] = useState({
-      infantName: "",
-      dob: "",
-      gender: "",
-      mothersName: "",
-      fathersName: ""
-    });
+  
 
     const navigate = useNavigate();
 
 
     useEffect(() => {
       setLoading(true);
-        fetchBirthCertificateRecords(orgUnit.id)
-        .then(data => {      
-          const headers = data.headers.map(h => h.name);
-          const records = data.rows.map( row => 
-            Object.fromEntries(row.map((value, i) => [headers[i], value]))
-        );
+        fetchBirthCertificateRecords(orgUnit.id, status)
+        .then(res => {      
+           const records = res.events.map(event => 
+              Object.fromEntries(event.dataValues.map(dv => [dv.dataElement, dv.value]))
+            )
           setCertificate(records);
         })
         .catch(data => setCertificate([]))
@@ -41,12 +34,20 @@
   
     }, [orgUnit]);
 
+      const [filters, setFilters] = useState({
+      infantName: "",
+      dob: "",
+      gender: "",
+      mothersName: "",
+      fathersName: ""
+    });
+
       const FIELD_KEYS = {
-      infantName: "EUfz92HiiVD.R43kdns3YYL",
+      infantName: "R43kdns3YYL",
       dob: "eventdate",
-      gender: "EUfz92HiiVD.wxrDsUO1ELy",
-      mothersName: "EUfz92HiiVD.UYmZMZt32hZ",
-      fathersName: "EUfz92HiiVD.RKs8td9BnNj"
+      gender: "wxrDsUO1ELy",
+      mothersName: "UYmZMZt32hZ",
+      fathersName: "RKs8td9BnNj"
 
     }
 
@@ -81,12 +82,14 @@
 
 
     const filteredRecords = certificate.filter((record) => {
-      return (
-          record[FIELD_KEYS.infantName]?.toLowerCase().includes(filters.infantName.toLowerCase()) &&
-          record[FIELD_KEYS.dob]?.toLowerCase().includes(filters.dob.toLowerCase()) &&
-          record[FIELD_KEYS.gender]?.toLowerCase().includes(filters.gender.toLowerCase()) &&
-          record[FIELD_KEYS.mothersName]?.toLowerCase().includes(filters.mothersName.toLowerCase()) &&
-          record[FIELD_KEYS.fathersName]?.toLowerCase().includes(filters.fathersName.toLowerCase())
+     
+     return (      
+          (record[FIELD_KEYS.infantName] || "").toLowerCase().includes(filters.infantName.toLowerCase()) &&
+          // earlier it is not working because if any field field record[field_keys.dob] may be undefine
+          (record[FIELD_KEYS.dob ]|| "").toLowerCase().includes(filters.dob.toLowerCase()) &&
+          (record[FIELD_KEYS.gender] || "").toLowerCase().includes(filters.gender.toLowerCase()) &&
+          (record[FIELD_KEYS.mothersName] || "").toLowerCase().includes(filters.mothersName.toLowerCase()) &&
+          (record[FIELD_KEYS.fathersName] || "").toLowerCase().includes(filters.fathersName.toLowerCase())
       );
     })
 
@@ -116,7 +119,6 @@
         }));
     }
     
-
   
 
     if(loading) return <div>Loading...</div>
@@ -126,9 +128,8 @@
         <div className={styles.card}>
           <h3> Birth Certificate Records</h3>
         
-          <table>
-  <thead>
-   
+    <table>
+    <thead>
     <tr>
       <th>{renderFilterField("infantName", "Infant Name")}</th>
       <th>{renderFilterField("dob", "Date of Birth")}</th>
@@ -137,16 +138,17 @@
       <th>{renderFilterField("fathersName", "Father Name")}</th>
       <th></th>
     </tr>
+
   </thead>
 
   <tbody>
-    {filteredRecords.map((record, index) => (
+    {paginatedRecords.map((record, index) => (
       <tr key={index}>
-        <td>{record?.["EUfz92HiiVD.R43kdns3YYL"] || ""}</td>
+        <td>{record?.["R43kdns3YYL"] || ""}</td>
         <td>{record?.["eventdate"] ? record["eventdate"].split(" ")[0] : ""}</td>
-        <td>{record?.["EUfz92HiiVD.wxrDsUO1ELy"] || ""}</td>
-        <td>{record?.["EUfz92HiiVD.UYmZMZt32hZ"] || ""}</td>
-        <td>{record?.["EUfz92HiiVD.RKs8td9BnNj"] || ""}</td>
+        <td>{record?.["wxrDsUO1ELy"] || ""}</td>
+        <td>{record?.["UYmZMZt32hZ"] || ""}</td>
+        <td>{record?.["RKs8td9BnNj"] || ""}</td>
         <td>
           <button
             className="button"
@@ -166,8 +168,8 @@
           {/* pagination */}
           <TablePagination 
               component="div"
-              count={certificate.length}
-              page={paginatedRecords}
+              count={filteredRecords.length}
+              page={page}
               onPageChange={handleChangePage}
               rowsPerPage={rowsPerPage}
               onRowsPerPageChange={handleChangeRowsPerPage}
