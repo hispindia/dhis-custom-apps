@@ -125,7 +125,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
           zIndex: 10,
           padding: "8px 16px",
           background: "#1976d2",
-          color: "red",
+          color: "#000",
           border: "none",
           borderRadius: 4,
           cursor: "pointer",

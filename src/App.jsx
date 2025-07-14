@@ -26,10 +26,10 @@ function AppContent() {
         const getOrgData = async() => {
           try {
             const allOrgUnit = await fetchOrgUnits();
-            const mynamar = allOrgUnit.find(unit => unit.name === "Myanmar");
-              console.log(allOrgUnit.map(u => u.name))
-              setUserOrgunit(mynamar);
-              setOrgUnits(allOrgUnit)
+            const myanmar = allOrgUnit.find(unit => unit.name === "Myanmar");
+              // console.log(allOrgUnit.map(u => u.name))
+              setUserOrgunit(myanmar);
+              setOrgUnits(allOrgUnit);
           } catch (error) {
             console.log("Error while fetching data");
           }

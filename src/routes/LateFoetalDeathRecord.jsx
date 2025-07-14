@@ -56,13 +56,12 @@ const LateFoetalDeathRecord = ({orgUnit}) => {
   
 
  
-
   if(loading) return <div>Loading...</div>
 
   return (
     <div className={styles.main}>
       <div className={styles.card}>
-        <h3> Birth Certificate Records</h3>
+        <h3>Still Born Certificate Records</h3>
         
         <table>
           <thead>
