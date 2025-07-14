@@ -86,7 +86,7 @@ const Sidebar = ({setOrgUnit, userOrgunit, orgUnits}) => {
             <ListItemText>Live Birth</ListItemText>
           </MenuItem>
           <MenuItem onClick={() => handleMenuClose("/still-born")}>
-            <ListItemText>Still Born</ListItemText>
+            <ListItemText>Still Birth</ListItemText>
           </MenuItem>
         </Menu>
 

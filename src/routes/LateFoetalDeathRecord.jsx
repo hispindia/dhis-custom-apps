@@ -123,7 +123,7 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
   return (
     <div className={styles.main}>
       <div className={styles.card}>
-        <h3>Still Born Certificate Records</h3>
+        <h3>Still Birth Certificate Records</h3>
         
         <table>
           <thead>

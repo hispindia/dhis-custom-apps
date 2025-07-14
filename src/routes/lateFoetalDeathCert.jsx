@@ -419,11 +419,12 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits}) => {
             <p style={{ width: "100%",color: "blue", display: "block", marginBottom: 8 }}>
               I, the undersigned, do hereby certify that the above mentioned child was still born at the time and
               place mentioned above and registered with the Entry No
-              ........ in the Late Foetal Death which is in my legal custody. </p> <br />
+              ........ in the Late Foetal Death which is in my legal custody.  <br />
               အထက်ဖော်ပြပါ ကလေးသည် ဖော်ပြပါဒေသနှင့် အချိန်တွင် အမှန်အသေမွေးဖွားပြီး၊ ကျွန်ုပ်၏ လက်ဝယ်တွင် အထက်ပါဒေသအတွက် 
               တရားဝင်ထားရှိသည့် အသေမွေးမှတ်ပုံတင်စာအုပ်၌ အမှတ်စဥ်________________ဖြင့် မှတ်ပုံတင်ပြီးကြောင်း
               သက်သေခံလက်မှတ်ရေးထိုးလိုက်သည်။
 
+                </p>
 
               {/* <span style={{ ...borderDotted, width: "9%" }}></span> */}
                <p style={{ width: "100%", color: "blue", display: "block", marginBottom: 8 }}>
