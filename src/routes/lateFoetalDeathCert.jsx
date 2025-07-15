@@ -296,7 +296,7 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits, dataElements}) => {
                 <div style={{ display: "flex", justifyContent: "space-between", padding: "8px" }}>
 
 
-                  <div style={{ width: "50%", paddingBottom: 4, color: 'blue'}}>1. Sex <br />ကျား / မ: {certificate?.["R43kdns3YYL"] || ""} </div>  {/* Name - 1 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: 'blue'}}>1. Sex <br />ကျား / မ: {certificate?.["wxrDsUO1ELy"] || ""}</div>  {/* Name - 1 index */}
 
 
                   <div style={{ width: "50%", paddingBottom: 4, color: 'blue' }}>3. Place of Birth <br />မွေးဖွားသည့်နေရာ: {certificate?.["eventdate"] ? certificate["eventdate"].split(" ")[0] : ""}</div>   {/* dob 0th index */}
@@ -306,7 +306,7 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits, dataElements}) => {
 
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%",color: 'blue' }}>2. Date of Birth <br/>မွေးဖွားသည့်ရက်စွဲ:  {certificate?.["wxrDsUO1ELy"] || ""}</div> {/* gender - 2 index */}
+                  <div style={{ width: "50%",color: 'blue' }}>2. Date of Birth <br/>မွေးဖွားသည့်ရက်စွဲ: {certificate?.["zAetLzp3cT1"] || ""} </div> {/* gender - 2 index */}
                   {/* <div style={{ width: "50%", color: 'blue' }}>4. Place of Birth: {certificate?.["JAU9NM7UqQP"] || ""}</div> 4 index */}
                 </div>
               </div>
