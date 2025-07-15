@@ -11,7 +11,6 @@ export const InitialQuery = {
     resource: "organisationUnits.json",
     params: {
       fields: ["id,name,code,path,children[id,name,path]"],
-      withinUserHierarchy: true,
       paging: false,
     },
   },
