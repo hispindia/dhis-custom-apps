@@ -75,7 +75,7 @@ const styles = {
   },
 };
 
-const LateFoetalDeathCert = ({orgUnit, orgUnits}) => {
+const LateFoetalDeathCert = ({orgUnit, orgUnits, dataElements}) => {
   // const {eventId} = useParams();
   const { state } = useLocation();
   const [certificate, setCertificate] = useState(state?.record || null);
@@ -296,7 +296,7 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits}) => {
                 <div style={{ display: "flex", justifyContent: "space-between", padding: "8px" }}>
 
 
-                  <div style={{ width: "50%", paddingBottom: 4, color: 'blue'}}>1. Sex <br />ကျား / မ: {certificate?.["EUfz92HiiVD.R43kdns3YYL"] || ""} </div>  {/* Name - 1 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: 'blue'}}>1. Sex <br />ကျား / မ: {certificate?.["R43kdns3YYL"] || ""} </div>  {/* Name - 1 index */}
 
 
                   <div style={{ width: "50%", paddingBottom: 4, color: 'blue' }}>3. Place of Birth <br />မွေးဖွားသည့်နေရာ: {certificate?.["eventdate"] ? certificate["eventdate"].split(" ")[0] : ""}</div>   {/* dob 0th index */}
@@ -306,8 +306,8 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits}) => {
 
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%",color: 'blue' }}>2. Date of Birth <br/>မွေးဖွားသည့်ရက်စွဲ:  {certificate?.["EUfz92HiiVD.wxrDsUO1ELy"] || ""}</div> {/* gender - 2 index */}
-                  {/* <div style={{ width: "50%", color: 'blue' }}>4. Place of Birth: {certificate?.["EUfz92HiiVD.JAU9NM7UqQP"] || ""}</div> 4 index */}
+                  <div style={{ width: "50%",color: 'blue' }}>2. Date of Birth <br/>မွေးဖွားသည့်ရက်စွဲ:  {certificate?.["wxrDsUO1ELy"] || ""}</div> {/* gender - 2 index */}
+                  {/* <div style={{ width: "50%", color: 'blue' }}>4. Place of Birth: {certificate?.["JAU9NM7UqQP"] || ""}</div> 4 index */}
                 </div>
               </div>
             </div>
@@ -323,17 +323,17 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits}) => {
               </div>
               <div style={{ width: "75%" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color:"blue" }}>5. Name <br />အမည်: {certificate?.["EUfz92HiiVD.RKs8td9BnNj"] || ""}</div> {/*  5 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color:"blue" }}>8. Religion <br />ကိုးကွယ်သည့်ဘာသာ: {certificate?.["EUfz92HiiVD.m4b4SSlipKJ"] || ""}</div> {/*  8 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color:"blue" }}>5. Name <br />အမည်: {certificate?.["RKs8td9BnNj"] || ""}</div> {/*  5 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color:"blue" }}>8. Religion <br />ကိုးကွယ်သည့်ဘာသာ: {certificate?.["m4b4SSlipKJ"] || ""}</div> {/*  8 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue"}}>6. Race<br />လူမျိုး: {certificate?.["EUfz92HiiVD.mIRVmCzC7Tt"] || ""}</div> {/*  6 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue"}}>9. Occupation <br />အလုပ်အကိုင်: {certificate?.["EUfz92HiiVD.CjjgDMbqfXX"] || ""}</div> {/*  9 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue"}}>6. Race<br />လူမျိုး: {certificate?.["mIRVmCzC7Tt"] || ""}</div> {/*  6 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue"}}>9. Occupation <br />အလုပ်အကိုင်: {certificate?.["CjjgDMbqfXX"] || ""}</div> {/*  9 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div>
-                  <div style={{ width: "50%", padding: '8px', color: "blue"}}>7. Citizenship <br />နိုင်ငံသားနှင့်အမှတ်: {certificate?.["EUfz92HiiVD.ed2RBrhMhnN"] || ""}</div> {/*  7 index */}
+                  <div style={{ width: "50%", padding: '8px', color: "blue"}}>7. Citizenship <br />နိုင်ငံသားနှင့်အမှတ်: {certificate?.["ed2RBrhMhnN"] || ""}</div> {/*  7 index */}
                 </div>
               </div>
             </div>
@@ -349,18 +349,18 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits}) => {
               </div>
               <div style={{ width: "75%" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>5. Name  <br />အမည်: {certificate?.["EUfz92HiiVD.UYmZMZt32hZ"] || ""}</div> {/*  10 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>8. Religion <br />ကိုးကွယ်သည့်ဘာသာ: {certificate?.["EUfz92HiiVD.QsUp6BSb8Du"] || ""}</div> {/*  13 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>5. Name  <br />အမည်: {certificate?.["UYmZMZt32hZ"] || ""}</div> {/*  10 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>8. Religion <br />ကိုးကွယ်သည့်ဘာသာ: {certificate?.["QsUp6BSb8Du"] || ""}</div> {/*  13 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>6. Race  <br />လူမျိုး: {certificate?.["EUfz92HiiVD.XFmGvaRAJqP"] || ""}</div> {/*  11 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>9. Occupation <br />အလုပ်အကိုင်: {certificate?.["EUfz92HiiVD.vg5hhREmzXe"] || ""}</div> {/*  14 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>6. Race  <br />လူမျိုး: {certificate?.["XFmGvaRAJqP"] || ""}</div> {/*  11 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>9. Occupation <br />အလုပ်အကိုင်: {certificate?.["vg5hhREmzXe"] || ""}</div> {/*  14 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", color: "blue"}}>7. Citizenship <br />နိုင်ငံသားနှင့်အမှတ်: {certificate?.["EUfz92HiiVD.r8oFvT4PZwL"] || ""}</div> {/*  12 index */}
-                  <div style={{ width: "50%", color: "blue"}}>10. Permanent Address <br />နေရပ်လိပ်စာ(အပြည့်အစုံ): {certificate?.["EUfz92HiiVD.bVyrfnpCd6i"] || ""}</div> {/*  15 index */}
+                  <div style={{ width: "50%", color: "blue"}}>7. Citizenship <br />နိုင်ငံသားနှင့်အမှတ်: {certificate?.["r8oFvT4PZwL"] || ""}</div> {/*  12 index */}
+                  <div style={{ width: "50%", color: "blue"}}>10. Permanent Address <br />နေရပ်လိပ်စာ(အပြည့်အစုံ): {certificate?.["bVyrfnpCd6i"] || ""}</div> {/*  15 index */}
                 </div>
               </div>
             </div>
@@ -376,13 +376,13 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits}) => {
               </div>
               <div style={{ width: "75%" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>Signature <br /> လက်မှတ်: {certificate?.["EUfz92HiiVD.UYmZMZt32hZ"] || ""}</div> {/*  10 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>Qualification <br />အရည်အချင်း: {certificate?.["EUfz92HiiVD.QsUp6BSb8Du"] || ""}</div> {/*  13 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>Signature <br /> လက်မှတ်: {certificate?.["UYmZMZt32hZ"] || ""}</div> {/*  10 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>Qualification <br />အရည်အချင်း: {certificate?.["QsUp6BSb8Du"] || ""}</div> {/*  13 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>Name <br />အမည်: {certificate?.["EUfz92HiiVD.XFmGvaRAJqP"] || ""}</div> {/*  11 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>Address <br />လိပ်စာ: {certificate?.["EUfz92HiiVD.vg5hhREmzXe"] || ""}</div> {/*  14 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>Name <br />အမည်: {certificate?.["XFmGvaRAJqP"] || ""}</div> {/*  11 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>Address <br />လိပ်စာ: {certificate?.["vg5hhREmzXe"] || ""}</div> {/*  14 index */}
                 </div>
                
               </div>
@@ -401,11 +401,11 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits}) => {
               <div style={{ width: "75%" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
                   <div style={{ width: "50%", color: "blue" }}>Signature  <br />လက်မှတ်</div>
-                  <div style={{ width: "50%", color: "blue" }}>Relationship to Child <br />ကလေးနှင့်တော်စပ်ပုံ: {certificate?.["EUfz92HiiVD.eYh3U6sXrTQ"] || ""}</div> {/*  17 index */}
+                  <div style={{ width: "50%", color: "blue" }}>Relationship to Child <br />ကလေးနှင့်တော်စပ်ပုံ: {certificate?.["eYh3U6sXrTQ"] || ""}</div> {/*  17 index */}
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", paddingTop: '16' }}>
-                  <div style={{ width: "50%", padding: "8px", color: "blue" }}>Name <br />အမည်: {certificate?.["EUfz92HiiVD.YdNUYjH3rct"] || ""}</div> {/*  16 index */}
-                  <div style={{ width: "50%", padding: "8px", color: "blue" }}>Address <br />လိပ်စာ: {certificate?.["EUfz92HiiVD.rRpqp6TPWlh"] || ""}</div> {/*  18 index */}
+                  <div style={{ width: "50%", padding: "8px", color: "blue" }}>Name <br />အမည်: {certificate?.["YdNUYjH3rct"] || ""}</div> {/*  16 index */}
+                  <div style={{ width: "50%", padding: "8px", color: "blue" }}>Address <br />လိပ်စာ: {certificate?.["rRpqp6TPWlh"] || ""}</div> {/*  18 index */}
                 </div>
               </div>
             </div>

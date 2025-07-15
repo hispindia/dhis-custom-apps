@@ -78,8 +78,8 @@ function AppContent() {
           <Route path="/death" element={<DeathRecords orgUnit={orgUnit} dataElements={dataElements}/>} />
           <Route path="/still-born" element={<LateFoetalDeathRecord orgUnit={orgUnit} status={'Still Birth'}/>} />
           <Route path="/birth-certificate" element={<BirthCertificate orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>} />
-          <Route path="/death-certificate" element={<DeathCertificate orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>} />
-          <Route path="/late-Foetal-death-certificate" element={<LateFoetalDeathCert orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>} />
+          <Route path="/death-certificate" element={<DeathCertificate orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits} dataElements={dataElements}/>} />
+          <Route path="/late-Foetal-death-certificate" element={<LateFoetalDeathCert orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits} dataElements={dataElements}/>} />
         </Routes>
       </div>
     </>

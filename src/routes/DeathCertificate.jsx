@@ -113,7 +113,7 @@ const styles = {
     mt2Text: { marginTop: "0.5rem" },
 };
 
-const DeathCertificate = ({orgUnit, orgUnits}) => {
+const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
     const { state } = useLocation();
     const [certificate, setCertificate] = useState(state?.record || null);
@@ -320,52 +320,52 @@ const DeathCertificate = ({orgUnit, orgUnits}) => {
                     <table style={styles.table}>
                         <tbody>
                             <tr>
-                                <td style={styles.td}>1. Name <br />အမည်: {certificate?.["FL9N3yXzucT.aTbE3kYe98D"] || ""}</td>
-                                <td style={styles.td}>7. Race <br />လူမျိုး: {certificate?.["FL9N3yXzucT.b9BVo7x8248"] || ""}</td>
+                                <td style={styles.td}>1. Name <br />အမည်: {certificate?.["aTbE3kYe98D"] || ""}</td>
+                                <td style={styles.td}>7. Race <br />လူမျိုး: {certificate?.["b9BVo7x8248"] || ""}</td>
                             </tr>
                            
                             <tr>
-                                <td style={styles.td}>2. Sex <br />ကျား / မ: {certificate?.["FL9N3yXzucT.wxrDsUO1ELy"] || ""}</td>
-                                <td style={styles.td}>8. Citizenship <br />နိုင်ငံသားနှင့်အမှတ်: {certificate?.["FL9N3yXzucT.aTbE3kYe98D"] || ""}</td>
+                                <td style={styles.td}>2. Sex <br />ကျား / မ: {certificate?.["wxrDsUO1ELy"] || ""}</td>
+                                <td style={styles.td}>8. Citizenship <br />နိုင်ငံသားနှင့်အမှတ်: {certificate?.["aTbE3kYe98D"] || ""}</td>
                             </tr>
                            
 
                             <tr>
-                                <td style={styles.td}>3. Date of death <br />သေဆုံးသည့်ရက်စွဲနှင့်အချိန်: {certificate?.["FL9N3yXzucT.jGGNvNYhu47"] ? certificate["FL9N3yXzucT.jGGNvNYhu47"].split(" ")[0]: ""}</td>
-                                <td style={styles.td}>9. Religion <br />ကိုးကွယ်သည့်ဘာသာ: {certificate?.["FL9N3yXzucT.b9BVo7x8248"] || ""}</td>
+                                <td style={styles.td}>3. Date of death <br />သေဆုံးသည့်ရက်စွဲနှင့်အချိန်: {certificate?.["jGGNvNYhu47"] ? certificate["jGGNvNYhu47"].split(" ")[0]: ""}</td>
+                                <td style={styles.td}>9. Religion <br />ကိုးကွယ်သည့်ဘာသာ: {certificate?.["b9BVo7x8248"] || ""}</td>
                             </tr>
                             
                             <tr>
-                                <td style={styles.td}>4. Place of death <br />သေဆုံးသည့်နေရာ: {certificate?.["FL9N3yXzucT.MOV6uMBMkph"] || ""}</td>
-                                <td style={styles.td}>10. Permanent Address <br />နေရပ်လိပ်စာ(အပြည့်အစုံ): {certificate?.["FL9N3yXzucT.iXXvJAxbOtd"] || ""}</td>
+                                <td style={styles.td}>4. Place of death <br />သေဆုံးသည့်နေရာ: {certificate?.["MOV6uMBMkph"] || ""}</td>
+                                <td style={styles.td}>10. Permanent Address <br />နေရပ်လိပ်စာ(အပြည့်အစုံ): {certificate?.["iXXvJAxbOtd"] || ""}</td>
                             </tr>
                            
                             <tr>
-                                <td style={styles.td}>5. Age <br />အသက်: {certificate?.["FL9N3yXzucT.KFGxB6wpRxi"] || ""}</td>
-                                <td style={styles.td}>11. Name of Father of the deceased <br />သေဆုံးသူ၏ဖခင်အမည်: {certificate?.["FL9N3yXzucT.OpzRl6KIFVU"] || ""}</td>
+                                <td style={styles.td}>5. Age <br />အသက်: {certificate?.["KFGxB6wpRxi"] || ""}</td>
+                                <td style={styles.td}>11. Name of Father of the deceased <br />သေဆုံးသူ၏ဖခင်အမည်: {certificate?.["OpzRl6KIFVU"] || ""}</td>
                             </tr>
                            
                             <tr>
-                                <td style={styles.td}>6. Occupation <br />အလုပ်အကိုင်: {certificate?.["FL9N3yXzucT.s3wKlMmBs8p"] || ""}</td>
-                                <td style={styles.td}>12. Name of Mother of the deceased <br />သေဆုံးသူ၏မိခင်အမည်: {certificate?.["FL9N3yXzucT.xHcmoS3icZD"] || ""}</td>
+                                <td style={styles.td}>6. Occupation <br />အလုပ်အကိုင်: {certificate?.["s3wKlMmBs8p"] || ""}</td>
+                                <td style={styles.td}>12. Name of Mother of the deceased <br />သေဆုံးသူ၏မိခင်အမည်: {certificate?.["xHcmoS3icZD"] || ""}</td>
                             </tr>
                            
                             <tr>
-                                <td style={styles.td}>13. Cause of Death <br />မည်သည့်အကြောင်းကြောင့် (သို့) ရောဂါဖြင့် သေဆုံးသည်။: {certificate?.["FL9N3yXzucT.XXDApzQFycS"] || ""}</td>
+                                <td style={styles.td}>13. Cause of Death <br />မည်သည့်အကြောင်းကြောင့် (သို့) ရောဂါဖြင့် သေဆုံးသည်။: {(dataElements['nQy5xQrOMXj'] && dataElements['nQy5xQrOMXj'][certificate["nQy5xQrOMXj"]]) ? dataElements['nQy5xQrOMXj'][certificate["nQy5xQrOMXj"]] :  ""}</td>
                                 <td></td>
                             </tr>
                            
                             <tr>
                                 <td style={styles.td}>14. Informat's Signature <br />တိုင်ကြားသူ၏ လက်မှတ်</td>
-                                <td style={styles.td}>Relationship to deceased <br />သေဆုံးသူနှင့်တော်စပ်ပုံ: {certificate?.["FL9N3yXzucT.qa5eIb216nF"] || ""}</td>
+                                <td style={styles.td}>Relationship to deceased <br />သေဆုံးသူနှင့်တော်စပ်ပုံ: {certificate?.["qa5eIb216nF"] || ""}</td>
                             </tr>
                             <tr>
-                                <td style={{ ...styles.td, ...styles.pt4 }}>Name <br />အမည်: {certificate?.["FL9N3yXzucT.YdNUYjH3rct"] || ""}</td>
-                                <td style={{ ...styles.td, ...styles.pt4 }}>Address <br />လိပ်စာ: {certificate?.["FL9N3yXzucT.rRpqp6TPWlh"] || ""}</td>
+                                <td style={{ ...styles.td, ...styles.pt4 }}>Name <br />အမည်: {certificate?.["YdNUYjH3rct"] || ""}</td>
+                                <td style={{ ...styles.td, ...styles.pt4 }}>Address <br />လိပ်စာ: {certificate?.["rRpqp6TPWlh"] || ""}</td>
                             </tr>
                          
                             <tr>
-                                <td style={styles.td}>15. Cause of Death Certifiers <br />သေဆုံးသည့်အကြောင်းအရာ (သို့) ရောဂါ ထောက်ခံသူ၏:  {certificate?.["FL9N3yXzucT.aTbE3kYe98D"] || ""}</td>
+                                <td style={styles.td}>15. Cause of Death Certifiers <br />သေဆုံးသည့်အကြောင်းအရာ (သို့) ရောဂါ ထောက်ခံသူ၏:  {certificate?.["aTbE3kYe98D"] || ""}</td>
                                 <td style={styles.td}>
                                     Signature <br />လက်မှတ် <span style={styles.w17}></span>
                                 </td>
@@ -373,13 +373,13 @@ const DeathCertificate = ({orgUnit, orgUnits}) => {
                             <tr>
                                 <td></td>
                                 <td style={styles.pt4}>
-                                    Name <br />အမည် {certificate?.["FL9N3yXzucT.RkPGXTudjFI"] || ""} <span style={styles.w17}></span>
+                                    Name <br />အမည် {certificate?.["RkPGXTudjFI"] || ""} <span style={styles.w17}></span>
                                 </td>
                             </tr>
                             <tr>
                                 <td></td>
                                 <td style={styles.pt4}>
-                                    Designation <br />ရာထူး {certificate?.["FL9N3yXzucT.NxtfpJnOOHx"] || ""} <span style={styles.w17}></span>
+                                    Designation <br />ရာထူး {certificate?.["NxtfpJnOOHx"] || ""} <span style={styles.w17}></span>
                                 </td>
                             </tr>
                            
