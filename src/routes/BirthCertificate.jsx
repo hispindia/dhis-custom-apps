@@ -4,6 +4,7 @@ import { fetchBirthCertificateRecords } from "../API/BirthCertAPI";
 import { data } from "autoprefixer";
 import { useLocation, useParams } from "react-router-dom";
 import { red } from "@mui/material/colors";
+import { useTranslation } from 'react-i18next'
 
 
 const borderDotted = {
@@ -79,6 +80,8 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
   // const {eventId} = useParams();
   const { state } = useLocation();
   const [certificate, setCertificate] = useState(state?.record || null);
+  const {t}  = useTranslation();
+
   const pdfRef = useRef();
   const orgUnitObj = {};
   orgUnits.forEach(ou => {
@@ -136,7 +139,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
       </button>
 
       <main ref={pdfRef} style={{ margin: "1rem", width: "100%" }}>
-        <h2 style={{ fontSize: 24, color: "red", fontWeight: "bold", textAlign: "center", marginBottom: 8 }}>BIRTH CERTIFICATE <br />အရှင်မွေးလက်မှတ်</h2>
+        <h2 style={{ fontSize: 24, color: "red", fontWeight: "bold", textAlign: "center", marginBottom: 8 }}>{t("BIRCERT")}</h2>
         {/* Header for main certificate */}
         <header
           style={{
@@ -150,10 +153,10 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
         >
           {/* Left Section */}
           <section style={{ color: '#000', fontSize: 16, width: "30%" }}>
-            <p style={{ marginBottom: 4, marginTop: 12, fontWeight: 'normal', color:'red' }}>V.R. Form 103 <br />ဖွားသေပုံစံ ၁၀၃</p>
+            <p style={{ marginBottom: 4, marginTop: 12, fontWeight: 'normal', color:'red' }}>{t("VR")}</p>
             <div>
               <p style={{ marginBottom: 4, marginTop: 16, fontWeight: 'normal', color:'red'}}>
-                State / Division <br />ပြည်နယ် / တိုင်းဒေသကြီး
+                 {t("S/d")}
                 <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted red',
@@ -167,7 +170,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
             </div>
             <div>
               <p style={{ fontWeight: 'normal', color: 'red' }}>
-                District <br />ခရိုင်
+                   {t("D")}
                 <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted red',
@@ -183,7 +186,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
 
             <div>
               <p style={{ fontWeight: 'normal', color:'red'}}>
-                Township <br />မြို့နယ်
+                   {t("T")}
                <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted red',
@@ -200,7 +203,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
 
             <div>
               <p style={{ fontWeight: 'normal', color: 'red'}}>
-                Ward / Village-tract  ............ <br />ရပ်ကွက် / ကျေးရွာအုပ်စု
+                   {t("W/v")} ............ 
                 {/* <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted black',
@@ -217,9 +220,8 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
           {/* Right Section */}
           <section style={{ marginTop: 40, color: 'red', fontSize: 16, width: "30%" }}>
             <p style={{ fontWeight: 'normal' }}>
-              Page No ............ <br />
-              စာမျက်နှာအမှတ်
-              {/* <span style={{
+               {t("PN")} ............ 
+               {/* <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted black',
                     width: '31%',
@@ -230,9 +232,8 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                   </span> */}
             </p>
             <p style={{ fontWeight: 'normal', color: 'red' }}>
-              Book No............
-              <br />
-             စာအုပ်အမှတ်
+              {t("BN")} ............
+              
               {/* <span style={{
                   display: 'inline-block',
                   borderBottom: '2px dotted black',
@@ -242,7 +243,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                 }}></span> */}
             </p>
             <p style={{ marginBottom: 4, fontWeight: 'normal', color: 'red' }}>
-              Entry No........... <br /> မှတ်ပုံတင်အမှတ်စဉ်
+              {t("EN")} ........... 
               {/* <span style={{
                   display: 'inline-block',
                   borderBottom: '2px dotted black',
@@ -252,8 +253,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                 }}></span> */}
             </p>
             <p style={{ marginBottom: 4, fontWeight: 'normal', color:'red'}}>
-              Date of Registration..../.../ <br />
-              မှတ်ပုံတင်သည့်ရက်စွဲ
+                {t("DR")} ..../.../ 
 
               {/* <span style={{
                   display: 'inline-block',
@@ -288,27 +288,26 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
             <div style={borderSolid}></div>
             <div style={{ display: "flex" }}>
               <div style={{ width: "25%", textAlign: "center", fontWeight: "600", color: 'red', display: "flex", alignItems: "center", justifyContent: "center", paddingRight: 16, borderRight: "2px solid red" }}>
-                Particular of Child  <br />
-                ကလေး၏အကြောင်းအရာ
+                {t("POC")}
               </div>
               <div style={{ width: "75%" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: "8px" }}>
 
 
-                  <div style={{ width: "50%", paddingBottom: 4, color: 'red'}}>1. Name  <br />အမည်: {certificate?.["R43kdns3YYL"] || ""} </div>  {/* Name - 1 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: 'red'}}>1.  {t("N")} : {certificate?.["R43kdns3YYL"] || ""} </div>  {/* Name - 1 index */}
                   <br />
                 
 
 
-                  <div style={{ width: "50%", paddingBottom: 4, color: 'red' }}>3. Date of Birth <br />မွေးဖွားသည့်ရက်စွဲနှင့်အချိန်: {certificate?.["eventdate"] ? certificate["eventdate"].split(" ")[0] : ""}</div>   {/* dob 0th index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: 'red' }}>3.  {t("DOB")}: {certificate?.["eventdate"] ? certificate["eventdate"].split(" ")[0] : ""}</div>   {/* dob 0th index */}
 
 
                 </div>
 
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%",color: 'red' }}>2. Sex <br />ကျား / မ:  {certificate?.["wxrDsUO1ELy"] || ""}</div> {/* gender - 2 index */}
-                  <div style={{ width: "50%", color: 'red' }}>4. Place of Birth <br />မွေးဖွားသည့်နေရာ: {certificate?.["JAU9NM7UqQP"] || ""}</div> {/* 4 index */}
+                  <div style={{ width: "50%",color: 'red' }}>2.  {t("S")}:  {certificate?.["wxrDsUO1ELy"] || ""}</div> {/* gender - 2 index */}
+                  <div style={{ width: "50%", color: 'red' }}>4.  {t("POB")}: {certificate?.["JAU9NM7UqQP"] || ""}</div> {/* 4 index */}
                 </div>
               </div>
             </div>
@@ -319,22 +318,21 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
           <div>
             <div style={{ display: "flex" }}>
               <div style={{ width: "25%", textAlign: "center",color: "red", fontWeight: "600", display: "flex", alignItems: "center", justifyContent: "center", paddingRight: 16, borderRight: "2px solid red" }}>
-                Particular of Father <br />
-                ဖခင်၏အကြောင်းအရာ
+                {t("POF")}
               </div>
               <div style={{ width: "75%" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color:"red" }}>5. Name <br />အမည်: {certificate?.["RKs8td9BnNj"] || ""}</div> {/*  5 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color:"red" }}>8. Religion <br />ကိုးကွယ်သည့်ဘာသာ: {certificate?.["m4b4SSlipKJ"] || ""}</div> {/*  8 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color:"red" }}>5.  {t("N")}: {certificate?.["RKs8td9BnNj"] || ""}</div> {/*  5 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color:"red" }}>8.  {t("R")}: {certificate?.["m4b4SSlipKJ"] || ""}</div> {/*  8 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color: "red"}}>6. Race <br />လူမျိုး: {certificate?.["mIRVmCzC7Tt"] || ""}</div> {/*  6 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color: "red"}}>9. Occupation <br />အလုပ်အကိုင်: {certificate?.["CjjgDMbqfXX"] || ""}</div> {/*  9 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "red"}}>6.  {t("RC")}: {certificate?.["mIRVmCzC7Tt"] || ""}</div> {/*  6 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "red"}}>9.  {t("OC")}: {certificate?.["CjjgDMbqfXX"] || ""}</div> {/*  9 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div>
-                  <div style={{ width: "50%", padding: '8px', color: "red"}}>7. Citizenship <br />နိုင်ငံသားနှင့်အမှတ်: {certificate?.["ed2RBrhMhnN"] || ""}</div> {/*  7 index */}
+                  <div style={{ width: "50%", padding: '8px', color: "red"}}>7.  {t("C")}: {certificate?.["ed2RBrhMhnN"] || ""}</div> {/*  7 index */}
                 </div>
               </div>
             </div>
@@ -345,23 +343,22 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
           <div>
             <div style={{ display: "flex" }}>
               <div style={{ width: "25%", textAlign: "center", color: "red", fontWeight: "600", display: "flex", alignItems: "center", justifyContent: "center", paddingRight: 16, borderRight: "2px solid red" }}>
-                Particular of Mother <br />
-                မိခင်၏အကြောင်းအရာ
+                {t("POM")}
               </div>
               <div style={{ width: "75%" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color: "red" }}>5. Name <br />အမည်: {certificate?.["UYmZMZt32hZ"] || ""}</div> {/*  10 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color: "red" }}>8. Religion <br />ကိုးကွယ်သည့်ဘာသာ: {certificate?.["QsUp6BSb8Du"] || ""}</div> {/*  13 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "red" }}>5.  {t("N")}: {certificate?.["UYmZMZt32hZ"] || ""}</div> {/*  10 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "red" }}>8.  {t("PD")}: {certificate?.["QsUp6BSb8Du"] || ""}</div> {/*  13 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color: "red" }}>6. Race <br />လူမျိုး: {certificate?.["XFmGvaRAJqP"] || ""}</div> {/*  11 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color: "red" }}>9. Occupation <br />အလုပ်အကိုင်: {certificate?.["vg5hhREmzXe"] || ""}</div> {/*  14 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "red" }}>6.  {t("RC")}: {certificate?.["XFmGvaRAJqP"] || ""}</div> {/*  11 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "red" }}>9.  {t("OC")}: {certificate?.["vg5hhREmzXe"] || ""}</div> {/*  14 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", color: "red"}}>7. Citizenship <br />နိုင်ငံသားနှင့်အမှတ်: {certificate?.["r8oFvT4PZwL"] || ""}</div> {/*  12 index */}
-                  <div style={{ width: "50%", color: "red"}}>10. Permanent Address <br />နေရပ်လိပ်စာ(အပြည့်အစုံ): {certificate?.["bVyrfnpCd6i"] || ""}</div> {/*  15 index */}
+                  <div style={{ width: "50%", color: "red"}}>7.  {t("C")}: {certificate?.["r8oFvT4PZwL"] || ""}</div> {/*  12 index */}
+                  <div style={{ width: "50%", color: "red"}}>10.  {t("PD")}: {certificate?.["bVyrfnpCd6i"] || ""}</div> {/*  15 index */}
                 </div>
               </div>
             </div>
@@ -372,17 +369,16 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
           <div>
             <div style={{ display: "flex" }}>
               <div style={{ width: "25%",color: "red", textAlign: "center", fontWeight: "600", display: "flex", alignItems: "center", justifyContent: "center", paddingRight: 16, borderRight: "2px solid red" }}>
-                Particular of Informant <br />
-                တိုင်ကြားသူ၏အကြောင်းအရာ
+                 {t("POI")}
               </div>
               <div style={{ width: "75%" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", color: "red" }}>Signature <br />လက်မှတ်</div>
-                  <div style={{ width: "50%", color: "red" }}>Relationship to Child <br />ကလေးနှင့်တော်စပ်ပုံ: {certificate?.["eYh3U6sXrTQ"] || ""}</div> {/*  17 index */}
+                  <div style={{ width: "50%", color: "red" }}> {t("SIG")}</div>
+                  <div style={{ width: "50%", color: "red" }}> {t("RTC")}: {certificate?.["eYh3U6sXrTQ"] || ""}</div> {/*  17 index */}
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", paddingTop: '16' }}>
-                  <div style={{ width: "50%", padding: "8px", color: "red" }}>Name <br />အမည်: {certificate?.["YdNUYjH3rct"] || ""}</div> {/*  16 index */}
-                  <div style={{ width: "50%", padding: "8px", color: "red" }}>Address <br />လိပ်စာ: {certificate?.["rRpqp6TPWlh"] || ""}</div> {/*  18 index */}
+                  <div style={{ width: "50%", padding: "8px", color: "red" }}> {t("N")}: {certificate?.["YdNUYjH3rct"] || ""}</div> {/*  16 index */}
+                  <div style={{ width: "50%", padding: "8px", color: "red" }}> {t("AD")}: {certificate?.["rRpqp6TPWlh"] || ""}</div> {/*  18 index */}
                 </div>
               </div>
             </div>
@@ -394,41 +390,32 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
         <footer>
           <div style={{ marginTop: 16, fontSize: 14 }}>
             <p style={{ width: "100%",color: "red"}}>
-              I, the undersigned, do hereby certify that the above mentioned child  was born
-              alive at the time and place mentioned above and registered with the Entry No ........ 
-              in the Birth Register which is in my legal custody. <br />
-              အထက်ဖော်ပြပါ ကလေးသည် ဖော်ပြပါဒေသနှင့် အချိန်တွင် အမှန်မွေးဖွားပြီး ကျွန်ုပ် ၏ လက်ဝယ်တွင် 
-              အထက်ပါဒေသအတွက် တရားဝင်ထားရှိသည့် အရှင်မွေး မှတ်ပုံ
-             တင်စာအုပ်၌ အမှတ်စဉ်________________ဖြင့် မှတ်ပုံတင်ပြီး‌ကြောင်း သက်သေခံ လက်မှတ် ရေးထိုးလိုက်သည်။
-
+                 {t("PARA1VALIDATION")}
              </p>
               {/* <span style={{ ...borderDotted, width: "9%" }}></span> */}
                <p style={{ width: "100%", color: "red", display: "block"}}>
-              Any person who (1) falsifies any of the particulars on this certificate or (2) used it as true, knowing it
-              to be false is liable to prosecution.
-              <br />
-              ဤသက်သေခံလက်မှတ်တွင် (၁) အကြောင်းအရာ လိမ်လည်ထည့်သွင်းသောသူ (၂) လိမ်လည်ထားမှန်းသိလျက်နှင့် အမှန်ကဲ့သို့ အသုံးပြုသောသူများအား တရားစွဲဆိုလိမ့်မည်။
+                   {t("PARA2VALIDATION")}
             </p>
           </div>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", color: "red"}}>
             <div>
               <p style={{ marginTop: 5, fontWeight: "600" }}>
-                Date of issue <br />ထုတ်ပေးသည့်ရက်စွဲ <span style={{ display: "inline-block", width: 24, verticalAlign: "middle" }}></span>
+                 {t("DOI")} <span style={{ display: "inline-block", width: 24, verticalAlign: "middle" }}></span>
                 / <span style={{ display: "inline-block", width: 24, verticalAlign: "middle" }}></span> /
               </p>
             </div>
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <span style={{ fontWeight: "600" }}>Registration Officer's <br />ဖွားသေမှတ်ပုံတင်အရာရှိ၏</span>
+              <span style={{ fontWeight: "600" }}> {t("RO")}</span>
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span style={{ fontWeight: "600" }}>
-                Signature <br /> လက်မှတ် <span style={{ ...borderDotted, width: 80 }}></span>
+                {t("SIG")} <span style={{ ...borderDotted, width: 80 }}></span>
               </span>
               <span style={{ fontWeight: "600", marginTop: 2 }}>
-                Name <br />အမည်<span style={{ ...borderDotted, width: 80 }}></span>
+                {t("N")}<span style={{ ...borderDotted, width: 80 }}></span>
               </span>
               <span style={{ fontWeight: "600", marginTop: 2 }}>
-                Designation <br />ရာထူး <span style={{ ...borderDotted, width: 80 }}></span>
+                 {t("DG")} <span style={{ ...borderDotted, width: 80 }}></span>
               </span>
             </div>
           </div>

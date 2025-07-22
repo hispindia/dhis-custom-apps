@@ -15,6 +15,7 @@ import LateFoetalDeathCert from "./routes/lateFoetalDeathCert";
 import { useDataQuery } from "@dhis2/app-runtime";
 import { InitialQuery } from "./components/constants";
 
+
 function AppContent() {
   const location = useLocation();
   const hideSidebar = location.pathname === "/downloadBirthCertificate";
