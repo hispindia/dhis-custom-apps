@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, BrowserRouter, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, HashRouter, useLocation, useNavigate } from "react-router-dom";
 
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
@@ -14,7 +14,7 @@ import LateFoetalDeathRecord from "./routes/LateFoetalDeathRecord";
 import LateFoetalDeathCert from "./routes/lateFoetalDeathCert";
 import { useDataQuery } from "@dhis2/app-runtime";
 import { InitialQuery } from "./components/constants";
-
+import './i18n'
 
 function AppContent() {
   const location = useLocation();
@@ -72,16 +72,21 @@ function AppContent() {
     <>
       {/* <Header /> */}
       <div className={styles.container}>
-        {!hideSidebar && <Sidebar  setOrgUnit={setOrgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>}
+        <Sidebar  setOrgUnit={setOrgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>
 
-        <Routes>
+        <div style={{flex: 1}}>
+          <Routes>
+          <Route path="/" element={<BirthRecords orgUnit={orgUnit} status={'Live-Birth'} />} />
           <Route path="/born-alive" element={<BirthRecords orgUnit={orgUnit} status={'Live-Birth'}/>} />
           <Route path="/death" element={<DeathRecords orgUnit={orgUnit} dataElements={dataElements}/>} />
           <Route path="/still-born" element={<LateFoetalDeathRecord orgUnit={orgUnit} status={'Still Birth'}/>} />
           <Route path="/birth-certificate" element={<BirthCertificate orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>} />
           <Route path="/death-certificate" element={<DeathCertificate orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits} dataElements={dataElements}/>} />
           <Route path="/late-Foetal-death-certificate" element={<LateFoetalDeathCert orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits} dataElements={dataElements}/>} />
+          <Route path="*" element={<BirthRecords orgUnit={orgUnit} status={'Live-Birth'} />} />
         </Routes>
+
+        </div>
       </div>
     </>
   );
@@ -89,9 +94,9 @@ function AppContent() {
 
 function App() {
   return (
-    <BrowserRouter basename="/myr_registry/api/apps/birth-death-certificate/">
+    <HashRouter >
       <AppContent />
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

@@ -5,7 +5,8 @@ import styles from '../App.module.css';
 import { fetchDeathCertficateRecords } from "../API/DeathCertAPI";
 import { useNavigate } from "react-router-dom";
 import { TablePagination, TextField } from "@mui/material";
-  import MoreVertIcon from '@mui/icons-material/MoreVert';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { useTranslation } from "react-i18next";
 
 const DeathRecords = ({orgUnit, dataElements}) => {
   
@@ -14,6 +15,8 @@ const DeathRecords = ({orgUnit, dataElements}) => {
   const [page, setPage] = useState(0);
   const[rowsPerPage, setRowsPerPage] = useState(10);
   const[showField, setShowField] = useState(null);
+
+  const {t, i18n} = useTranslation();
 
 
   const navigate = useNavigate();
@@ -148,16 +151,37 @@ const DeathRecords = ({orgUnit, dataElements}) => {
             {paginatedRecords.map((record, index) => (
               <tr key={index}>
                
-              <td>{record["jGGNvNYhu47"] ? record["jGGNvNYhu47"].split(" ")[0]: ""}</td>     {/* date of report*/}
-              <td>{record["jGGNvNYhu47"] ? record["jGGNvNYhu47"].split(" ")[0]: ""}</td>  {/* date of death*/}
+              <td>{typeof record["jGGNvNYhu47"] === "string" ? record["jGGNvNYhu47"].split(" ")[0]: ""}</td>     {/* date of report*/}
+              <td>{typeof record["jGGNvNYhu47"] === "string" ? record["jGGNvNYhu47"].split(" ")[0]: ""}</td>  {/* date of death*/}
               <td>{record["aTbE3kYe98D"] || ""}</td>  {/* name */}
               <td>{record["wxrDsUO1ELy"] || ""}</td>  {/* gender*/}
               <td>{record["KFGxB6wpRxi"] || ""}</td>  {/* age */}
               <td>{record["iXXvJAxbOtd"] || ""}</td>  {/*permanent address */} 
               <td>{(dataElements['nQy5xQrOMXj'] && dataElements['nQy5xQrOMXj'][record["nQy5xQrOMXj"]]) ? dataElements['nQy5xQrOMXj'][record["nQy5xQrOMXj"]] : ""}</td>   {/* cause of death */} 
                  <td>
-                  <button className="button" onClick={() => navigate('/death-certificate', {state: {record}})}>
-                    ⬇️ Generate Certificate </button>
+                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <i>Generate Certificate</i>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <button
+                      style={{ width: "60px", height: "28px", background: "#BFF4B", border:"1px solid green", borderRadius: "10%" }}
+                      onClick={() => {
+                        navigate("/birth-certificate", { state: { record } })
+                        i18n.changeLanguage('br');
+                      }}
+                    >
+                      Bur
+                    </button>
+                    <button
+                      style={{ width: "60px", height: "28px",background: "#ADD8E6", border:"1px solid green", borderRadius: "10%" }}
+                      onClick={() => {
+                        navigate("/birth-certificate", { state: { record } })
+                        i18n.changeLanguage('en');
+                      }}
+                    >
+                   En
+      </button>
+    </div>
+            </div>
                 </td>
               </tr>
             ))}

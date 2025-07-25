@@ -5,15 +5,18 @@ import { useNavigate } from "react-router-dom";
 import { fetchBirthCertificateRecords } from "../API/BirthCertAPI";
 import { TablePagination } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { useTranslation } from "react-i18next";
 
 const LateFoetalDeathRecord = ({orgUnit, status}) => {
-//   const [searchQuery, setSearchQuery] = useState("");
+
 
   const [certificate, setCertificate] = useState([]);
   const [loading, setLoading] = useState(false);
   const[page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
    const[showField, setShowField] = useState(null);
+
+   const {t, i18n} = useTranslation();
 
   const navigate = useNavigate();
 
@@ -141,13 +144,34 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
             {paginatedRecords.map((record, index) => (
               <tr key={index}>
                 <td>{record?.["R43kdns3YYL"] || ""}</td> { /* infant name */}
-                <td>{record?.["eventdate"] ? record["eventdate"].split(" ")[0]: ""}</td> { /* dob */}
+                <td>{typeof record?.["eventdate"] === "string" ? record["eventdate"].split(" ")[0]: ""}</td> { /* dob */}
                 <td>{record?.["wxrDsUO1ELy"] || ""}</td> { /* gender */}
                 <td>{record?.["UYmZMZt32hZ"] || ""}</td> { /* Mothers Name */}
                 <td>{record?.["RKs8td9BnNj"] || ""}</td>   { /* Fathers Name */}
                 <td>
-                  <button className="button" onClick={() => navigate('/late-Foetal-death-certificate', {state: {record}})}>
-                    ⬇️ Generate Certificate </button>
+                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <i>Generate Certificate</i>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <button
+                      style={{ width: "60px", height: "28px", background: "#BFF4B", border:"1px solid green", borderRadius: "10%" }}
+                      onClick={() => {
+                        navigate("/birth-certificate", { state: { record } })
+                        i18n.changeLanguage('br');
+                      }}
+                    >
+                      Bur
+                    </button>
+                    <button
+                      style={{ width: "60px", height: "28px",background: "#ADD8E6", border:"1px solid green", borderRadius: "10%" }}
+                      onClick={() => {
+                        navigate("/birth-certificate", { state: { record } })
+                        i18n.changeLanguage('en');
+                      }}
+                    >
+        En
+      </button>
+    </div>
+            </div>
                 </td>
               </tr>
             ))}

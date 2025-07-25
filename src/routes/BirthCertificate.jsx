@@ -3,7 +3,6 @@ import html2pdf from "html2pdf.js";
 import { fetchBirthCertificateRecords } from "../API/BirthCertAPI";
 import { data } from "autoprefixer";
 import { useLocation, useParams } from "react-router-dom";
-import { red } from "@mui/material/colors";
 import { useTranslation } from 'react-i18next'
 
 
@@ -81,6 +80,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
   const { state } = useLocation();
   const [certificate, setCertificate] = useState(state?.record || null);
   const {t}  = useTranslation();
+  console.log(t("BIRCERT"));
 
   const pdfRef = useRef();
   const orgUnitObj = {};
@@ -89,7 +89,9 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
   })
   orgUnit = {
     ...orgUnit,
-    path: orgUnit.path.split('/').map(ou => orgUnitObj[ou] ? orgUnitObj[ou] : ou)
+    path: typeof orgUnit.path === "string"
+    ? orgUnit.path.split('/').map(ou => orgUnitObj[ou] ? orgUnitObj[ou] : ou)
+    : []
   }
 
   console.log("OrgUnit", orgUnit);
@@ -153,7 +155,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
         >
           {/* Left Section */}
           <section style={{ color: '#000', fontSize: 16, width: "30%" }}>
-            <p style={{ marginBottom: 4, marginTop: 12, fontWeight: 'normal', color:'red' }}>{t("VR")}</p>
+            <p style={{ marginBottom: 4, marginTop: 12, fontWeight: 'normal', color:'red' }}>{t("VR103")}</p>
             <div>
               <p style={{ marginBottom: 4, marginTop: 16, fontWeight: 'normal', color:'red'}}>
                  {t("S/d")}
@@ -299,7 +301,13 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                 
 
 
-                  <div style={{ width: "50%", paddingBottom: 4, color: 'red' }}>3.  {t("DOB")}: {certificate?.["eventdate"] ? certificate["eventdate"].split(" ")[0] : ""}</div>   {/* dob 0th index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: 'red' }}>
+                    3.  {t("DOB")}: {
+                    typeof certificate?.["eventdate"] === "string" 
+                    ? certificate["eventdate"].split(" ")[0] 
+                    : ""
+                    }
+                  </div>   {/* dob 0th index */}
 
 
                 </div>
@@ -390,11 +398,11 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
         <footer>
           <div style={{ marginTop: 16, fontSize: 14 }}>
             <p style={{ width: "100%",color: "red"}}>
-                 {t("PARA1VALIDATION")}
+                 {t("LIVE_BIRTH_PARA1_VALIDATION")}
              </p>
               {/* <span style={{ ...borderDotted, width: "9%" }}></span> */}
                <p style={{ width: "100%", color: "red", display: "block"}}>
-                   {t("PARA2VALIDATION")}
+                   {t("LIVE_BIRTH_PARA2_VALIDATION")}
             </p>
           </div>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", color: "red"}}>

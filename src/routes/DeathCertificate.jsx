@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import html2pdf from "html2pdf.js";
 import { fetchDeathCertficateRecords } from "../API/DeathCertAPI";
 import { useLocation, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const styles = {
     body: {
@@ -118,6 +119,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
     const { state } = useLocation();
     const [certificate, setCertificate] = useState(state?.record || null);
     const pdfRef = useRef();
+    const {t, i18n} = useTranslation();
     const orgUnitObj = {};
     orgUnits.forEach(ou => {
         orgUnitObj[ou.id] = ou.name;
@@ -125,7 +127,9 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
     orgUnit = {
         ...orgUnit, 
-        path: orgUnit.path.split('/').map(ou => orgUnitObj[ou] ? orgUnitObj[ou] : ou)
+        path: typeof orgUnit.path === "string" 
+         ? orgUnit.path.split('/').map(ou => orgUnitObj[ou] ? orgUnitObj[ou] : ou)
+         : []
     }
 
 
@@ -170,7 +174,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
       </button>
 
         <main ref={pdfRef} style={{ margin: "1rem", width: "100%" }}>
-            <h2 style={styles.h2}>DEATH CERTIFICATE <br />သေဆုံးမှုလက်မှတ် </h2>
+            <h2 style={styles.h2}>{t("DC")} </h2>
 
         <header
           style={{
@@ -187,7 +191,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
             <p style={{ marginBottom: 4, marginTop: 12, fontWeight: 'normal' }}>V.R. Form 203 ဖွားသေပုံစံ ၂၀၃</p>
             <div>
               <p style={{ marginBottom: 4, marginTop: 16, fontWeight: 'normal' }}>
-                State / Division <br />ပြည်နယ် / တိုင်းဒေသကြီး
+               {t("S/d")}
                 <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted black',
@@ -201,7 +205,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
             </div>
             <div>
               <p style={{ fontWeight: 'normal' }}>
-                District <br />ခရိုင်
+               {t("D")}
                 <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted black',
@@ -217,7 +221,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
             <div>
               <p style={{ fontWeight: 'normal' }}>
-                Township  <br />မြို့နယ်
+               {t("T")}
                 <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted black',
@@ -233,7 +237,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
             <div>
               <p style={{ fontWeight: 'normal' }}>
-                Ward / Village-tract ............ <br />ရပ်ကွက် / ကျေးရွာအုပ်စု
+               {t("W/v")}............ 
                   {/* <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted black',
@@ -250,8 +254,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
           {/* Right Section */}
           <section style={{ marginTop: 40, color: '#000', fontSize: 16,  width: "30%" }}>
             <p style={{ fontWeight: 'normal' }}>
-              Page No............  <br />
-              စာမျက်နှာအမှတ်
+             {t("PN")}............  
               {/* <span style={{
                   display: 'inline-block',
                   borderBottom: '2px dotted black',
@@ -262,8 +265,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
             </p>
             <p style={{ fontWeight: 'normal' }}>
               Book No............
-               <br />
-             စာအုပ်အမှတ်
+              
               {/* <span style={{
                   display: 'inline-block',
                   borderBottom: '2px dotted black',
@@ -273,7 +275,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                 }}></span> */}
             </p>
             <p style={{ marginBottom: 4, fontWeight: 'normal' }}>
-              Entry No........... <br /> မှတ်ပုံတင်အမှတ်စဉ်
+             {t("EN")}........... 
               {/* <span style={{
                   display: 'inline-block',
                   borderBottom: '2px dotted black',
@@ -283,8 +285,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                 }}></span> */}
             </p>
             <p style={{ marginBottom: 4, fontWeight: 'normal' }}>
-              Date of Registration..../.../ <br />
-              မှတ်ပုံတင်သည့်ရက်စွဲ
+              {t("DR")}..../.../ 
               {/* <span style={{
                   display: 'inline-block',
                   width: 5,
@@ -312,74 +313,78 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
         </header>
 
                     <hr style={styles.hr} />
-                    <h3 style={styles.h3}>Particulars of Deceased <br />
-                    သေဆုံးသူ၏အကြောင်းအရာ
+                    <h3 style={styles.h3}> {t("PODec")}
+                   
                     </h3>
                     <hr style={styles.hr} />
 
                     <table style={styles.table}>
                         <tbody>
                             <tr>
-                                <td style={styles.td}>1. Name <br />အမည်: {certificate?.["aTbE3kYe98D"] || ""}</td>
-                                <td style={styles.td}>7. Race <br />လူမျိုး: {certificate?.["b9BVo7x8248"] || ""}</td>
+                                <td style={styles.td}>1. {t("N")}: {certificate?.["aTbE3kYe98D"] || ""}</td>
+                                <td style={styles.td}>7. {t("RC")}: {certificate?.["b9BVo7x8248"] || ""}</td>
                             </tr>
                            
                             <tr>
-                                <td style={styles.td}>2. Sex <br />ကျား / မ: {certificate?.["wxrDsUO1ELy"] || ""}</td>
-                                <td style={styles.td}>8. Citizenship <br />နိုင်ငံသားနှင့်အမှတ်: {certificate?.["aTbE3kYe98D"] || ""}</td>
+                                <td style={styles.td}>2. {t("S")}: {certificate?.["wxrDsUO1ELy"] || ""}</td>
+                                <td style={styles.td}>8. {t("C")}: {certificate?.["aTbE3kYe98D"] || ""}</td>
                             </tr>
                            
 
                             <tr>
-                                <td style={styles.td}>3. Date of death <br />သေဆုံးသည့်ရက်စွဲနှင့်အချိန်: {certificate?.["jGGNvNYhu47"] ? certificate["jGGNvNYhu47"].split(" ")[0]: ""}</td>
-                                <td style={styles.td}>9. Religion <br />ကိုးကွယ်သည့်ဘာသာ: {certificate?.["b9BVo7x8248"] || ""}</td>
+                                <td style={styles.td}>3. {t("DOD")}: {
+                                typeof certificate?.["jGGNvNYhu47"] === "string" 
+                                ? certificate["jGGNvNYhu47"].split(" ")[0]
+                                : ""}
+                                </td>
+                                <td style={styles.td}>9. {t("R")}: {certificate?.["b9BVo7x8248"] || ""}</td>
                             </tr>
                             
                             <tr>
-                                <td style={styles.td}>4. Place of death <br />သေဆုံးသည့်နေရာ: {certificate?.["MOV6uMBMkph"] || ""}</td>
-                                <td style={styles.td}>10. Permanent Address <br />နေရပ်လိပ်စာ(အပြည့်အစုံ): {certificate?.["iXXvJAxbOtd"] || ""}</td>
+                                <td style={styles.td}>4. {t("POD")}: {certificate?.["MOV6uMBMkph"] || ""}</td>
+                                <td style={styles.td}>10. {t("PD")}: {certificate?.["iXXvJAxbOtd"] || ""}</td>
                             </tr>
                            
                             <tr>
-                                <td style={styles.td}>5. Age <br />အသက်: {certificate?.["KFGxB6wpRxi"] || ""}</td>
-                                <td style={styles.td}>11. Name of Father of the deceased <br />သေဆုံးသူ၏ဖခင်အမည်: {certificate?.["OpzRl6KIFVU"] || ""}</td>
+                                <td style={styles.td}>5. {t("A")}: {certificate?.["KFGxB6wpRxi"] || ""}</td>
+                                <td style={styles.td}>11.  {t("NFD")}: {certificate?.["OpzRl6KIFVU"] || ""}</td>
                             </tr>
                            
                             <tr>
-                                <td style={styles.td}>6. Occupation <br />အလုပ်အကိုင်: {certificate?.["s3wKlMmBs8p"] || ""}</td>
-                                <td style={styles.td}>12. Name of Mother of the deceased <br />သေဆုံးသူ၏မိခင်အမည်: {certificate?.["xHcmoS3icZD"] || ""}</td>
+                                <td style={styles.td}>6. {t("OC")}: {certificate?.["s3wKlMmBs8p"] || ""}</td>
+                                <td style={styles.td}>12. {t("NMD")} : {certificate?.["xHcmoS3icZD"] || ""}</td>
                             </tr>
                            
                             <tr>
-                                <td style={styles.td}>13. Cause of Death <br />မည်သည့်အကြောင်းကြောင့် (သို့) ရောဂါဖြင့် သေဆုံးသည်။: {(dataElements['nQy5xQrOMXj'] && dataElements['nQy5xQrOMXj'][certificate["nQy5xQrOMXj"]]) ? dataElements['nQy5xQrOMXj'][certificate["nQy5xQrOMXj"]] :  ""}</td>
+                                <td style={styles.td}>13. {t("COD")}: {(dataElements['nQy5xQrOMXj'] && dataElements['nQy5xQrOMXj'][certificate["nQy5xQrOMXj"]]) ? dataElements['nQy5xQrOMXj'][certificate["nQy5xQrOMXj"]] :  ""}</td>
                                 <td></td>
                             </tr>
                            
                             <tr>
-                                <td style={styles.td}>14. Informat's Signature <br />တိုင်ကြားသူ၏ လက်မှတ်</td>
-                                <td style={styles.td}>Relationship to deceased <br />သေဆုံးသူနှင့်တော်စပ်ပုံ: {certificate?.["qa5eIb216nF"] || ""}</td>
+                                <td style={styles.td}>14. {t("IS")}</td>
+                                <td style={styles.td}>{t("RTD")}: {certificate?.["qa5eIb216nF"] || ""}</td>
                             </tr>
                             <tr>
-                                <td style={{ ...styles.td, ...styles.pt4 }}>Name <br />အမည်: {certificate?.["YdNUYjH3rct"] || ""}</td>
-                                <td style={{ ...styles.td, ...styles.pt4 }}>Address <br />လိပ်စာ: {certificate?.["rRpqp6TPWlh"] || ""}</td>
+                                <td style={{ ...styles.td, ...styles.pt4 }}> {t("N")}: {certificate?.["YdNUYjH3rct"] || ""}</td>
+                                <td style={{ ...styles.td, ...styles.pt4 }}> {t("AD")}: {certificate?.["rRpqp6TPWlh"] || ""}</td>
                             </tr>
                          
                             <tr>
-                                <td style={styles.td}>15. Cause of Death Certifiers <br />သေဆုံးသည့်အကြောင်းအရာ (သို့) ရောဂါ ထောက်ခံသူ၏:  {certificate?.["aTbE3kYe98D"] || ""}</td>
+                                <td style={styles.td}>15. {t("CODC")} :  {certificate?.["aTbE3kYe98D"] || ""}</td>
                                 <td style={styles.td}>
-                                    Signature <br />လက်မှတ် <span style={styles.w17}></span>
+                                   {t("SIG")} <span style={styles.w17}></span>
                                 </td>
                             </tr>
                             <tr>
                                 <td></td>
                                 <td style={styles.pt4}>
-                                    Name <br />အမည် {certificate?.["RkPGXTudjFI"] || ""} <span style={styles.w17}></span>
+                                    {t("N")} {certificate?.["RkPGXTudjFI"] || ""} <span style={styles.w17}></span>
                                 </td>
                             </tr>
                             <tr>
                                 <td></td>
                                 <td style={styles.pt4}>
-                                    Designation <br />ရာထူး {certificate?.["NxtfpJnOOHx"] || ""} <span style={styles.w17}></span>
+                                   {t("DG")} {certificate?.["NxtfpJnOOHx"] || ""} <span style={styles.w17}></span>
                                 </td>
                             </tr>
                            
@@ -389,41 +394,30 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                     <footer style={styles.footer}>
                         <div>
                             <p style={{ width: "100%", display: "block", marginBottom: 8 }}>
-                                I, the undersigned, do hereby certify that the mentioned above   deceased was dead 
-                                 at the time and place mentioned above and registered with the Entry No in the Death Register
-                                 and that Such Register Book is now legally in my custody.
-                                 အထက်ဖော်ပြပါ သေဆုံးသူသည် ဖော်ပြပါဒေသနှင့် အချိန်တွင် အမှန်သေဆုံးပြီး ကျွန်ု 
-                                 ပ်၏ လက်ဝယ်တွင် အထက်ပါဒေသအတွက် တရားဝင်ထားရှိသည့် သေဆုံးမှု မှတ်ပုံ တင်စာအုပ်၌ အမှတ်စဉ်________________ <br />
-                                <span style={{ ...styles.borderDotted, width: "9%", marginLeft: 4, marginRight: 4 }}></span>
-                                
-                                ဖြင့် မှတ်ပုံတင်ပြီး‌ကြောင်း သက်သေခံ လက်မှတ် ရေးထိုးလိုက်သည်။
+                              {t("DEAD_PARA1_VALIDATION")}
                             </p>
                             <p style={{ width: "100%", display: "block", marginBottom: 8 }}>
-                                Any person who (1) falsifies any of the particulars on this certificate 
-                                or (2) used it as true, knowing it to be false is liable to prosecution. <br />
-                                ဤသက်သေခံလက်မှတ်တွင် (၁) အကြောင်းအရာ လိမ်လည်ထည့်သွင်းသောသူ (၂) 
-                                လိမ်လည်ထားမှန်းသိလျက်နှင့် အမှန်ကဲ့သို့ အသုံးပြုသောသူများအား တရားစွဲဆိုလိမ့်မည်။
-                                
+                                {t("DEAD_PARA2_VALIDATION")}
                             </p>
                         </div>
                         <div style={styles.flex}>
                             <div>
                                 <p style={{ marginTop: 16, fontWeight: "600" }}>
-                                    Date of issue <span style={styles.w6}></span> / <span style={styles.w6}></span> /{" "}
+                                    {t("DOI")} <span style={styles.w6}></span> / <span style={styles.w6}></span> /{" "}
                                 </p>
                             </div>
                             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                                <span style={styles.fontSemibold}>Registration Officer's <br /> ဖွားသေမှတ်ပုံတင်အရာရှိ၏</span>
+                                <span style={styles.fontSemibold}> {t("RO")} </span>
                             </div>
                             <div style={{ display: "flex", flexDirection: "column" }}>
                                 <span style={styles.fontSemibold}>
-                                    Signature <br /> လက်မှတ် <span style={styles.w20}></span>
+                                    {t("SIG")} <span style={styles.w20}></span>
                                 </span>
                                 <span style={{ ...styles.fontSemibold, ...styles.mt2Text }}>
-                                    Name <br />အမည် <span style={styles.w20}></span>
+                                  {t("N")} <span style={styles.w20}></span>
                                 </span>
                                 <span style={{ ...styles.fontSemibold, ...styles.mt2Text }}>
-                                    Designation <br />ရာထူး<span style={styles.w20}></span>
+                                   {t("DG")}<span style={styles.w20}></span>
                                 </span>
                             </div>
                         </div>

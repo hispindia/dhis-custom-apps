@@ -83,25 +83,3 @@ th {
   display: none;
 }
 
-
-.btn-container{
-  display: flex;
-  gap: 10px;
-}
-
-button{
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  font-weight: 500;
-  font-family: 'inherit';
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-
-button:hover{
- border-color: #646cff;
-}
