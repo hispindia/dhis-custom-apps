@@ -264,7 +264,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                 }}></span> */}
             </p>
             <p style={{ fontWeight: 'normal' }}>
-              Book No............
+              {t("BN")}............
               
               {/* <span style={{
                   display: 'inline-block',

@@ -155,7 +155,7 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
                     <button
                       style={{ width: "60px", height: "28px", background: "#BFF4B", border:"1px solid green", borderRadius: "10%" }}
                       onClick={() => {
-                        navigate("/birth-certificate", { state: { record } })
+                        navigate("/late-Foetal-death-certificate", { state: { record } })
                         i18n.changeLanguage('br');
                       }}
                     >
@@ -164,7 +164,7 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
                     <button
                       style={{ width: "60px", height: "28px",background: "#ADD8E6", border:"1px solid green", borderRadius: "10%" }}
                       onClick={() => {
-                        navigate("/birth-certificate", { state: { record } })
+                        navigate("/late-Foetal-death-certificate", { state: { record } })
                         i18n.changeLanguage('en');
                       }}
                     >
