@@ -3,7 +3,7 @@ import styles from '../App.module.css';
 // import { fetchBirthRecords } from "../API/BirthAPI";
 import { useNavigate } from "react-router-dom";
 import { fetchBirthCertificateRecords } from "../API/BirthCertAPI";
-import { TablePagination } from "@mui/material";
+import { TablePagination, TextField } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useTranslation } from "react-i18next";
 
@@ -14,14 +14,17 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
   const [loading, setLoading] = useState(false);
   const[page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-   const[showField, setShowField] = useState(null);
-
-   const {t, i18n} = useTranslation();
+  const[showField, setShowField] = useState(null);
+  const {t, i18n} = useTranslation();
 
   const navigate = useNavigate();
 
 
   useEffect(() => {
+    setLoading(true);
+    
+    console.log("LateFoetalDeathRecord - orgUnit:", orgUnit);
+    console.log("LateFoetalDeathRecord - status:", status);
      setLoading(true);
       fetchBirthCertificateRecords(orgUnit.id, status)
        .then(res => {      
@@ -44,7 +47,9 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
       dob: "",
       gender: "",
       mothersName: "",
-      fathersName: ""
+      fathersName: "",
+      fatherNRC: "",
+      motherNRC: ""
     });
 
       const FIELD_KEYS = {
@@ -52,7 +57,9 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
       dob: "eventdate",
       gender: "wxrDsUO1ELy",
       mothersName: "UYmZMZt32hZ",
-      fathersName: "RKs8td9BnNj"
+      fathersName: "RKs8td9BnNj",
+      fatherNRC: "Fwa7gEzjZAH",
+      motherNRC: "M8pvzjPdija"
 
     }
 
@@ -91,7 +98,9 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
           (record[FIELD_KEYS.dob ]|| "").toLowerCase().includes(filters.dob.toLowerCase()) &&
           (record[FIELD_KEYS.gender] || "").toLowerCase().includes(filters.gender.toLowerCase()) &&
           (record[FIELD_KEYS.mothersName] || "").toLowerCase().includes(filters.mothersName.toLowerCase()) &&
-          (record[FIELD_KEYS.fathersName] || "").toLowerCase().includes(filters.fathersName.toLowerCase())
+          (record[FIELD_KEYS.fathersName] || "").toLowerCase().includes(filters.fathersName.toLowerCase()) &&
+          (record[FIELD_KEYS.fatherNRC] || "").toLowerCase().includes(filters.fatherNRC.toLowerCase()) && 
+          (record[FIELD_KEYS.motherNRC] || "").toLowerCase().includes(filters.motherNRC.toLowerCase()) 
       );
     })
 
@@ -128,14 +137,16 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
       <div className={styles.card}>
         <h3>Still Birth Certificate Records</h3>
         
-        <table>
-          <thead>
-            <tr>
+      <table>
+      <thead>
+      <tr>
       <th>{renderFilterField("infantName", "Infant Name")}</th>
       <th>{renderFilterField("dob", "Date of Birth")}</th>
       <th>{renderFilterField("gender", "Gender")}</th>
       <th>{renderFilterField("mothersName", "Mother Name")}</th>
       <th>{renderFilterField("fathersName", "Father Name")}</th>
+      <th>{renderFilterField("fatherNRC", "Father NRC (Full)")}</th>
+      <th>{renderFilterField("motherNRC", "Mother NRC (Full)")}</th>
       <th></th>
     </tr>
            
@@ -148,6 +159,8 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
                 <td>{record?.["wxrDsUO1ELy"] || ""}</td> { /* gender */}
                 <td>{record?.["UYmZMZt32hZ"] || ""}</td> { /* Mothers Name */}
                 <td>{record?.["RKs8td9BnNj"] || ""}</td>   { /* Fathers Name */}
+                <td>{record?.["Fwa7gEzjZAH"] || ""}</td>    { /* Fathers NRC */}
+                <td>{record?.["M8pvzjPdija"] || ""}</td>    { /* MOTHER NRC */}
                 <td>
                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                   <i>Generate Certificate</i>

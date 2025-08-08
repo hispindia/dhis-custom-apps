@@ -41,7 +41,9 @@ import { useTranslation } from "react-i18next";
       dob: "",
       gender: "",
       mothersName: "",
-      fathersName: ""
+      fathersName: "",
+      fatherNRC: "",
+      motherNRC: ""
     });
 
       const FIELD_KEYS = {
@@ -49,7 +51,9 @@ import { useTranslation } from "react-i18next";
       dob: "eventdate",
       gender: "wxrDsUO1ELy",
       mothersName: "UYmZMZt32hZ",
-      fathersName: "RKs8td9BnNj"
+      fathersName: "RKs8td9BnNj",
+      fatherNRC: "Fwa7gEzjZAH",
+      motherNRC: "M8pvzjPdija"
 
     }
 
@@ -91,7 +95,9 @@ import { useTranslation } from "react-i18next";
           (record[FIELD_KEYS.dob ]|| "").toLowerCase().includes(filters.dob.toLowerCase()) &&
           (record[FIELD_KEYS.gender] || "").toLowerCase().includes(filters.gender.toLowerCase()) &&
           (record[FIELD_KEYS.mothersName] || "").toLowerCase().includes(filters.mothersName.toLowerCase()) &&
-          (record[FIELD_KEYS.fathersName] || "").toLowerCase().includes(filters.fathersName.toLowerCase())
+          (record[FIELD_KEYS.fatherNRC] || "").toLowerCase().includes(filters.fatherNRC.toLowerCase()) && 
+          (record[FIELD_KEYS.motherNRC] || "").toLowerCase().includes(filters.motherNRC.toLowerCase()) 
+
       );
     })
 
@@ -138,6 +144,8 @@ import { useTranslation } from "react-i18next";
       <th>{renderFilterField("gender", "Gender")}</th>
       <th>{renderFilterField("mothersName", "Mother Name")}</th>
       <th>{renderFilterField("fathersName", "Father Name")}</th>
+      <th>{renderFilterField("fatherNRC", "Father NRC (Full)")}</th>
+      <th>{renderFilterField("motherNRC", "Mother NRC (Full)")}</th>
       <th></th>
     </tr>
 
@@ -155,6 +163,8 @@ import { useTranslation } from "react-i18next";
         <td>{record?.["wxrDsUO1ELy"] || ""}</td>
         <td>{record?.["UYmZMZt32hZ"] || ""}</td>
         <td>{record?.["RKs8td9BnNj"] || ""}</td>
+        <td>{record?.["Fwa7gEzjZAH"] || ""}</td>
+        <td>{record?.["M8pvzjPdija"] || ""}</td>
         <td>
      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
     <i>Generate Certificate</i>

@@ -83,6 +83,8 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits, dataElements}) => {
   const pdfRef = useRef();
   const {t} = useTranslation();
   const orgUnitObj = {};
+  console.log(`---------- ${orgUnit}`);
+  console.log(`------------------${orgUnits}`);
   orgUnits.forEach(ou => {
     orgUnitObj[ou.id] = ou.name;
   })
@@ -347,18 +349,18 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits, dataElements}) => {
               </div>
               <div style={{ width: "75%" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>5. {t("N")}: {certificate?.["UYmZMZt32hZ"] || ""}</div> {/*  10 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>8. {t("R")}: {certificate?.["QsUp6BSb8Du"] || ""}</div> {/*  13 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>10. {t("N")}: {certificate?.["UYmZMZt32hZ"] || ""}</div> {/*  10 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>13. {t("R")}: {certificate?.["QsUp6BSb8Du"] || ""}</div> {/*  13 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>6. {t("RC")}: {certificate?.["XFmGvaRAJqP"] || ""}</div> {/*  11 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>9. {t("OC")}: {certificate?.["vg5hhREmzXe"] || ""}</div> {/*  14 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>11. {t("RC")}: {certificate?.["XFmGvaRAJqP"] || ""}</div> {/*  11 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>14. {t("OC")}: {certificate?.["vg5hhREmzXe"] || ""}</div> {/*  14 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", color: "blue"}}>7. {t("C")}: {certificate?.["r8oFvT4PZwL"] || ""}</div> {/*  12 index */}
-                  <div style={{ width: "50%", color: "blue"}}>10.  {t("PD")}: {certificate?.["bVyrfnpCd6i"] || ""}</div> {/*  15 index */}
+                  <div style={{ width: "50%", color: "blue"}}>12. {t("C")}: {certificate?.["r8oFvT4PZwL"] || ""}</div> {/*  12 index */}
+                  <div style={{ width: "50%", color: "blue"}}>15.  {t("PD")}: {certificate?.["bVyrfnpCd6i"] || ""}</div> {/*  15 index */}
                 </div>
               </div>
             </div>
