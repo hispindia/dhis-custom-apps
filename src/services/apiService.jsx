@@ -2,10 +2,28 @@ export const ApiService = {
  
   getUserrole,
   getUserGroup,
-  createUser
+  createUser,
+  MeJson
  
 };
 
+async function MeJson() {
+  var url = `${process.env.REACT_APP_DHIS2_BASE_URL}/api/me.json?fields=id,name,userRoles[id,name]`;
+  let response = await fetch(url, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (response.status == "200") {
+    let data = await response.text();
+    return data;
+  } else {
+    throw "Error: Report generation failed, Please try again!";
+  }
+}
 async function getUserrole() {
   var url = `${process.env.REACT_APP_DHIS2_BASE_URL}/api/userRoles.json?fields=name,id&paging=false`;
 
@@ -42,32 +60,7 @@ async function getUserGroup() {
     throw "Error: Report generation failed, Please try again!";
   }
 }
-// async function createUser(formData) {
-//   const url = `${process.env.REACT_APP_DHIS2_BASE_URL}/api/users`;
 
-//   try {
-//     let response = await fetch(url, {
-//       method: "POST",
-//       credentials: "include", // keep if you need cookies/session
-//       headers: {
-//         "Content-Type": "application/json",
-//         Accept: "application/json",
-//       },
-//       body: JSON.stringify(formData), // send your formData payload
-//     });
-//      if (!response.ok) {
-//       const errorText = await response.text();
-//       throw new Error(`Error ${response.status}: ${errorText}`);
-//     }
-
-//     return await response.json();
-//   } catch (error) {
-//     console.error("❌ User creation failed:", error);
-//     throw error;
-//   }
-
-
-// }
 
 async function createUser(formData) {
   const url = `${process.env.REACT_APP_DHIS2_BASE_URL}/api/users`;

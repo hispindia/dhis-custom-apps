@@ -11,34 +11,27 @@ import {
 } from "../../store/outree/outree.action";
 const Main = ({ data, head }) => {
   const dispatch = useDispatch();
+
   const [errors, setErrors] = useState({});
+
   const selectedOU = useSelector((state) => state.outree.clickedOU);
   const [loading, setLoading] = useState(false); //
   const [userRoles, setUserRoles] = useState([]); // ✅ store all role IDs
   const [selectedValue, setSelectedValue] = useState("");
-
+   const [showForm, setShowForm] = useState(false); // ✅ control form visibility
   // Define buttons with unique IDs
   const buttons = [
     {
       id: "ZIyUEL6JOGj",
-      Hasrole: "Regional Supervisors",
+      role: "Regional Supervisors",
       label: "Create LGU MPMO",
-      assignRole:"U4PSYThC7BK"
-     
-
     },
     {
       id: "U4PSYThC7BK",
-      Hasrole: "LGU MPMO",
+      role: "LGU MPMO",
       label: "Create Barangay Supervisors",
-       assignRole:"RgsiAXF6U8e"
     },
-    {
-      id: "RgsiAXF6U8e",
-      Hasrole: "Superuser",
-      label: "Create Data Collectors",
-       assignRole:"JjgMg5mkdPc"
-    },
+    { id: "RgsiAXF6U8e", role: "Superuser", label: "Create Data Collectors" },
   ];
   const [formData, setFormData] = useState({
     username: "", // prefilled example
@@ -48,6 +41,7 @@ const Main = ({ data, head }) => {
     changePassword: true,
     password: "",
     repeatPassword: "",
+    
   });
   //set the OrgUnits value in the store
   useEffect(() => {
@@ -66,20 +60,15 @@ const Main = ({ data, head }) => {
   const getMe = async () => {
     try {
       const response = await ApiService.MeJson();
+      console.log("RAW RESPONSE from ApiService:", response);
+
       // Case: if response is string
-      const parsedData =
+       const parsedData =
         typeof response === "string" ? JSON.parse(response) : response;
 
       if (parsedData.userRoles?.length > 0) {
         // store ALL role IDs
         const roleIds = parsedData.userRoles.map((r) => r.id);
-        //  const firstMatch = buttons.find((btn) => roleIds.includes(btn.id));
-        // if (firstMatch) {
-        //   setSelectedValue({
-        //     id: firstMatch.assignRole, // pass assignRole as userRole
-        //     label: firstMatch.label, // keep readable text
-        //   });
-        // }
         setUserRoles(roleIds);
       }
     } catch (err) {
@@ -137,10 +126,7 @@ const Main = ({ data, head }) => {
     return Object.keys(newErrors).length === 0;
   };
   const handleButtonClick = (btn) => {
-   setSelectedValue({
-    id: btn.assignRole,   // ✅ this is what goes to API
-    label: btn.label,     // ✅ this is for showing in UI
-  });
+    setSelectedValue(btn);
   };
 
   console.log("selected value", selectedValue);
@@ -180,6 +166,7 @@ const Main = ({ data, head }) => {
             password: "",
           });
           setSelectedValue(null); // ✅ also clear the role selection
+          setShowForm(false); // ✅ hide form after success
         } else if (response?.status === "ERROR") {
           // ✅ Only show backend message
           alert(`❌ ${response.message}`);
@@ -201,23 +188,46 @@ const Main = ({ data, head }) => {
       }
     }
   };
-  // ✅ Filter buttons by userRoles
+// ✅ Filter buttons by userRoles
   const availableButtons = buttons.filter((btn) => userRoles.includes(btn.id));
   // console.log("ROLEEEE", role);
   return (
     <>
-      <div className="container d-flex justify-content-center mt-4">
-        <div
-          className="w-100 p-4 border rounded"
-          style={{ maxWidth: "900px", minHeight: "600px", overflowY: "auto" }}
-        >
+       <div className="container d-flex justify-content-center mt-4">
+      <div
+        className="w-100 p-4 border rounded"
+        style={{ maxWidth: "900px", minHeight: "600px", overflowY: "auto" }}
+      >
+        {!showForm ? (
+          // ✅ Only show this button at first
+          <div className="text-center">
+            <button
+              className="btn btn-success px-4 py-2"
+              onClick={() => setShowForm(true)}
+            >
+              ➕ Add User
+            </button>
+          </div>
+        ) : (
           <div className="card shadow">
             <div className="card-body">
-              <h2 className="mb-4">Add User</h2>
+              <div className="d-flex justify-content-between align-items-center">
+                <h2 className="mb-4">Add User</h2>
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={() => setShowForm(false)}
+                >
+                  ✖ Close
+                </button>
+              </div>
+
+              {/* <h2 className="mb-4">Add User</h2> */}
               <form onSubmit={handleSubmit}>
                 {/* Username */}
                 <h5 className="mb-3">Basic information</h5>
 
+                {/* Username */}
                 <div className="mb-3">
                   <label className="form-label">Username *</label>
                   <input
@@ -346,28 +356,27 @@ const Main = ({ data, head }) => {
                   </>
                 )}
 
+                {/* <h5 className="mt-4 mb-3">UserRole</h5> */}
                 <div className="d-flex gap-3 mb-3">
-                  {availableButtons.length > 0 ? (
-                    availableButtons.map((btn) => (
-                      <button
-                        key={btn.id}
-                        type="button"
-                        className={`btn ${
-                          selectedValue?.id === btn.id
-                            ? "btn-primary"
-                            : "btn-outline-primary"
-                        }`}
-                        onClick={() => handleButtonClick(btn)}
-                      >
-                        {btn.label}
-                      </button>
-                    ))
-                  ) : (
-                    <p className="text-muted">
-                      No roles available for this user.
-                    </p>
-                  )}
-                </div>
+                {availableButtons.length > 0 ? (
+                  availableButtons.map((btn) => (
+                    <button
+                      key={btn.id}
+                      type="button"
+                      className={`btn ${
+                        selectedValue?.id === btn.id
+                          ? "btn-primary"
+                          : "btn-outline-primary"
+                      }`}
+                      onClick={() => handleButtonClick(btn)}
+                    >
+                      {btn.label}
+                    </button>
+                  ))
+                ) : (
+                  <p className="text-muted">No roles available for this user.</p>
+                )}
+              </div>
 
                 {/* Selected Value */}
                 <div className="mb-3">
@@ -380,7 +389,7 @@ const Main = ({ data, head }) => {
                     placeholder=""
                   />
                 </div>
-                {/* <div className="mb-3">
+                 {/* <div className="mb-3">
                   <label className="form-label">UserGroup</label>
                   <input
                     type="text"
@@ -417,8 +426,10 @@ const Main = ({ data, head }) => {
                   {loading && <div className="loader">⏳ Please wait...</div>}
                 </div>
               </form>
+                
             </div>
           </div>
+            )}
         </div>
       </div>
     </>
