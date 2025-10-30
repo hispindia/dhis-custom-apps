@@ -4,7 +4,8 @@ import styles from '../App.module.css';
 function TreeNode({ node, orgUnits, setOrgUnit, selectedOrgUnitId,  setSelectedOrgUnitId }) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const children = orgUnits.find(orgUnit=> orgUnit.id == node.id)?.children.sort((a,b) => a.name.localeCompare(b.name));
+
+  const children = orgUnits.find(orgUnit=> orgUnit.id == node.id)?.children.sort((a,b) => a.displayName.localeCompare(b.displayName));
 
   const isSelected = selectedOrgUnitId === node.id;
 
@@ -31,7 +32,7 @@ function TreeNode({ node, orgUnits, setOrgUnit, selectedOrgUnitId,  setSelectedO
           {children.length ? (isOpen ? "▼ " : "▶ ") : "• "}
         </span> 
 
-       <span>{node.name}</span>
+       <span>{node.displayName}</span>
 
       </div>
      

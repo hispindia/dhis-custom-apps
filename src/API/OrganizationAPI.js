@@ -1,9 +1,9 @@
 
-const BASE_URL = "https://links.hispindia.org/myr_registry/api";
+const BASE_URL = "https://hmistraining.mm.dhis2.net/train/api";
 
 export const fetchOrgUnits = async () => {
   const response = await fetch(
-    `${BASE_URL}/organisationUnits?paging=false&withinUserHierarchy=true&fields=id,name,children[id,name,path],code,path,level`,
+    `${BASE_URL}/organisationUnits?paging=false&withinUserHierarchy=true&fields=id,displayName,children[id,displayName,path],code,path,level`,
     );
   const data = await response.json();
   return data.organisationUnits;

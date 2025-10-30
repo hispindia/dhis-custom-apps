@@ -4,13 +4,13 @@ export const InitialQuery = {
   me: {
     resource: "me.json",
     params: {
-      fields: ["id", "organisationUnits[id,name,code,path]"],
+      fields: ["id", "organisationUnits[id,displayName,code,path]"],
     },
   },
   ouList: {
     resource: "organisationUnits.json",
     params: {
-      fields: ["id,name,code,path,children[id,name,path]"],
+      fields: ["id,name,code,path,children[id,displayName,path]"],
       paging: false,
     },
   },
