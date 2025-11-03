@@ -266,8 +266,7 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits, dataElements}) => {
              {t("DR")} 
 
                   { <span style={{
-                  display: 'inline-block',
-                  borderBottom: '2px dotted red',
+                  borderBottom: '2px dotted blue',
                   width: 60,
                   verticalAlign: 'middle',
                   marginLeft: 8
@@ -317,7 +316,7 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits, dataElements}) => {
                   <div style={{ width: "50%", paddingBottom: 4, color: 'blue'}}>1. {t("S")}: {certificate?.["wxrDsUO1ELy"] || ""}</div>  {/* Name - 1 index */}
 
 
-                  <div style={{ width: "50%", paddingBottom: 4, color: 'blue' }}>3. {t("POB")}: {typeof certificate?.["eventdate"] === "string" ? certificate["eventdate"].split(" ")[0] : ""}</div>   {/* dob 0th index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: 'blue' }}>3. {t("POB")}: {certificate?.["JAU9NM7UqQP"] || ""}</div>   {/* dob 0th index */}
 
 
                 </div>
@@ -391,13 +390,13 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits, dataElements}) => {
               </div>
               <div style={{ width: "75%" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>{t("SIG")}: {t("SIG")}{certificate?.["UYmZMZt32hZ"] || ""}</div> {/*  10 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}> {t("Q")}: {certificate?.["QsUp6BSb8Du"] || ""}</div> {/*  13 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>{t("SIG")}: {t("SIG")}{certificate?.[""] || ""}</div> {/*  10 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}> {t("Q")}: {certificate?.[""] || ""}</div> {/*  13 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>{t("N")}: {certificate?.["XFmGvaRAJqP"] || ""}</div> {/*  11 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>{t("AD")}: {certificate?.["vg5hhREmzXe"] || ""}</div> {/*  14 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>{t("N")}: {certificate?.[""] || ""}</div> {/*  11 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "blue" }}>{t("AD")}: {certificate?.[""] || ""}</div> {/*  14 index */}
                 </div>
                
               </div>

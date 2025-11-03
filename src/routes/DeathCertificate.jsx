@@ -245,7 +245,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                     verticalAlign: 'middle',
                     marginLeft: 8
                   }}>
-                    {certificate["XQr4fv6jfEM"] ||  ""}
+                    {certificate["hQnTVzOd0m9"] ||  ""}
                   </span>
               </p>
             </div>
@@ -292,8 +292,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                {t("DR")} 
 
                   { <span style={{
-                  display: 'inline-block',
-                  borderBottom: '2px dotted red',
+                  borderBottom: '2px dotted black',
                   width: 60,
                   verticalAlign: 'middle',
                   marginLeft: 8
@@ -351,7 +350,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                                 ? certificate["jGGNvNYhu47"].split(" ")[0]
                                 : ""}
                                 </td>
-                                <td style={styles.td}>9. {t("R")}: {certificate?.["b9BVo7x8248"] || ""}</td>
+                                <td style={styles.td}>9. {t("R")}: {certificate?.["TseVgVwxzx9"] || ""}</td>
                             </tr>
                             
                             <tr>

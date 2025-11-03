@@ -28,13 +28,8 @@ import { useTranslation } from "react-i18next";
         .then(res => {      
            const records = res.events.map(event => {
               const occurredAt = event.occurredAt ? event.occurredAt.split("T")[0] : "";
-              Object.fromEntries([{
-                dataElement: "occuredAt",
-                value: occurredAt
-              },...event.dataValues.map(dv => [dv.dataElement, dv.value])])
-
-           }
-            )
+              return Object.fromEntries([["occurredAt", occurredAt],...event.dataValues.map(dv => [dv.dataElement, dv.value])])
+           })
           setCertificate(records);
         })
         .catch(data => setCertificate([]))
@@ -54,7 +49,7 @@ import { useTranslation } from "react-i18next";
 
       const FIELD_KEYS = {
       infantName: "R43kdns3YYL",
-      dob: "eventdate",
+      dob: "zAetLzp3cT1",
       gender: "wxrDsUO1ELy",
       mothersName: "UYmZMZt32hZ",
       fathersName: "RKs8td9BnNj",
@@ -96,13 +91,13 @@ import { useTranslation } from "react-i18next";
     const filteredRecords = certificate.filter((record) => {
      
      return (      
-          (record[FIELD_KEYS.infantName] || "").toLowerCase().includes(filters.infantName.toLowerCase()) &&
+          (record[FIELD_KEYS.infantName] || "")?.toLowerCase()?.includes(filters.infantName.toLowerCase()) &&
           // earlier it is not working because if any field field record[field_keys.dob] may be undefine
-          (record[FIELD_KEYS.dob ]|| "").toLowerCase().includes(filters.dob.toLowerCase()) &&
-          (record[FIELD_KEYS.gender] || "").toLowerCase().includes(filters.gender.toLowerCase()) &&
-          (record[FIELD_KEYS.mothersName] || "").toLowerCase().includes(filters.mothersName.toLowerCase()) &&
-          (record[FIELD_KEYS.fatherNRC] || "").toLowerCase().includes(filters.fatherNRC.toLowerCase()) && 
-          (record[FIELD_KEYS.motherNRC] || "").toLowerCase().includes(filters.motherNRC.toLowerCase()) 
+          (record[FIELD_KEYS.dob ]|| "")?.toLowerCase()?.includes(filters.dob.toLowerCase()) &&
+          (record[FIELD_KEYS.gender] || "")?.toLowerCase()?.includes(filters.gender.toLowerCase()) &&
+          (record[FIELD_KEYS.mothersName] || "")?.toLowerCase()?.includes(filters.mothersName.toLowerCase()) &&
+          (record[FIELD_KEYS.fatherNRC] || "")?.toLowerCase()?.includes(filters.fatherNRC.toLowerCase()) && 
+          (record[FIELD_KEYS.motherNRC] || "")?.toLowerCase()?.includes(filters.motherNRC.toLowerCase()) 
 
       );
     })
@@ -161,11 +156,7 @@ import { useTranslation } from "react-i18next";
     {paginatedRecords.map((record, index) => (
       <tr key={index}>
         <td>{record?.["R43kdns3YYL"] || ""}</td>
-        <td>
-          {typeof record?.["eventdate"] === "string" 
-          ? record["eventdate"].split(" ")[0] 
-          : ""}
-          </td>
+        <td>{record?.["zAetLzp3cT1"] || ""}</td>
         <td>{record?.["wxrDsUO1ELy"] || ""}</td>
         <td>{record?.["UYmZMZt32hZ"] || ""}</td>
         <td>{record?.["RKs8td9BnNj"] || ""}</td>

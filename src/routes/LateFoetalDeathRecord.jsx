@@ -27,10 +27,11 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
     console.log("LateFoetalDeathRecord - status:", status);
      setLoading(true);
       fetchBirthCertificateRecords(orgUnit.id, status)
-       .then(res => {      
-         const records = res.events.map(event => 
-              Object.fromEntries(event.dataValues.map(dv => [dv.dataElement, dv.value]))
-            )
+       .then(res => {        
+           const records = res.events.map(event => {
+              const occurredAt = event.occurredAt ? event.occurredAt.split("T")[0] : "";
+              return Object.fromEntries([["occurredAt", occurredAt],...event.dataValues.map(dv => [dv.dataElement, dv.value])])
+           })
          setCertificate(records);
        })
        .catch(data => setCertificate([]))
@@ -43,7 +44,6 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
 //     (r["R43kdns3YYL"] || "").toLowerCase().includes(searchQuery.toLowerCase())
 //   );
   const [filters, setFilters] = useState({
-      infantName: "",
       dob: "",
       gender: "",
       mothersName: "",
@@ -53,8 +53,7 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
     });
 
       const FIELD_KEYS = {
-      infantName: "R43kdns3YYL",
-      dob: "eventdate",
+      dob: "zAetLzp3cT1",
       gender: "wxrDsUO1ELy",
       mothersName: "UYmZMZt32hZ",
       fathersName: "RKs8td9BnNj",
@@ -93,7 +92,6 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
        const filteredRecords = certificate.filter((record) => {
      
      return (      
-          (record[FIELD_KEYS.infantName] || "").toLowerCase().includes(filters.infantName.toLowerCase()) &&
           // earlier it is not working because if any field field record[field_keys.dob] may be undefine
           (record[FIELD_KEYS.dob ]|| "").toLowerCase().includes(filters.dob.toLowerCase()) &&
           (record[FIELD_KEYS.gender] || "").toLowerCase().includes(filters.gender.toLowerCase()) &&
@@ -140,7 +138,6 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
       <table>
       <thead>
       <tr>
-      <th>{renderFilterField("infantName", "Infant Name")}</th>
       <th>{renderFilterField("dob", "Date of Birth")}</th>
       <th>{renderFilterField("gender", "Gender")}</th>
       <th>{renderFilterField("mothersName", "Mother Name")}</th>
@@ -154,8 +151,7 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
           <tbody>
             {paginatedRecords.map((record, index) => (
               <tr key={index}>
-                <td>{record?.["R43kdns3YYL"] || ""}</td> { /* infant name */}
-                <td>{typeof record?.["eventdate"] === "string" ? record["eventdate"].split(" ")[0]: ""}</td> { /* dob */}
+                <td>{record?.["zAetLzp3cT1"] || ""}</td> { /* dob */}
                 <td>{record?.["wxrDsUO1ELy"] || ""}</td> { /* gender */}
                 <td>{record?.["UYmZMZt32hZ"] || ""}</td> { /* Mothers Name */}
                 <td>{record?.["RKs8td9BnNj"] || ""}</td>   { /* Fathers Name */}

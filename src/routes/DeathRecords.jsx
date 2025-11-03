@@ -25,14 +25,10 @@ const DeathRecords = ({orgUnit, dataElements}) => {
     setLoading(true);
           fetchDeathCertficateRecords(orgUnit.id)
           .then(res => {    
-            
-            const records = res.events.map(event => 
-              Object.fromEntries(event.dataValues.map(dv => [dv.dataElement, dv.value]))
-            )
-        //    const headers = data.headers.map(h => h.name);
-        //    const records = data.rows.map( row => 
-        //       Object.fromEntries(row.map((value, i) => [headers[i], value]))
-        //  );
+           const records = res.events.map(event => {
+              const occurredAt = event.occurredAt ? event.occurredAt.split("T")[0] : "";
+              return Object.fromEntries([["occurredAt", occurredAt],...event.dataValues.map(dv => [dv.dataElement, dv.value])])
+           })
             setCertificate(records);
           })
           .catch(data => setCertificate([]))

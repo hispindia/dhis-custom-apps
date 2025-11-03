@@ -262,7 +262,6 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                 {t("DR")} 
 
                   { <span style={{
-                  display: 'inline-block',
                   borderBottom: '2px dotted red',
                   width: 60,
                   verticalAlign: 'middle',
@@ -368,7 +367,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
               <div style={{ width: "75%" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
                   <div style={{ width: "50%", paddingBottom: 4, color: "red" }}>10.  {t("N")}: {certificate?.["UYmZMZt32hZ"] || ""}</div> {/*  10 index */}
-                  <div style={{ width: "50%", paddingBottom: 4, color: "red" }}>13.  {t("PD")}: {certificate?.["QsUp6BSb8Du"] || ""}</div> {/*  13 index */}
+                  <div style={{ width: "50%", paddingBottom: 4, color: "red" }}>13.  {t("PD")}: {certificate?.["bVyrfnpCd6i"] || ""}</div> {/*  13 index */}
                 </div>
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
@@ -378,7 +377,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                 <div style={{ ...borderBlack, marginBottom: '10px' }}></div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
                   <div style={{ width: "50%", color: "red"}}>12.  {t("C")}: {certificate?.["r8oFvT4PZwL"] || ""}</div> {/*  12 index */}
-                  <div style={{ width: "50%", color: "red"}}>15.  {t("PD")}: {certificate?.["bVyrfnpCd6i"] || ""}</div> {/*  15 index */}
+                  {/* <div style={{ width: "50%", color: "red"}}>15.  {t("PD")}: {certificate?.["bVyrfnpCd6i"] || ""}</div> */}
                 </div>
               </div>
             </div>
