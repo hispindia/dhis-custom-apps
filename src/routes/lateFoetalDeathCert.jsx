@@ -207,17 +207,17 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits, dataElements}) => {
             </div>
 
             <div>
-              <p style={{ fontWeight: 'normal', color: 'blue'}}>
-                {t("W/v")} ............
-                {/* <span style={{
+               <p style={{ fontWeight: 'normal', color: 'blue'}}>
+                   {t("W/v")} 
+                <span style={{
                     display: 'inline-block',
-                    borderBottom: '2px dotted black',
+                    borderBottom: '2px dotted blue',
                     width: '31%',
                     verticalAlign: 'middle',
                     marginLeft: 8
                   }}>
-                    {orgUnit.path[5] ? orgUnit.path[5] : ''}
-                  </span> */}
+                    {certificate["hQnTVzOd0m9"] ||  ""}
+                  </span>
               </p>
             </div>
           </section>
@@ -225,41 +225,57 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits, dataElements}) => {
           {/* Right Section */}
           <section style={{ marginTop: 40, color: 'blue', fontSize: 16, width: "30%" }}>
             <p style={{ fontWeight: 'normal' }}>
-              {t("PN")}............
-              {/* <span style={{
+              {t("PN")}
+              { <span style={{
                     display: 'inline-block',
-                    borderBottom: '2px dotted black',
+                    borderBottom: '2px dotted blue',
                     width: '31%',
                     verticalAlign: 'middle',
                     marginLeft: 8
                   }}>
-                    {orgUnit.path[5] ? orgUnit.path[5] : '............'}
-                  </span> */}
+                  {certificate?.["PS99q9IRjKy"] || ''}
+                  </span> }
             </p>
             <p style={{ fontWeight: 'normal', color: 'blue' }}>
-             {t("BN")}............
+             {t("BN")}
               
-              {/* <span style={{
+              <span style={{
                   display: 'inline-block',
-                  borderBottom: '2px dotted black',
+                  borderBottom: '2px dotted blue',
                   width: 60,
                   verticalAlign: 'middle',
                   marginLeft: 8
-                }}></span> */}
+                }}
+                >
+                {certificate?.["l0Pm3ydZ2om"] || ""}
+                </span>
             </p>
             <p style={{ marginBottom: 4, fontWeight: 'normal', color: 'blue' }}>
-             {t("EN")}........... 
-              {/* <span style={{
+             {t("EN")}
+              {<span style={{
                   display: 'inline-block',
-                  borderBottom: '2px dotted black',
+                  borderBottom: '2px dotted blue',
                   width: 60,
                   verticalAlign: 'middle',
                   marginLeft: 8
-                }}></span> */}
+                }}>
+                  {certificate?.["MrtKbjcsHnk"] || ""}
+                  </span> }
             </p>
             <p style={{ marginBottom: 4, fontWeight: 'normal', color:'blue'}}>
-             {t("DR")} ..../.../ 
-              {/* <span style={{
+             {t("DR")} 
+
+                  { <span style={{
+                  display: 'inline-block',
+                  borderBottom: '2px dotted red',
+                  width: 60,
+                  verticalAlign: 'middle',
+                  marginLeft: 8
+                }}>
+                  {certificate?.["occurredAt"] || ''}
+                </span> }
+
+              {/* { <span style={{
                   display: 'inline-block',
                   width: 5,
                   borderBottom: '2px dotted black',
@@ -279,7 +295,7 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits, dataElements}) => {
                   borderBottom: '2px dotted black',
                   verticalAlign: 'middle',
                   marginLeft: 8
-                }}></span> */}
+                }}></span> } */}
             </p>
           </section>
 

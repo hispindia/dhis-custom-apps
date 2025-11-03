@@ -237,16 +237,16 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
             <div>
               <p style={{ fontWeight: 'normal' }}>
-               {t("W/v")}............ 
-                  {/* <span style={{
+               {t("W/v")}
+                  <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted black',
                     width: 90,
                     verticalAlign: 'middle',
                     marginLeft: 8
                   }}>
-                    {orgUnit.path[5] ? orgUnit.path[5] : ''}
-                  </span> */}
+                    {certificate["XQr4fv6jfEM"] ||  ""}
+                  </span>
               </p>
             </div>
           </section>
@@ -254,38 +254,52 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
           {/* Right Section */}
           <section style={{ marginTop: 40, color: '#000', fontSize: 16,  width: "30%" }}>
             <p style={{ fontWeight: 'normal' }}>
-             {t("PN")}............  
-              {/* <span style={{
+             {t("PN")} 
+              <span style={{
                   display: 'inline-block',
                   borderBottom: '2px dotted black',
                   width: 60,
                   verticalAlign: 'middle',
                   marginLeft: 8
-                }}></span> */}
+                }}>{certificate?.["PS99q9IRjKy"] || ""}</span>
             </p>
             <p style={{ fontWeight: 'normal' }}>
-              {t("BN")}............
+              {t("BN")}
               
-              {/* <span style={{
+              <span style={{
                   display: 'inline-block',
                   borderBottom: '2px dotted black',
                   width: 60,
                   verticalAlign: 'middle',
                   marginLeft: 8
-                }}></span> */}
+                }}>
+                    {certificate?.["l0Pm3ydZ2om"] || ""}
+                </span>
             </p>
             <p style={{ marginBottom: 4, fontWeight: 'normal' }}>
-             {t("EN")}........... 
-              {/* <span style={{
+             {t("EN")}
+              <span style={{
                   display: 'inline-block',
                   borderBottom: '2px dotted black',
                   width: 60,
                   verticalAlign: 'middle',
                   marginLeft: 8
-                }}></span> */}
+                }}>
+                    {certificate?.["MrtKbjcsHnk"] || ""}
+                </span>
             </p>
             <p style={{ marginBottom: 4, fontWeight: 'normal' }}>
-              {t("DR")}..../.../ 
+               {t("DR")} 
+
+                  { <span style={{
+                  display: 'inline-block',
+                  borderBottom: '2px dotted red',
+                  width: 60,
+                  verticalAlign: 'middle',
+                  marginLeft: 8
+                }}>
+                  {certificate?.["occurredAt"] || ''}
+                </span> }
               {/* <span style={{
                   display: 'inline-block',
                   width: 5,
@@ -327,7 +341,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                            
                             <tr>
                                 <td style={styles.td}>2. {t("S")}: {certificate?.["wxrDsUO1ELy"] || ""}</td>
-                                <td style={styles.td}>8. {t("C")}: {certificate?.["aTbE3kYe98D"] || ""}</td>
+                                <td style={styles.td}>8. {t("C")}: {certificate?.["JB1wN0sieDP"] || ""}</td>
                             </tr>
                            
 
@@ -378,13 +392,13 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                             <tr>
                                 <td></td>
                                 <td style={styles.pt4}>
-                                    {t("N")} {certificate?.["RkPGXTudjFI"] || ""} <span style={styles.w17}></span>
+                                    {t("N")} <span style={styles.w17}> {certificate?.["RkPGXTudjFI"] || ""}</span>
                                 </td>
                             </tr>
                             <tr>
                                 <td></td>
                                 <td style={styles.pt4}>
-                                   {t("DG")} {certificate?.["NxtfpJnOOHx"] || ""} <span style={styles.w17}></span>
+                                   {t("DG")} <span style={styles.w17}>{certificate?.["NxtfpJnOOHx"] || ""}</span>
                                 </td>
                             </tr>
                            

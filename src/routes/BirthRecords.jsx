@@ -26,8 +26,14 @@ import { useTranslation } from "react-i18next";
       setLoading(true);
         fetchBirthCertificateRecords(orgUnit.id, status)
         .then(res => {      
-           const records = res.events.map(event => 
-              Object.fromEntries(event.dataValues.map(dv => [dv.dataElement, dv.value]))
+           const records = res.events.map(event => {
+              const occurredAt = event.occurredAt ? event.occurredAt.split("T")[0] : "";
+              Object.fromEntries([{
+                dataElement: "occuredAt",
+                value: occurredAt
+              },...event.dataValues.map(dv => [dv.dataElement, dv.value])])
+
+           }
             )
           setCertificate(records);
         })
