@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import html2pdf from "html2pdf.js";
-import { fetchDeathCertficateRecords } from "../API/DeathCertAPI";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const styles = {
@@ -174,7 +173,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
       </button>
 
         <main ref={pdfRef} style={{ margin: "1rem", width: "100%" }}>
-            <h2 style={styles.h2}>{t("DC")} </h2>
+            <h2 style={styles.h2}>{t("DEATH_CERTIFICATE")} </h2>
 
         <header
           style={{
@@ -188,10 +187,10 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
         >
           {/* Left Section */}
           <section style={{ color: '#000', fontSize: 16, width: "50%" }}>
-            <p style={{ marginBottom: 4, marginTop: 12, fontWeight: 'normal' }}>V.R. Form 203 ဖွားသေပုံစံ ၂၀၃</p>
+            <p style={{ marginBottom: 4, marginTop: 12, fontWeight: 'normal' }}>{t("VR_Form_203")} </p>
             <div>
               <p style={{ marginBottom: 4, marginTop: 16, fontWeight: 'normal' }}>
-               {t("S/d")}
+               {t("STATE_DIVISION")}
                 <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted black',
@@ -205,7 +204,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
             </div>
             <div>
               <p style={{ fontWeight: 'normal' }}>
-               {t("D")}
+               {t("DISTRICT")}
                 <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted black',
@@ -221,7 +220,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
             <div>
               <p style={{ fontWeight: 'normal' }}>
-               {t("T")}
+               {t("TOWNSHIP")}
                 <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted black',
@@ -237,7 +236,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
             <div>
               <p style={{ fontWeight: 'normal' }}>
-               {t("W/v")}
+               {t("WARD/VILLAGE_TRACT")}
                   <span style={{
                     display: 'inline-block',
                     borderBottom: '2px dotted black',
@@ -254,7 +253,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
           {/* Right Section */}
           <section style={{ marginTop: 40, color: '#000', fontSize: 16,  width: "30%" }}>
             <p style={{ fontWeight: 'normal' }}>
-             {t("PN")} 
+             {t("PAGE_NUMBER")} 
               <span style={{
                   display: 'inline-block',
                   borderBottom: '2px dotted black',
@@ -264,7 +263,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                 }}>{certificate?.["PS99q9IRjKy"] || ""}</span>
             </p>
             <p style={{ fontWeight: 'normal' }}>
-              {t("BN")}
+              {t("BOOK_NUMBER")}
               
               <span style={{
                   display: 'inline-block',
@@ -277,7 +276,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                 </span>
             </p>
             <p style={{ marginBottom: 4, fontWeight: 'normal' }}>
-             {t("EN")}
+             {t("ENTRY_NUMBER")}
               <span style={{
                   display: 'inline-block',
                   borderBottom: '2px dotted black',
@@ -289,7 +288,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                 </span>
             </p>
             <p style={{ marginBottom: 4, fontWeight: 'normal' }}>
-               {t("DR")} 
+               {t("DATE_OF_REGISTRATION")} 
 
                   { <span style={{
                   borderBottom: '2px dotted black',
@@ -299,34 +298,13 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                 }}>
                   {certificate?.["occurredAt"] || ''}
                 </span> }
-              {/* <span style={{
-                  display: 'inline-block',
-                  width: 5,
-                  borderBottom: '2px dotted black',
-                  verticalAlign: 'middle',
-                  marginLeft: 8
-                }}></span> /
-                <span style={{
-                  display: 'inline-block',
-                  width: 12,
-                  borderBottom: '2px dotted black',
-                  verticalAlign: 'middle',
-                  marginLeft: 8
-                }}></span> /
-                <span style={{
-                  display: 'inline-block',
-                  width: 12,
-                  borderBottom: '2px dotted black',
-                  verticalAlign: 'middle',
-                  marginLeft: 8
-                }}></span> */}
             </p>
           </section>
 
         </header>
 
                     <hr style={styles.hr} />
-                    <h3 style={styles.h3}> {t("PODec")}
+                    <h3 style={styles.h3}> {t("PARTICULARS_OF_DECEASED")}
                    
                     </h3>
                     <hr style={styles.hr} />
@@ -334,70 +312,70 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                     <table style={styles.table}>
                         <tbody>
                             <tr>
-                                <td style={styles.td}>1. {t("N")}: {certificate?.["aTbE3kYe98D"] || ""}</td>
-                                <td style={styles.td}>7. {t("RC")}: {certificate?.["b9BVo7x8248"] || ""}</td>
+                                <td style={styles.td}>1. {t("NAME")}: {certificate?.["aTbE3kYe98D"] || ""}</td>
+                                <td style={styles.td}>7. {t("RACE")}: {certificate?.["b9BVo7x8248"] || ""}</td>
                             </tr>
                            
                             <tr>
-                                <td style={styles.td}>2. {t("S")}: {certificate?.["wxrDsUO1ELy"] || ""}</td>
-                                <td style={styles.td}>8. {t("C")}: {certificate?.["JB1wN0sieDP"] || ""}</td>
+                                <td style={styles.td}>2. {t("SEX")}: {certificate?.["wxrDsUO1ELy"] || ""}</td>
+                                <td style={styles.td}>8. {t("CITIZENSHIP")}: {certificate?.["JB1wN0sieDP"] || ""}</td>
                             </tr>
                            
 
                             <tr>
-                                <td style={styles.td}>3. {t("DOD")}: {
+                                <td style={styles.td}>3. {t("DEATH_OF_DEATH")}: {
                                 typeof certificate?.["jGGNvNYhu47"] === "string" 
                                 ? certificate["jGGNvNYhu47"].split(" ")[0]
                                 : ""}
                                 </td>
-                                <td style={styles.td}>9. {t("R")}: {certificate?.["TseVgVwxzx9"] || ""}</td>
+                                <td style={styles.td}>9. {t("RELIGION")}: {certificate?.["TseVgVwxzx9"] || ""}</td>
                             </tr>
                             
                             <tr>
-                                <td style={styles.td}>4. {t("POD")}: {certificate?.["MOV6uMBMkph"] || ""}</td>
-                                <td style={styles.td}>10. {t("PD")}: {certificate?.["iXXvJAxbOtd"] || ""}</td>
+                                <td style={styles.td}>4. {t("PLACE_OF_DEATH")}: {certificate?.["MOV6uMBMkph"] || ""}</td>
+                                <td style={styles.td}>10. {t("PERMANENT_ADDRESS")}: {certificate?.["iXXvJAxbOtd"] || ""}</td>
                             </tr>
                            
                             <tr>
-                                <td style={styles.td}>5. {t("A")}: {certificate?.["KFGxB6wpRxi"] || ""}</td>
-                                <td style={styles.td}>11.  {t("NFD")}: {certificate?.["OpzRl6KIFVU"] || ""}</td>
+                                <td style={styles.td}>5. {t("AGE")}: {certificate?.["KFGxB6wpRxi"] || ""}</td>
+                                <td style={styles.td}>11.  {t("NAME_OF_FATHER_DECEASED")}: {certificate?.["OpzRl6KIFVU"] || ""}</td>
                             </tr>
                            
                             <tr>
-                                <td style={styles.td}>6. {t("OC")}: {certificate?.["s3wKlMmBs8p"] || ""}</td>
-                                <td style={styles.td}>12. {t("NMD")} : {certificate?.["xHcmoS3icZD"] || ""}</td>
+                                <td style={styles.td}>6. {t("OCCUPATION")}: {certificate?.["s3wKlMmBs8p"] || ""}</td>
+                                <td style={styles.td}>12. {t("NAME_OF_MOTHER_DECEASED")} : {certificate?.["xHcmoS3icZD"] || ""}</td>
                             </tr>
                            
                             <tr>
-                                <td style={styles.td}>13. {t("COD")}: {(dataElements['nQy5xQrOMXj'] && dataElements['nQy5xQrOMXj'][certificate["nQy5xQrOMXj"]]) ? dataElements['nQy5xQrOMXj'][certificate["nQy5xQrOMXj"]] :  ""}</td>
+                                <td style={styles.td}>13. {t("CAUSE_OF_DEATH")}: {(dataElements['nQy5xQrOMXj'] && dataElements['nQy5xQrOMXj'][certificate["nQy5xQrOMXj"]]) ? dataElements['nQy5xQrOMXj'][certificate["nQy5xQrOMXj"]] :  ""}</td>
                                 <td></td>
                             </tr>
                            
                             <tr>
-                                <td style={styles.td}>14. {t("IS")}</td>
-                                <td style={styles.td}>{t("RTD")}: {certificate?.["qa5eIb216nF"] || ""}</td>
+                                <td style={styles.td}>14. {t("INFORMAT_SIGNATURE")}</td>
+                                <td style={styles.td}>{t("RELATION_TO_DECEASE")}: {certificate?.["qa5eIb216nF"] || ""}</td>
                             </tr>
                             <tr>
-                                <td style={{ ...styles.td, ...styles.pt4 }}> {t("N")}: {certificate?.["YdNUYjH3rct"] || ""}</td>
-                                <td style={{ ...styles.td, ...styles.pt4 }}> {t("AD")}: {certificate?.["rRpqp6TPWlh"] || ""}</td>
+                                <td style={{ ...styles.td, ...styles.pt4 }}> {t("NAME")}: {certificate?.["YdNUYjH3rct"] || ""}</td>
+                                <td style={{ ...styles.td, ...styles.pt4 }}> {t("ADDRESS")}: {certificate?.["rRpqp6TPWlh"] || ""}</td>
                             </tr>
                          
                             <tr>
-                                <td style={styles.td}>15. {t("CODC")} :  {certificate?.["aTbE3kYe98D"] || ""}</td>
+                                <td style={styles.td}>15. {t("CAUSE_OF_DEATH_CERTIFIERS")} :  {certificate?.["aTbE3kYe98D"] || ""}</td>
                                 <td style={styles.td}>
-                                   {t("SIG")} <span style={styles.w17}></span>
+                                   {t("SIGNATURE")} <span style={styles.w17}></span>
                                 </td>
                             </tr>
                             <tr>
                                 <td></td>
                                 <td style={styles.pt4}>
-                                    {t("N")} <span style={styles.w17}> {certificate?.["RkPGXTudjFI"] || ""}</span>
+                                    {t("NAME")} <span style={styles.w17}> {certificate?.["RkPGXTudjFI"] || ""}</span>
                                 </td>
                             </tr>
                             <tr>
                                 <td></td>
                                 <td style={styles.pt4}>
-                                   {t("DG")} <span style={styles.w17}>{certificate?.["NxtfpJnOOHx"] || ""}</span>
+                                   {t("DESIGNATION")} <span style={styles.w17}>{certificate?.["NxtfpJnOOHx"] || ""}</span>
                                 </td>
                             </tr>
                            
@@ -416,7 +394,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                         <div style={styles.flex}>
                             <div>
                                 <p style={{ marginTop: 16, fontWeight: "600" }}>
-                                    {t("DOI")} <span style={styles.w6}></span> / <span style={styles.w6}></span> /{" "}
+                                    {t("DATE_OF_ISSUE")} <span style={styles.w6}></span> / <span style={styles.w6}></span> /{" "}
                                 </p>
                             </div>
                             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -424,13 +402,13 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                             </div>
                             <div style={{ display: "flex", flexDirection: "column" }}>
                                 <span style={styles.fontSemibold}>
-                                    {t("SIG")} <span style={styles.w20}></span>
+                                    {t("SIGNATURE")} <span style={styles.w20}></span>
                                 </span>
                                 <span style={{ ...styles.fontSemibold, ...styles.mt2Text }}>
-                                  {t("N")} <span style={styles.w20}></span>
+                                  {t("NAME")} <span style={styles.w20}></span>
                                 </span>
                                 <span style={{ ...styles.fontSemibold, ...styles.mt2Text }}>
-                                   {t("DG")}<span style={styles.w20}></span>
+                                   {t("DESIGNATION")}<span style={styles.w20}></span>
                                 </span>
                             </div>
                         </div>
