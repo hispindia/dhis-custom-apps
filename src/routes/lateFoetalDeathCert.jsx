@@ -109,8 +109,14 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits, dataElements}) => {
 
   const handleDownloadPDF = () => {
     if (pdfRef.current) {
+      const options = {
+        margin: [0.3, 0.5, 0.3, 0.5], 
+        filename: 'Late Foetal Death Certificate.pdf',
+        html2canvas: { scale: 2 },
+        jsPDF: { orientation: 'landscape', unit: 'in', format: 'a4' }
+      };
       html2pdf()
-        .set({ margin: 0.5, filename: 'Birth Certificate.pdf', html2canvas: { scale: 2 } })
+        .set(options)
         .from(pdfRef.current)
         .save();
     }
@@ -140,7 +146,7 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits, dataElements}) => {
       </button>
 
       <main ref={pdfRef} style={{ margin: "1rem", width: "100%" }}>
-        <h2 style={{ fontSize: 24, color: "blue", fontWeight: "bold", textAlign: "center", marginBottom: 8 }}> 
+        <h2 style={{ fontSize: 22, color: "blue", fontWeight: "bold", textAlign: "center", marginBottom: 8 }}> 
          {t("LATE_FOETAL_DEATH_CERTIFICATE")}
         </h2>
         {/* Header for main certificate */}
@@ -149,7 +155,7 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits, dataElements}) => {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-start',
-            marginBottom: '1.5rem',
+            marginBottom: '1rem',
             color: 'blue', 
             backgroundColor: '#fff'
           }}
@@ -278,7 +284,7 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits, dataElements}) => {
         </header>
 
 
-        <div style={{ marginTop: 24, width: "100%" }}>
+        <div style={{ marginTop: 16, width: "100%" }}>
           {/* Particular of Child */}
           <div>
             <div style={borderSolid}></div>
@@ -405,19 +411,19 @@ const LateFoetalDeathCert = ({orgUnit, orgUnits, dataElements}) => {
 
         {/* Footer */}
         <footer>
-          <div style={{ marginTop: 16, fontSize: 14 }}>
-            <p style={{ width: "100%",color: "blue", display: "block", marginBottom: 8 }}>
+          <div style={{ marginTop: 12, fontSize: 13 }}>
+            <p style={{ width: "100%",color: "blue", display: "block", marginBottom: 8}}>
               {t("STILL_BORN_PARA1_VALIDATION")}    
             </p>
 
               {/* <span style={{ ...borderDotted, width: "9%" }}></span> */}
-               <p style={{ width: "100%", color: "blue", display: "block", marginBottom: 8 }}>
+               <p style={{ width: "100%", color: "blue", display: "block", marginBottom: 8}}>
                 {t("STILL_BORN_PARA2_VALIDATION")}
             </p>
           </div>
-          <div style={{ display: "flex", alignItems: "flex-start", marginTop: 16, justifyContent: "space-between", color: "blue"}}>
+          <div style={{ display: "flex", alignItems: "flex-start", marginTop: 12, justifyContent: "space-between", color: "blue"}}>
             <div>
-              <p style={{ marginTop: 16, fontWeight: "600" }}>
+              <p style={{ marginTop: 12, fontWeight: "600" }}>
                {t("DATE_OF_ISSUE")} <span style={{ display: "inline-block", width: 24, verticalAlign: "middle" }}></span>
                 / <span style={{ display: "inline-block", width: 24, verticalAlign: "middle" }}></span> /
               </p>

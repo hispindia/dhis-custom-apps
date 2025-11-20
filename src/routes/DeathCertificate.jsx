@@ -142,8 +142,14 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
     const handleDownloadPDF = () => {
         if (pdfRef.current) {
+            const options = {
+                margin: [0.3, 0.5, 0.3, 0.5], // [top, right, bottom, left] in inches
+                filename: 'Death Certificate.pdf',
+                html2canvas: { scale: 2 },
+                jsPDF: { orientation: 'landscape', unit: 'in', format: 'a4' }
+            };
             html2pdf()
-                .set({ margin: 0.5, filename: 'Death Certificate.pdf', html2canvas: { scale: 2 } })
+                .set(options)
                 .from(pdfRef.current)
                 .save();
         }
@@ -173,14 +179,14 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
       </button>
 
         <main ref={pdfRef} style={{ margin: "1rem", width: "100%" }}>
-            <h2 style={styles.h2}>{t("DEATH_CERTIFICATE")} </h2>
+            <h2 style={{...styles.h2, fontSize: 22}}>{t("DEATH_CERTIFICATE")} </h2>
 
         <header
           style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-start',
-            marginBottom: '1.5rem',
+            marginBottom: '1rem',
             color: '#000', // Force black text
             backgroundColor: '#fff'
           }}
@@ -382,7 +388,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                         </tbody>
                     </table>
 
-                    <footer style={styles.footer}>
+                    <footer style={{...styles.footer, marginTop: 12, fontSize: 13}}>
                         <div>
                             <p style={{ width: "100%", display: "block", marginBottom: 8 }}>
                               {t("DEAD_PARA1_VALIDATION")}
@@ -391,14 +397,14 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                                 {t("DEAD_PARA2_VALIDATION")}
                             </p>
                         </div>
-                        <div style={styles.flex}>
+                        <div style={{...styles.flex, marginTop: 12}}>
                             <div>
                                 <p style={{ marginTop: 16, fontWeight: "600" }}>
                                     {t("DATE_OF_ISSUE")} <span style={styles.w6}></span> / <span style={styles.w6}></span> /{" "}
                                 </p>
                             </div>
                             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                                <span style={styles.fontSemibold}> {t("RO")} </span>
+                                <span style={styles.fontSemibold}> {t("REGISTRATION_OFFICER")} </span>
                             </div>
                             <div style={{ display: "flex", flexDirection: "column" }}>
                                 <span style={styles.fontSemibold}>
