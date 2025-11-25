@@ -153,7 +153,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
 
           
           <aside style={styles.leftPane}>
-            <h4 style={{fontWeight: 600, textAlign: "left"}}>{t("BIRTH CERTIFICATE COUNTERFOIL") || "Birth Certificate Counterfoil"}</h4>
+            <h4 style={{fontWeight: 600, textAlign: "left"}}>{t("BIRTH_CERTIFICATE_COUNTERFOIL")}</h4>
 
             <div style={{ marginTop: "15px", fontSize: "15px"}}>
               <div style={{ fontWeight: 600 }}>{t("VR_103") || "V.R Form 103"}</div>
@@ -169,11 +169,11 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
 
           <div style={{ fontSize: 15, marginTop: "22px"}}>
               <div style={{ marginBottom: 10}}>
-                <div>{t("NAME_OF_CHILD")}<span style={{display: "inline-block", borderBottom: "2px dotted red", verticalAlign: "middle", minWidth: "179px", paddingLeft: "5px"}}>{certificate?.["R43kdns3YYL"] || ""}</span></div>
+                <div>{t("Name_of_child")}<span style={{display: "inline-block", borderBottom: "2px dotted red", verticalAlign: "middle", minWidth: "179px", paddingLeft: "5px"}}>{certificate?.["R43kdns3YYL"] || ""}</span></div>
               </div>
 
               <div style={{ marginBottom: 8}}>
-                <div>{t("SEX")}<span style={{display: "inline-block", borderBottom: "2px dotted red", verticalAlign: "middle", minWidth: "244px", paddingLeft: "5px"}}>{certificate?.["wxrDsUO1ELy"] || ""}</span></div>
+                <div>{t("SEX")}<span style={{display: "inline-block", borderBottom: "2px dotted red", verticalAlign: "middle", minWidth: "230px", paddingLeft: "5px"}}>{certificate?.["wxrDsUO1ELy"] || ""}</span></div>
               </div>
 
               <div style={{ marginBottom: 8}}>
@@ -189,7 +189,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
               </div>
 
             <div style={{ marginBottom: 8}}>
-                <div>{t("NAME_OF_MOTHER")}<span style={{display: "inline-block", borderBottom: "2px dotted red", verticalAlign: "middle", minWidth: "164px", paddingLeft: "5px"}}>{certificate?.["UYmZMZt32hZ"] || ""}</span></div>
+                <div>{t("NAME_OF_MOTHER")}<span style={{display: "inline-block", borderBottom: "2px dotted red", verticalAlign: "middle", minWidth: "150px", paddingLeft: "5px"}}>{certificate?.["UYmZMZt32hZ"] || ""}</span></div>
             </div>
             
 
@@ -201,7 +201,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
 
            <div style={{ fontSize: 15, marginTop: "15px"}}>
               <div style={{ marginBottom: 8 }}>
-                <div>{t("SIGNATURE_OF_ISSUEING_PERSON")}<span style={{display: "inline-block", borderBottom: "2px dotted red", verticalAlign: "middle", minWidth: "80px", paddingLeft: "5px"}}>{certificate?.["l0Pm3ydZ2om"] || ""}</span></div>
+                <div>{t("SIGNATURE_OF_ISSUEING_PERSON")}<span style={{display: "inline-block", borderBottom: "2px dotted red", verticalAlign: "middle", minWidth: "62px", paddingLeft: "5px"}}>{certificate?.["l0Pm3ydZ2om"] || ""}</span></div>
               </div>
 
               <div style={{ marginBottom: 8 }}>
@@ -225,9 +225,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
           {/* ===== RIGHT PANE - Main Certificate content ===== */}
           <section style={styles.rightPane}>
             <div style={{display: "flex", justifyContent: "space-between"}}>
-              <div style={{width: "21%"}}>
-
-              </div>
+              <div style={{width: "21%"}}></div>
              <div>
                <h2 style={{ fontSize: 20, color: "red", fontWeight: "bold", textAlign: "center", marginBottom: 4 }}>{t("BIRTH_CERTIFICATE")}</h2>
              </div>
@@ -260,7 +258,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                 <p style={{ marginBottom: 8, fontWeight: 'normal' }}>{t("VR_103")}</p>
                 <p style={{ marginBottom: 8, fontWeight: 'normal'}}>
                   {t("STATE_DIVISION")}
-                  <span style={{ display: 'inline-block', borderBottom: '2px dotted red', width: '46%', verticalAlign: 'middle', marginLeft: 4, paddingLeft: '4px' }}>
+                  <span style={{ display: 'inline-block', borderBottom: '2px dotted red', width: '37%', verticalAlign: 'middle', marginLeft: 4, paddingLeft: '4px' }}>
                     {orgUnit.path[2] ? orgUnit.path[2] : ''}
                   </span>
                 </p>
@@ -272,7 +270,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                 </p>
                 <p style={{ marginBottom: 8, fontWeight: 'normal'}}>
                   {t("WARD/VILLAGE_TRACT")}
-                  <span style={{ display: 'inline-block', borderBottom: '2px dotted red', width: '33%', verticalAlign: 'middle', marginLeft: 4, paddingLeft: '4px' }}>
+                  <span style={{ display: 'inline-block', borderBottom: '2px dotted red', width: '53px', verticalAlign: 'middle', marginLeft: 4, paddingLeft: '4px' }}>
                     {certificate["hQnTVzOd0m9"] ||  ""}
                   </span>
                 </p>
@@ -380,12 +378,12 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                   </div>
                   <div style={{ width: "75%" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", padding: '4px 8px' }}>
-                      <div style={{ width: "50%", color: "red" }}> {t("NAME")}: {certificate?.["YdNUYjH3rct"] || ""}</div>
-                      <div style={{ width: "50%", color: "red" }}> {t("ADDRESS")}: {certificate?.["rRpqp6TPWlh"] || ""} </div>
+                      <div style={{ width: "50%", color: "red" }}> {t("Informant’s_Name")}: {certificate?.["YdNUYjH3rct"] || ""}</div>
+                      <div style={{ width: "50%", color: "red" }}> {t("Informant’s_Address")}: {certificate?.["rRpqp6TPWlh"] || ""} </div>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", paddingTop: '4px' }}>
                       <div style={{ width: "50%", padding: "8px", color: "red" }}>{t("RELATION_TO_CHILD")}: {certificate?.["eYh3U6sXrTQ"]  || ""}</div>
-                      <div style={{ width: "50%", padding: "8px", color: "red" }}>  {t("SIGNATURE")}</div>
+                      <div style={{ width: "50%", padding: "8px", color: "red" }}>  {t("Signature")}</div>
                     </div>
                   </div>
                 </div>
@@ -418,13 +416,13 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", fontSize: 12}}>
                   <span style={{ fontWeight: "600" }}>
-                    {t("SIGNATURE")} <span style={{ ...borderDotted, width: 80 }}></span>
+                    {t("Registrar’s_Signature")} <span style={{ ...borderDotted, width: 80 }}></span>
                   </span>
                   <span style={{ fontWeight: "600", marginTop: 2 }}>
-                    {t("NAME")}<span style={{ ...borderDotted, width: 80 }}></span>
+                    {t("Registrar’s_Name")}<span style={{ ...borderDotted, width: 80 }}></span>
                   </span>
                   <span style={{ fontWeight: "600", marginTop: 2 }}>
-                     {t("DESIGNATION")} <span style={{ ...borderDotted, width: 80 }}></span>
+                     {t("Registrar’s_Designation")} <span style={{ ...borderDotted, width: 80 }}></span>
                   </span>
                 </div>
               </div>

@@ -45,6 +45,7 @@ const DeathRecords = ({orgUnit, dataElements}) => {
           name: "",
           gender: "",
           age: "",
+          nrcFull: "",
           permanentAddress: "",
           causeOfDeath: ""
   })
@@ -55,6 +56,7 @@ const DeathRecords = ({orgUnit, dataElements}) => {
       name: "aTbE3kYe98D",
       gender: "wxrDsUO1ELy",
       age: "KFGxB6wpRxi",
+      nrcFull: "Fwa7gEzjZAH",
       permanentAddress: "iXXvJAxbOtd",
       causeOfDeath: "XXDApzQFycS"
 
@@ -95,6 +97,7 @@ const DeathRecords = ({orgUnit, dataElements}) => {
           (record[FIELD_KEYS.name] || "").toLowerCase().includes(filters.name.toLowerCase()) &&
           (record[FIELD_KEYS.gender] || "").toLowerCase().includes(filters.gender.toLowerCase()) &&
           (record[FIELD_KEYS.age] || "").toLowerCase().includes(filters.age.toLowerCase()) &&
+          (record[FIELD_KEYS.nrcFull] || "").toLowerCase().includes(filters.nrcFull.toLowerCase()) &&
           (record[FIELD_KEYS.permanentAddress] || "").toLowerCase().includes(filters.permanentAddress.toLowerCase()) && 
           (record[FIELD_KEYS.causeOfDeath] || "").toLowerCase().includes(filters.causeOfDeath.toLowerCase())
       );
@@ -136,6 +139,7 @@ const DeathRecords = ({orgUnit, dataElements}) => {
       <th>{renderFilterField("name", "Name")}</th>
       <th>{renderFilterField("gender", "Gender")}</th>
       <th>{renderFilterField("age", "Age")}</th>
+      <th>{renderFilterField("nrcFull", "NRC (Full)")}</th>
       <th>{renderFilterField("permanentAddress", "Permanent Address")}</th>
       <th>{renderFilterField("causeOfDeath", "Cause of Death")}</th>
       <th></th>
@@ -152,6 +156,7 @@ const DeathRecords = ({orgUnit, dataElements}) => {
               <td>{record["aTbE3kYe98D"] || ""}</td>  {/* name */}
               <td>{record["wxrDsUO1ELy"] || ""}</td>  {/* gender*/}
               <td>{record["KFGxB6wpRxi"] || ""}</td>  {/* age */}
+              <td>{record["Fwa7gEzjZAH"] || ""}</td>  {/* nrc full (make change here in the id)*/}
               <td>{record["iXXvJAxbOtd"] || ""}</td>  {/*permanent address */} 
               <td>{(dataElements['nQy5xQrOMXj'] && dataElements['nQy5xQrOMXj'][record["nQy5xQrOMXj"]]) ? dataElements['nQy5xQrOMXj'][record["nQy5xQrOMXj"]] : ""}</td>   {/* cause of death */} 
                  <td>

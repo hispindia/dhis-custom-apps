@@ -11,13 +11,32 @@ const styles = {
     },
     container: {
         display: "flex",
-        alignItems: "flex-start",
+        alignItems: "stretch",
+        gap: '16px',
+        width: "100%",
+        maxWidth: "11.69in",
+        boxSizing: "border-box"
     },
-    main: {
+    leftPane: {
+        width: '8.6cm',
+        padding: '10px',
+        boxSizing: 'border-box',
+        color: 'black',
+        fontSize: 11,
+        borderRight: '2px dashed black',
+    },
+    rightPane: {
+    flex: 1, // Allow the right pane to fill remaining space
+    padding: '6px 10px',
+    boxSizing: 'border-box',
+    color: 'black',
+    fontSize: 11
+   },
+   main: {
         width: "68%",
     },
     h2: {
-        fontSize: "2rem",
+        fontSize: "1.2rem",
         fontWeight: "bold",
         textAlign: "center",
         marginBottom: "0.5rem",
@@ -61,7 +80,8 @@ const styles = {
     w3: { width: "0.75rem" },
     mt10: { marginTop: "2.5rem" },
     hr: {
-        marginTop: "1.25rem",
+        marginTop: "0.6rem",
+        marginTop: "0.2rem",
         borderTop: "2px solid black",
         width: "100%",
     },
@@ -71,22 +91,23 @@ const styles = {
         width: "100%",
     },
     h3: {
-        fontSize: "1.125rem",
+        fontSize: "1rem",
         fontWeight: "bold",
         textAlign: "center",
-        marginTop: "1rem",
-        marginBottom: "0.5rem",
+        marginBottom: "0.25rem",
     },
     table: {
         width: "100%",
         borderCollapse: "separate",
         borderSpacing: 0,
         borderColor: "black",
+        marginTop: "1rem",
         marginTop: "0.5rem",
+        fontSize: "11px"
     },
     td: {
         width: "16.666%",
-        padding: "0.5rem 0.25rem",
+        padding: "0.2rem 0.25rem",
         verticalAlign: "top",
     },
     tdWide: {
@@ -97,20 +118,21 @@ const styles = {
     pt4: { paddingTop: "1rem" },
     mt2: { marginTop: "0.5rem" },
     footer: {
-        marginTop: "1rem",
-        fontSize: "0.95rem",
+        marginTop: "0rem",
+        fontSize: "9.5px",
     },
     flex: {
         display: "flex",
         alignItems: "flex-start",
-        marginTop: "1rem",
         justifyContent: "space-between",
+        marginTop: "1rem",
+        marginTop: "0.2rem",
     },
-    fontSemibold: { fontWeight: "600" },
-    w6: { width: "1.5rem", display: "inline-block", verticalAlign: "middle" },
+    w6: { width: "1.5rem", display: "inline-block", borderBottom: "2px dotted black", verticalAlign: "middle" },
     w20: { width: "5rem", display: "inline-block", borderBottom: "2px dotted black", verticalAlign: "middle" },
     w17: { width: "4.25rem", display: "inline-block", borderBottom: "2px dotted black", verticalAlign: "middle" },
-    mt2Text: { marginTop: "0.5rem" },
+    mt2Text: { marginTop: "0.15rem" },
+    fontSemibold: { fontWeight: "600" },
 };
 
 const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
@@ -148,282 +170,556 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                 html2canvas: { scale: 2 },
                 jsPDF: { orientation: 'landscape', unit: 'in', format: 'a4' }
             };
-            html2pdf()
-                .set(options)
-                .from(pdfRef.current)
-                .save();
+            html2pdf().from(pdfRef.current).set(options).save();
         }
     };
 
-
     return (
-       
-        <div style={{ background: "#fff", padding: 32, fontFamily: "sans-serif", width: "100%", display: "flex", position: "relative" }}>
-        <button
-        onClick={handleDownloadPDF}
-        style={{
-          position: "absolute",
-          top: 16,
-          right: 16,
-          zIndex: 10,
-          padding: "8px 16px",
-          background: "#1976d2",
-          color: "#fff",
-          border: "none",
-          borderRadius: 4,
-          cursor: "pointer",
-          fontWeight: "bold"
-        }}
-      >
-        Download PDF
-      </button>
+  <div
+    style={{
+      background: "#fff",
+      padding: 32,
+      fontFamily: "sans-serif",
+      width: "100%",
+      display: "flex",
+      position: "relative",
+    }}
+  >
+    <button
+      onClick={handleDownloadPDF}
+      style={{
+        position: "absolute",
+        top: 16,
+        right: 16,
+        zIndex: 10,
+        padding: "8px 16px",
+        background: "#1976d2",
+        color: "#fff",
+        border: "none",
+        borderRadius: 4,
+        cursor: "pointer",
+        fontWeight: "bold",
+      }}
+    >
+      Download PDF
+    </button>
 
-        <main ref={pdfRef} style={{ margin: "1rem", width: "100%" }}>
-            <h2 style={{...styles.h2, fontSize: 22}}>{t("DEATH_CERTIFICATE")} </h2>
+    <main
+      ref={pdfRef}
+      style={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        boxSizing: "border-box",
+      }}
+    >
+      <div style={styles.container}>
 
-        <header
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            marginBottom: '1rem',
-            color: '#000', // Force black text
-            backgroundColor: '#fff'
-          }}
-        >
-          {/* Left Section */}
-          <section style={{ color: '#000', fontSize: 16, width: "50%" }}>
-            <p style={{ marginBottom: 4, marginTop: 12, fontWeight: 'normal' }}>{t("VR_Form_203")} </p>
-            <div>
-              <p style={{ marginBottom: 4, marginTop: 16, fontWeight: 'normal' }}>
-               {t("STATE_DIVISION")}
-                <span style={{
-                    display: 'inline-block',
-                    borderBottom: '2px dotted black',
-                    width: '31%',
-                    verticalAlign: 'middle',
-                    marginLeft: 8
-                  }}>
-                    {orgUnit.path[2] ? orgUnit.path[2] : ''}
-                  </span>
-              </p>
-            </div>
-            <div>
-              <p style={{ fontWeight: 'normal' }}>
-               {t("DISTRICT")}
-                <span style={{
-                    display: 'inline-block',
-                    borderBottom: '2px dotted black',
-                    width: 90,
-                    verticalAlign: 'middle',
-                    marginLeft: 8
-                  }}>
-                    {orgUnit.path[3] ? orgUnit.path[3] : ''}
-                  </span>
-              </p>
+        {/* LEFT PANE */}
+        <aside style={styles.leftPane}>
+          <h4 style={{ fontWeight: 600, textAlign: "left" }}>
+            {t("DEATH_CERTIFICATE_COUNTERFOIL")}
+          </h4>
 
-            </div>
+          <div style={{ marginTop: "15px", fontSize: "15px" }}>
+            <div style={{ fontWeight: 600 }}>{t("VR_103") || "V.R Form 203"}</div>
 
-            <div>
-              <p style={{ fontWeight: 'normal' }}>
-               {t("TOWNSHIP")}
-                <span style={{
-                    display: 'inline-block',
-                    borderBottom: '2px dotted black',
-                    width: 90,
-                    verticalAlign: 'middle',
-                    marginLeft: 8
-                  }}>
-                    {orgUnit.path[4] ? orgUnit.path[4] : ''}
-                  </span>
-              </p>
-
-            </div>
-
-            <div>
-              <p style={{ fontWeight: 'normal' }}>
-               {t("WARD/VILLAGE_TRACT")}
-                  <span style={{
-                    display: 'inline-block',
-                    borderBottom: '2px dotted black',
-                    width: 90,
-                    verticalAlign: 'middle',
-                    marginLeft: 8
-                  }}>
-                    {certificate["hQnTVzOd0m9"] ||  ""}
-                  </span>
-              </p>
-            </div>
-          </section>
-
-          {/* Right Section */}
-          <section style={{ marginTop: 40, color: '#000', fontSize: 16,  width: "30%" }}>
-            <p style={{ fontWeight: 'normal' }}>
-             {t("PAGE_NUMBER")} 
-              <span style={{
-                  display: 'inline-block',
-                  borderBottom: '2px dotted black',
-                  width: 60,
-                  verticalAlign: 'middle',
-                  marginLeft: 8
-                }}>{certificate?.["PS99q9IRjKy"] || ""}</span>
-            </p>
-            <p style={{ fontWeight: 'normal' }}>
-              {t("BOOK_NUMBER")}
-              
-              <span style={{
-                  display: 'inline-block',
-                  borderBottom: '2px dotted black',
-                  width: 60,
-                  verticalAlign: 'middle',
-                  marginLeft: 8
-                }}>
-                    {certificate?.["l0Pm3ydZ2om"] || ""}
+            <div style={{ marginTop: "38px" }}>
+              <div>
+                {t("BOOK_NUMBER")}
+                <span
+                  style={{
+                    display: "inline-block",
+                    borderBottom: "2px dotted black",
+                    verticalAlign: "middle",
+                    minWidth: "192px",
+                    paddingLeft: "5px",
+                  }}
+                >
+                  {certificate?.["l0Pm3ydZ2om"] || ""}
                 </span>
-            </p>
-            <p style={{ marginBottom: 4, fontWeight: 'normal' }}>
-             {t("ENTRY_NUMBER")}
-              <span style={{
-                  display: 'inline-block',
-                  borderBottom: '2px dotted black',
-                  width: 60,
-                  verticalAlign: 'middle',
-                  marginLeft: 8
-                }}>
-                    {certificate?.["MrtKbjcsHnk"] || ""}
+              </div>
+
+              <div style={{ marginTop: 8 }}>
+                {t("PAGE_NUMBER")}
+                <span
+                  style={{
+                    display: "inline-block",
+                    borderBottom: "2px dotted black",
+                    verticalAlign: "middle",
+                    minWidth: "165px",
+                    paddingLeft: "5px",
+                  }}
+                >
+                  {certificate?.["PS99q9IRjKy"] || ""}
                 </span>
-            </p>
-            <p style={{ marginBottom: 4, fontWeight: 'normal' }}>
-               {t("DATE_OF_REGISTRATION")} 
+              </div>
 
-                  { <span style={{
-                  borderBottom: '2px dotted black',
-                  width: 60,
-                  verticalAlign: 'middle',
-                  marginLeft: 8
-                }}>
-                  {certificate?.["occurredAt"] || ''}
-                </span> }
-            </p>
-          </section>
+              <div style={{ marginTop: 8 }}>
+                {t("ENTRY_NUMBER")}
+                <span
+                  style={{
+                    display: "inline-block",
+                    borderBottom: "2px dotted black",
+                    verticalAlign: "middle",
+                    minWidth: "152px",
+                    paddingLeft: "5px",
+                  }}
+                >
+                  {certificate?.["MrtKbjcsHnk"] || ""}
+                </span>
+              </div>
 
-        </header>
-
-                    <hr style={styles.hr} />
-                    <h3 style={styles.h3}> {t("PARTICULARS_OF_DECEASED")}
-                   
-                    </h3>
-                    <hr style={styles.hr} />
-
-                    <table style={styles.table}>
-                        <tbody>
-                            <tr>
-                                <td style={styles.td}>1. {t("NAME")}: {certificate?.["aTbE3kYe98D"] || ""}</td>
-                                <td style={styles.td}>7. {t("RACE")}: {certificate?.["b9BVo7x8248"] || ""}</td>
-                            </tr>
-                           
-                            <tr>
-                                <td style={styles.td}>2. {t("SEX")}: {certificate?.["wxrDsUO1ELy"] || ""}</td>
-                                <td style={styles.td}>8. {t("CITIZENSHIP")}: {certificate?.["JB1wN0sieDP"] || ""}</td>
-                            </tr>
-                           
-
-                            <tr>
-                                <td style={styles.td}>3. {t("DEATH_OF_DEATH")}: {
-                                typeof certificate?.["jGGNvNYhu47"] === "string" 
-                                ? certificate["jGGNvNYhu47"].split(" ")[0]
-                                : ""}
-                                </td>
-                                <td style={styles.td}>9. {t("RELIGION")}: {certificate?.["TseVgVwxzx9"] || ""}</td>
-                            </tr>
-                            
-                            <tr>
-                                <td style={styles.td}>4. {t("PLACE_OF_DEATH")}: {certificate?.["MOV6uMBMkph"] || ""}</td>
-                                <td style={styles.td}>10. {t("PERMANENT_ADDRESS")}: {certificate?.["iXXvJAxbOtd"] || ""}</td>
-                            </tr>
-                           
-                            <tr>
-                                <td style={styles.td}>5. {t("AGE")}: {certificate?.["KFGxB6wpRxi"] || ""}</td>
-                                <td style={styles.td}>11.  {t("NAME_OF_FATHER_DECEASED")}: {certificate?.["OpzRl6KIFVU"] || ""}</td>
-                            </tr>
-                           
-                            <tr>
-                                <td style={styles.td}>6. {t("OCCUPATION")}: {certificate?.["s3wKlMmBs8p"] || ""}</td>
-                                <td style={styles.td}>12. {t("NAME_OF_MOTHER_DECEASED")} : {certificate?.["xHcmoS3icZD"] || ""}</td>
-                            </tr>
-                           
-                            <tr>
-                                <td style={styles.td}>13. {t("CAUSE_OF_DEATH")}: {(dataElements['nQy5xQrOMXj'] && dataElements['nQy5xQrOMXj'][certificate["nQy5xQrOMXj"]]) ? dataElements['nQy5xQrOMXj'][certificate["nQy5xQrOMXj"]] :  ""}</td>
-                                <td></td>
-                            </tr>
-                           
-                            <tr>
-                                <td style={styles.td}>14. {t("INFORMAT_SIGNATURE")}</td>
-                                <td style={styles.td}>{t("RELATION_TO_DECEASE")}: {certificate?.["qa5eIb216nF"] || ""}</td>
-                            </tr>
-                            <tr>
-                                <td style={{ ...styles.td, ...styles.pt4 }}> {t("NAME")}: {certificate?.["YdNUYjH3rct"] || ""}</td>
-                                <td style={{ ...styles.td, ...styles.pt4 }}> {t("ADDRESS")}: {certificate?.["rRpqp6TPWlh"] || ""}</td>
-                            </tr>
-                         
-                            <tr>
-                                <td style={styles.td}>15. {t("CAUSE_OF_DEATH_CERTIFIERS")} :  {certificate?.["aTbE3kYe98D"] || ""}</td>
-                                <td style={styles.td}>
-                                   {t("SIGNATURE")} <span style={styles.w17}></span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td style={styles.pt4}>
-                                    {t("NAME")} <span style={styles.w17}> {certificate?.["RkPGXTudjFI"] || ""}</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td style={styles.pt4}>
-                                   {t("DESIGNATION")} <span style={styles.w17}>{certificate?.["NxtfpJnOOHx"] || ""}</span>
-                                </td>
-                            </tr>
-                           
-                        </tbody>
-                    </table>
-
-                    <footer style={{...styles.footer, marginTop: 12, fontSize: 13}}>
-                        <div>
-                            <p style={{ width: "100%", display: "block", marginBottom: 8 }}>
-                              {t("DEAD_PARA1_VALIDATION")}
-                            </p>
-                            <p style={{ width: "100%", display: "block", marginBottom: 8 }}>
-                                {t("DEAD_PARA2_VALIDATION")}
-                            </p>
-                        </div>
-                        <div style={{...styles.flex, marginTop: 12}}>
-                            <div>
-                                <p style={{ marginTop: 16, fontWeight: "600" }}>
-                                    {t("DATE_OF_ISSUE")} <span style={styles.w6}></span> / <span style={styles.w6}></span> /{" "}
-                                </p>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                                <span style={styles.fontSemibold}> {t("REGISTRATION_OFFICER")} </span>
-                            </div>
-                            <div style={{ display: "flex", flexDirection: "column" }}>
-                                <span style={styles.fontSemibold}>
-                                    {t("SIGNATURE")} <span style={styles.w20}></span>
-                                </span>
-                                <span style={{ ...styles.fontSemibold, ...styles.mt2Text }}>
-                                  {t("NAME")} <span style={styles.w20}></span>
-                                </span>
-                                <span style={{ ...styles.fontSemibold, ...styles.mt2Text }}>
-                                   {t("DESIGNATION")}<span style={styles.w20}></span>
-                                </span>
-                            </div>
-                        </div>
-                    </footer>
-                </main>
+              <div style={{ marginTop: 8 }}>
+                {t("DATE_OF_REGISTRATION")}
+                <span
+                  style={{
+                    display: "inline-block",
+                    borderBottom: "2px dotted black",
+                    verticalAlign: "middle",
+                    minWidth: "90px",
+                    paddingLeft: "5px",
+                  }}
+                >
+                  {certificate?.["occurredAt"] || ""}
+                </span>
+              </div>
             </div>
-      
-    )
+          </div>
+
+          <div style={{ fontSize: 15, marginTop: "80px" }}>
+            <div style={{ marginBottom: 10 }}>
+              <div>
+                {t("NAME_OF_DECEASED")}
+                <span
+                  style={{
+                    display: "inline-block",
+                    borderBottom: "2px dotted black",
+                    verticalAlign: "middle",
+                    minWidth: "160px",
+                    paddingLeft: "5px",
+                  }}
+                >
+                  {certificate?.["R43kdns3YYL"] || ""}
+                </span>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 8 }}>
+              <div>
+                {t("SIGNATURE_OF_ISSUEING_PERSON")}
+                <span
+                  style={{
+                    display: "inline-block",
+                    borderBottom: "2px dotted black",
+                    verticalAlign: "middle",
+                    minWidth: "100px",
+                    paddingLeft: "5px",
+                  }}
+                >
+                  {certificate?.[""] || ""}
+                </span>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 8 }}>
+              <div>
+                {t("NAME_OF_ISSUEING_PERSON")}
+                <span
+                  style={{
+                    display: "inline-block",
+                    borderBottom: "2px dotted black",
+                    verticalAlign: "middle",
+                    minWidth: "117px",
+                    paddingLeft: "5px",
+                  }}
+                >
+                  {certificate?.["JAU9NM7UqQP"] || ""}
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <p style={{ marginTop: 0 }}>
+                {t("DATE_OF_ISSUE")}
+                <span
+                  style={{
+                    display: "inline-block",
+                    width: 24,
+                    verticalAlign: "middle",
+                    paddingLeft: "5px",
+                  }}
+                ></span>{" "}
+                /{" "}
+                <span
+                  style={{
+                    display: "inline-block",
+                    width: 24,
+                    verticalAlign: "middle",
+                  }}
+                ></span>{" "}
+                /
+              </p>
+            </div>
+          </div>
+        </aside>
+
+        {/* RIGHT PANE */}
+        <section style={styles.rightPane}>
+          <h2 style={styles.h2}>{t("DEATH_CERTIFICATE")}</h2>
+
+          {/* --- HEADER --- */}
+          <header
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              marginBottom: "0.5rem",
+              color: "#000",
+              backgroundColor: "#fff",
+            }}
+          >
+            {/* Left section of header */}
+            <section style={{ color: "#000", fontSize: 12, width: "50%" }}>
+              <p style={{ marginBottom: 4, marginTop: 12 }}>
+                {t("VR_Form_203")}
+              </p>
+
+              <div style={{ marginTop: "0.5rem" }}>
+                <p style={{ marginBottom: 4, marginTop: 10 }}>
+                  {t("STATE_DIVISION")}
+                  <span
+                    style={{
+                      display: "inline-block",
+                      borderBottom: "2px dotted black",
+                      width: "31%",
+                      verticalAlign: "middle",
+                      marginLeft: 8,
+                    }}
+                  >
+                    {orgUnit.path[2] || ""}
+                  </span>
+                </p>
+              </div>
+
+              <div>
+                <p>
+                  {t("DISTRICT")}
+                  <span
+                    style={{
+                      display: "inline-block",
+                      borderBottom: "2px dotted black",
+                      width: 90,
+                      verticalAlign: "middle",
+                      marginLeft: 8,
+                    }}
+                  >
+                    {orgUnit.path[3] || ""}
+                  </span>
+                </p>
+              </div>
+
+              <div>
+                <p>
+                  {t("TOWNSHIP")}
+                  <span
+                    style={{
+                      display: "inline-block",
+                      borderBottom: "2px dotted black",
+                      width: 90,
+                      verticalAlign: "middle",
+                      marginLeft: 8,
+                    }}
+                  >
+                    {orgUnit.path[4] || ""}
+                  </span>
+                </p>
+              </div>
+
+              <div>
+                <p>
+                  {t("WARD/VILLAGE_TRACT")}
+                  <span
+                    style={{
+                      display: "inline-block",
+                      borderBottom: "2px dotted black",
+                      width: 90,
+                      verticalAlign: "middle",
+                      marginLeft: 8,
+                    }}
+                  >
+                    {certificate["hQnTVzOd0m9"] || ""}
+                  </span>
+                </p>
+              </div>
+            </section>
+
+            {/* Right section of header */}
+            <section style={{ marginTop: 40, color: "#000", fontSize: 12, width: "35%" }}>
+              <p>
+                {t("PAGE_NUMBER")}
+                <span
+                  style={{
+                    display: "inline-block",
+                    borderBottom: "2px dotted black",
+                    width: 60,
+                    verticalAlign: "middle",
+                    marginLeft: 8,
+                  }}
+                >
+                  {certificate?.["PS99q9IRjKy"] || ""}
+                </span>
+              </p>
+
+              <p>
+                {t("BOOK_NUMBER")}
+                <span
+                  style={{
+                    display: "inline-block",
+                    borderBottom: "2px dotted black",
+                    width: 60,
+                    verticalAlign: "middle",
+                    marginLeft: 8,
+                  }}
+                >
+                  {certificate?.["l0Pm3ydZ2om"] || ""}
+                </span>
+              </p>
+
+              <p>
+                {t("ENTRY_NUMBER")}
+                <span
+                  style={{
+                    display: "inline-block",
+                    borderBottom: "2px dotted black",
+                    width: 60,
+                    verticalAlign: "middle",
+                    marginLeft: 8,
+                  }}
+                >
+                  {certificate?.["MrtKbjcsHnk"] || ""}
+                </span>
+              </p>
+
+              <p style={{ marginBottom: 4, fontWeight: 'normal', whiteSpace: 'nowrap' }}>
+                {t("DATE_OF_REGISTRATION")}
+                <span
+                  style={{
+                    borderBottom: "2px dotted black",
+                    width: 60,
+                    verticalAlign: "middle",
+                    marginLeft: 8,
+                  }}
+                >
+                  {certificate?.["occurredAt"] || ""}
+                </span>
+              </p>
+            </section>
+          </header>
+
+          <hr style={styles.hr} />
+
+          <h3 style={styles.h3}>{t("PARTICULARS_OF_DECEASED")}</h3>
+
+          <hr style={styles.hr} />
+
+          {/* --- TABLE --- */}
+          <table style={styles.table}>
+            <tbody>
+              <tr>
+                <td style={styles.td}>
+                  {t("1")}
+                  {t("NAME_OF_DECEASED")}: {certificate?.["aTbE3kYe98D"] || ""}
+                </td>
+                <td style={styles.td}>
+                  {t("7")}
+                  {t("RACE")}: {certificate?.["b9BVo7x8248"] || ""}
+                </td>
+              </tr>
+
+              <tr>
+                <td style={styles.td}>
+                  {t("2")}
+                  {t("SEX")}: {certificate?.["wxrDsUO1ELy"] || ""}
+                </td>
+                <td style={styles.td}>
+                  {t("8")}
+                  {t("CITIZENSHIP")}: {certificate?.["JB1wN0sieDP"] || ""}
+                </td>
+              </tr>
+
+              <tr>
+                <td style={styles.td}>
+                  {t("3")}
+                  {t("DEATH_OF_DEATH")}:{" "}
+                  {typeof certificate?.["jGGNvNYhu47"] === "string"
+                    ? certificate["jGGNvNYhu47"].split(" ")[0]
+                    : ""}
+                </td>
+                <td style={styles.td}>
+                  {t("9")}
+                  {t("RELIGION")}: {certificate?.["TseVgVwxzx9"] || ""}
+                </td>
+              </tr>
+
+              <tr>
+                <td style={styles.td}>
+                  {t("4")}
+                  {t("PLACE_OF_DEATH")}: {certificate?.["MOV6uMBMkph"] || ""}
+                </td>
+                <td style={styles.td}>
+                  {t("10")}
+                  {t("PERMANENT_ADDRESS")}: {certificate?.["iXXvJAxbOtd"] || ""}
+                </td>
+              </tr>
+
+              <tr>
+                <td style={styles.td}>
+                  {t("5")}
+                  {t("AGE")}: {certificate?.["KFGxB6wpRxi"] || ""}
+                </td>
+                <td style={styles.td}>
+                  {t("11")}
+                  {t("NAME_OF_FATHER_DECEASED")}: {certificate?.["OpzRl6KIFVU"] || ""}
+                </td>
+              </tr>
+
+              <tr>
+                <td style={styles.td}>
+                  {t("6")}
+                  {t("OCCUPATION")}: {certificate?.["s3wKlMmBs8p"] || ""}
+                </td>
+                <td style={styles.td}>
+                  {t("12")}
+                  {t("NAME_OF_MOTHER_DECEASED")}:{" "}
+                  {certificate?.["xHcmoS3icZD"] || ""}
+                </td>
+              </tr>
+
+              <tr>
+                <td style={styles.td}>
+                  13. {t("CAUSE_OF_DEATH")}:
+                  {dataElements["nQy5xQrOMXj"] &&
+                  dataElements["nQy5xQrOMXj"][certificate["nQy5xQrOMXj"]]
+                    ? dataElements["nQy5xQrOMXj"][certificate["nQy5xQrOMXj"]]
+                    : ""}
+                </td>
+                <td></td>
+              </tr>
+
+              <tr>
+                <td style={styles.td}>
+                  {t("(a)_Name")}: {certificate?.["YdNUYjH3rct"] || ""}
+                </td>
+                <td style={styles.td}>
+                  {t("(b)_Qualification")}: {certificate?.["YdNUYjH3rct"] || ""}
+                </td>
+              </tr>
+
+              <tr>
+                <td style={styles.td}>
+                  {t("(c)_RELATION_TO_DECEASE")}: {certificate?.["qa5eIb216nF"] || ""}
+                </td>
+                <td style={{ ...styles.td, ...styles.pt4 }}>
+                  {t("(d)_Address")}: {certificate?.["rRpqp6TPWlh"] || ""}
+                </td>
+              </tr>
+
+              <tr>
+                <td style={styles.td}>
+                  {t("15")}
+                  {t("3/_Person_who_certified_the_cause_of_Death")}:{" "}
+                  {certificate?.["aTbE3kYe98D"] || ""}
+                </td>
+                <td style={styles.td}>
+                  {t("SIGNATURE")} <span style={styles.w17}></span>
+                </td>
+              </tr>
+
+              <tr>
+                <td></td>
+                <td style={styles.pt4}>
+                  {t("NAME")}{" "}
+                  <span style={styles.w17}>
+                    {certificate?.["RkPGXTudjFI"] || ""}
+                  </span>
+                </td>
+              </tr>
+
+              <tr>
+                <td></td>
+                <td style={styles.pt4}>
+                  {t("DESIGNATION")}{" "}
+                  <span style={styles.w17}>
+                    {certificate?.["NxtfpJnOOHx"] || ""}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          {/* --- FOOTER --- */}
+          <footer style={styles.footer}>
+            <div>
+              <p style={{ width: "100%", marginBottom: 2 }}>
+                {t("DEAD_PARA1_VALIDATION")}
+              </p>
+              <p style={{ width: "100%", marginBottom: 0 }}>
+                {t("DEAD_PARA2_VALIDATION")}
+              </p>
+            </div>
+
+            <div style={styles.flex}>
+              <div>
+                <p style={{ marginTop: 1, fontWeight: "600" }}>
+                  {t("DATE_OF_ISSUE")} <span style={styles.w6}></span> /{" "}
+                  <span style={styles.w6}></span> /
+                </p>
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "flex-end",
+                }}
+              >
+                <span style={styles.fontSemibold}>
+                  {t("REGISTRATION_OFFICER")}
+                </span>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <span style={{ ...styles.fontSemibold }}>
+                  {t("Registrar’s_Signature")} <span style={styles.w20}></span>
+                </span>
+
+                <span
+                  style={{ ...styles.fontSemibold, ...styles.mt2Text }}
+                >
+                  {t("Registrar’s_Name")} <span style={styles.w20}></span>
+                </span>
+
+                <span
+                  style={{ ...styles.fontSemibold, ...styles.mt2Text }}
+                >
+                  {t("Registrar’s_Designation")}{" "}
+                  <span style={styles.w20}></span>
+                </span>
+              </div>
+            </div>
+          </footer>
+        </section>
+
+      </div>
+    </main>
+  </div>
+);
 
 };
+export default DeathCertificate;
 
-export default DeathCertificate
+
+
+
+
