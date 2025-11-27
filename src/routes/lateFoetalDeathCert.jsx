@@ -93,9 +93,11 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
   const pdfRef = useRef();
   const { t } = useTranslation();
   const orgUnitObj = {};
+  const currentDate = new Date().toLocaleDateString('en-GB');
   console.log(`---------- ${orgUnit}`);
   console.log(`------------------${orgUnits}`);
   orgUnits.forEach((ou) => {
+    debugger;
     orgUnitObj[ou.id] = ou.name;
   });
   orgUnit = {
@@ -183,9 +185,9 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
         style={{
           position: "absolute",
           top: 16,
-          right: 16,
+          right: 8,
           zIndex: 10,
-          padding: "8px 16px",
+          padding: "4px 8px",
           background: "#1976d2",
           color: "#000",
           border: "none",
@@ -215,7 +217,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
         <div style={styles.container}>
           <aside style={styles.leftPane}>
             <h4 style={{ fontWeight: 600, textAlign: "left" }}>
-              {t("LATE_FOETAL_DEATH CERTIFICATE COUNTERFOIL")}
+              {t("LATE_FOETAL_DEATH_CERTIFICATE_COUNTERFOIL")}
             </h4>
 
             <div style={{ marginTop: "15px", fontSize: "13px" }}>
@@ -224,7 +226,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
               </div>
               <div style={{ marginTop: "12px" }}>
                 <div>
-                  {t("BOOK_NUMBER")}
+                  {t("PAGE_NUMBER")}
                   <span
                     style={{
                       display: "inline-block",
@@ -234,11 +236,11 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                       paddingLeft: "5px",
                     }}
                   >
-                    {certificate?.["l0Pm3ydZ2om"] || ""}
+                    {certificate?.["PS99q9IRjKy"] || ""}
                   </span>
                 </div>
                 <div style={{ marginTop: 8 }}>
-                  {t("PAGE_NUMBER")}{" "}
+                  {t("BOOK_NUMBER")}{" "}
                   <span
                     style={{
                       display: "inline-block",
@@ -248,7 +250,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                       paddingLeft: "5px",
                     }}
                   >
-                    {certificate?.["PS99q9IRjKy"] || ""}
+                    {certificate?.["l0Pm3ydZ2om"] || ""}
                   </span>
                 </div>
                 <div style={{ marginTop: 8 }}>
@@ -265,6 +267,20 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                     {certificate?.["MrtKbjcsHnk"] || ""}
                   </span>
                 </div>
+                 <div style={{ marginTop: 8 }}>
+                  {t("PLACE_OF_REGISTRATION")}
+                  <span
+                    style={{
+                      display: "inline-block",
+                      borderBottom: "2px dotted blue",
+                      verticalAlign: "middle",
+                      minWidth: "136px",
+                      paddingLeft: "5px",
+                    }}
+                  >
+                    {orgUnitObj[certificate?.["orgUnit"]]}
+                  </span>
+                </div>
                 <div style={{ marginTop: 8 }}>
                   {t("DATE_OF_REGISTRATION")}{" "}
                   <span
@@ -279,6 +295,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                     {certificate?.["occurredAt"] || ""}
                   </span>
                 </div>
+               
               </div>
             </div>
 
@@ -313,7 +330,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                       paddingLeft: "5px",
                     }}
                   >
-                    {certificate?.["wxrDsUO1ELy"] || ""}
+                    {certificate?.["zAetLzp3cT1"] || ""}
                   </span>
                 </div>
               </div>
@@ -367,7 +384,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
               </div>
               <div style={{ marginBottom: 8 }}>
                 <div>
-                  {t("SIGNATURE_OF_ISSUEING_PERSON")}
+                  {t("SIGNATURE_OF_ISSUING_PERSON")}
                   <span
                     style={{
                       display: "inline-block",
@@ -377,13 +394,13 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                       paddingLeft: "5px",
                     }}
                   >
-                    {certificate?.["bVyrfnpCd6i"] || ""}
+                    {certificate?.[""] || ""}
                   </span>
                 </div>
               </div>
               <div style={{ marginBottom: 8 }}>
                 <div>
-                  {t("NAME_OF_ISSUEING_PERSON")}
+                  {t("NAME_OF_ISSUING_PERSON")}
                   <span
                     style={{
                       display: "inline-block",
@@ -407,7 +424,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                       verticalAlign: "middle",
                       paddingLeft: "5px",
                     }}
-                  ></span>
+                  > {currentDate}</span>
                   /{" "}
                   <span
                     style={{
@@ -469,7 +486,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                       color: "blue",
                     }}
                   >
-                    {t("STATE_DIVISION")}
+                    {t("STATE_REGION")}
                     <span
                       style={{
                         display: "inline-block",
@@ -513,23 +530,6 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                       }}
                     >
                       {orgUnit.path[4] ? orgUnit.path[4] : ""}
-                    </span>
-                  </p>
-                </div>
-
-                <div>
-                  <p style={{ fontWeight: "normal", color: "blue" }}>
-                    {t("WARD/VILLAGE_TRACT")}
-                    <span
-                      style={{
-                        display: "inline-block",
-                        borderBottom: "2px dotted blue",
-                        width: "42px",
-                        verticalAlign: "middle",
-                        marginLeft: 8,
-                      }}
-                    >
-                      {certificate["hQnTVzOd0m9"] || ""}
                     </span>
                   </p>
                 </div>
@@ -645,7 +645,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                           color: "blue",
                         }}
                       >
-                        1. {t("SEX")}: {certificate?.["wxrDsUO1ELy"] || ""}
+                        {t("1")}{t("MALE")}: {certificate?.["wxrDsUO1ELy"] || ""}
                       </div>{" "}
                       {/* Name - 1 index */}
                       <div
@@ -655,7 +655,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                           color: "blue",
                         }}
                       >
-                        3. {t("PLACE_OF_BIRTH")}:{" "}
+                        {t("3")}{t("PLACE_OF_BIRTH")}:{" "}
                         {certificate?.["JAU9NM7UqQP"] || ""}
                       </div>{" "}
                       {/* dob 0th index */}
@@ -677,9 +677,9 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                           paddingBottom: 4,
                           color: "blue",
                         }}
-                      >
-                        2. {t("DATE_OF_BIRTH")}:{" "}
-                        {certificate?.["zAetLzp3cT1"] || ""}{" "}
+                    >
+                        {t("2")}{t("DATE_AND_TIME_OF_BIRTH")}
+                        {certificate?.["zAetLzp3cT1"] || ""}{certificate?.["uOK1Wcm91NB"] || ""}
                       </div>{" "}
                       {/* gender - 2 index */}
                       {/* <div style={{ width: "50%", color: 'blue' }}>4. Place of Birth: {certificate?.["JAU9NM7UqQP"] || ""}</div> 4 index */}
@@ -710,7 +710,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                           color: "blue",
                         }}
                       >
-                        5. {t("NAME")}: {certificate?.["RKs8td9BnNj"] || ""}
+                        (t{"4"}){t("NAME")}: {certificate?.["RKs8td9BnNj"] || ""}
                       </div>{" "}
                       {/*  5 index */}
                       <div
@@ -720,7 +720,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                           color: "blue",
                         }}
                       >
-                        8. {t("RELIGION")}: {certificate?.["m4b4SSlipKJ"] || ""}
+                        {t("7")}{t("RELIGION")}: {certificate?.["m4b4SSlipKJ"] || ""}
                       </div>{" "}
                       {/*  8 index */}
                     </div>
@@ -739,7 +739,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                           color: "blue",
                         }}
                       >
-                        6. {t("RACE")}: {certificate?.["mIRVmCzC7Tt"] || ""}
+                        {t("5")}{t("RACE")}: {certificate?.["mIRVmCzC7Tt"] || ""}
                       </div>{" "}
                       {/*  6 index */}
                       <div
@@ -749,7 +749,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                           color: "blue",
                         }}
                       >
-                        9. {t("OCCUPATION")}:{" "}
+                        {t("8")}{t("OCCUPATION")}:{" "}
                         {certificate?.["CjjgDMbqfXX"] || ""}
                       </div>{" "}
                       {/*  9 index */}
@@ -763,7 +763,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                           color: "blue",
                         }}
                       >
-                        7.{t("CITIZENSHIP")}:{" "}
+                        {t("6")}{t("CITIZENSHIP_AND_NRC")}:{" "}
                         {certificate?.["ed2RBrhMhnN"] || ""}
                       </div>{" "}
                       {/*  7 index */}
@@ -794,7 +794,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                           color: "blue",
                         }}
                       >
-                        10. {t("NAME")}: {certificate?.["UYmZMZt32hZ"] || ""}
+                        {t("9")}{t("NAME")}: {certificate?.["UYmZMZt32hZ"] || ""}
                       </div>{" "}
                       {/*  10 index */}
                       <div
@@ -804,7 +804,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                           color: "blue",
                         }}
                       >
-                        13. {t("RELIGION")}:{" "}
+                         {t("12")}{t("RELIGION")}:{" "}
                         {certificate?.["QsUp6BSb8Du"] || ""}
                       </div>{" "}
                       {/*  13 index */}
@@ -824,7 +824,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                           color: "blue",
                         }}
                       >
-                        11. {t("RACE")}: {certificate?.["XFmGvaRAJqP"] || ""}
+                        {t("10")}{t("RACE")}: {certificate?.["XFmGvaRAJqP"] || ""}
                       </div>{" "}
                       {/*  11 index */}
                       <div
@@ -834,7 +834,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                           color: "blue",
                         }}
                       >
-                        14. {t("OCCUPATION")}:{" "}
+                        {t("13")}{t("OCCUPATION")}:{" "}
                         {certificate?.["vg5hhREmzXe"] || ""}
                       </div>{" "}
                       {/*  14 index */}
@@ -848,12 +848,12 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                       }}
                     >
                       <div style={{ width: "50%", color: "blue" }}>
-                        12. {t("CITIZENSHIP")}:{" "}
+                         {t("11")}{t("CITIZENSHIP_AND_NRC")}:{" "}
                         {certificate?.["r8oFvT4PZwL"] || ""}
                       </div>{" "}
                       {/*  12 index */}
                       <div style={{ width: "50%", color: "blue" }}>
-                        15. {t("PERMANENT_ADDRESS")}:{" "}
+                        {t("14")}{t("PERMANENT_ADDRESS")}:{" "}
                         {certificate?.["bVyrfnpCd6i"] || ""}
                       </div>{" "}
                       {/*  15 index */}
@@ -916,16 +916,6 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                       >
                         {t("NAME")}: {certificate?.[""] || ""}
                       </div>{" "}
-                      {/*  11 index */}
-                      <div
-                        style={{
-                          width: "50%",
-                          paddingBottom: 4,
-                          color: "blue",
-                        }}
-                      >
-                        {t("ADDRESS")}: {certificate?.[""] || ""}
-                      </div>{" "}
                       {/*  14 index */}
                     </div>
                   </div>
@@ -949,12 +939,12 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                     >
                       <div style={{ width: "50%", color: "blue" }}>
                         {" "}
-                        {t("Informant’s_Name")}:{" "}
+                        {t("SIGNATURE")}:{" "}
                         {certificate?.["YdNUYjH3rct"] || ""}
                       </div>
                       <div style={{ width: "50%", color: "blue" }}>
                         {" "}
-                        {t("Informant’s_Address")}:{" "}
+                        {t("RELATION_TO_CHILD")}:{" "}
                         {certificate?.["rRpqp6TPWlh"] || ""}{" "}
                       </div>
                     </div>
@@ -968,14 +958,15 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                       <div
                         style={{ width: "50%", padding: "4px", color: "blue" }}
                       >
-                        {t("RELATION_TO_CHILD")}:{" "}
+                        {t("NAME")}:{" "}
                         {certificate?.["eYh3U6sXrTQ"] || ""}
                       </div>
                       <div
                         style={{ width: "50%", padding: "4px", color: "blue" }}
                       >
                         {" "}
-                        {t("Signature")}
+                        {t("ADDRESS")}
+                        {certificate?.["eYh3U6sXrTQ"] || ""}
                       </div>
                     </div>
                   </div>
@@ -1042,14 +1033,14 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {t("DATE_OF_ISSUE")}
+                    {t("DATE")}
                     <span
                       style={{
                         display: "inline-block",
                         width: 18,
                         marginLeft: 6,
                       }}
-                    ></span>
+                    >{currentDate}</span>
                     /{" "}
                     <span style={{ display: "inline-block", width: 18 }}></span>{" "}
                     /
@@ -1090,7 +1081,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                     }}
                   >
                     <span style={{ marginRight: 6 }}>
-                      {t("Registrar’s_Signature")}
+                      {t("SIGNATURE")}
                     </span>
                     <span
                       style={{
@@ -1113,7 +1104,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                     }}
                   >
                     <span style={{ marginRight: 6 }}>
-                      {t("Registrar’s_Name")}
+                      {t("NAME")}
                     </span>
                     <span
                       style={{
@@ -1121,7 +1112,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                         width: "70px",
                         display: "inline-block",
                       }}
-                    ></span>
+                    >{certificate?.["bVyrfnpCd6i"]}</span>
                   </div>
 
                   {/* Designation */}
@@ -1135,7 +1126,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                     }}
                   >
                     <span style={{ marginRight: 6 }}>
-                      {t("Registrar’s_Designation")}
+                      {t("DESIGNATION")}
                     </span>
                     <span
                       style={{
@@ -1143,7 +1134,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                         width: "70px",
                         display: "inline-block",
                       }}
-                    ></span>
+                    >{certificate?.["qsIjbrXLBL5"]}</span>
                   </div>
                 </div>
               </div>

@@ -18,7 +18,11 @@ const Sidebar = ({setOrgUnit, userOrgunit, orgUnits}) => {
 
     useEffect(() => {
 
-      fetchOrgUnits().then(setOrgUnit);
+      if(userOrgunit && userOrgunit.id){
+        setOrgUnit(userOrgunit);
+      }else if(orgUnits && orgUnits.length){
+        setOrgUnit(orgUnits[0]);
+      }
 
     }, []);
 

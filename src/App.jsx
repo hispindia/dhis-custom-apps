@@ -9,7 +9,7 @@ import DeathRecords from "./routes/DeathRecords";
 import BirthCertificate from "./routes/BirthCertificate";
 import DeathCertificate from "./routes/DeathCertificate";
 import { useState, useEffect } from "react";
-import { fetchOrgUnits } from "./API/OrganizationAPI";
+import { fetchOrgUnits } from "./API/OrganizationAPI"
 import LateFoetalDeathRecord from "./routes/LateFoetalDeathRecord";
 import LateFoetalDeathCert from "./routes/lateFoetalDeathCert";
 import { useDataQuery } from "@dhis2/app-runtime";
@@ -53,8 +53,14 @@ function AppContent() {
               if(dataElement.optionSetValue) {
                 de[dataElement.id] = {};
                 const optionSet = data.optionSets.optionSets.find(option => option.id == dataElement.optionSet.id)
-                optionSet.options.forEach(option => {
-                  de[dataElement.id][option.code] = option.name;
+                optionSet?.options?.forEach(option => {
+                  const my = option?.translations?.find(translation => translation.locale == "my");
+                  if(my) {
+                    de[dataElement.id][option.code] = my.value;
+                  }
+                  else {
+                    de[dataElement.id][option.code] = option.name;
+                  }
                 })
               }
             })

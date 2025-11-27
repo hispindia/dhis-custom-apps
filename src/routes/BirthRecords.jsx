@@ -26,10 +26,16 @@ import { useTranslation } from "react-i18next";
       setLoading(true);
         fetchBirthCertificateRecords(orgUnit.id, status)
         .then(res => {      
-           const records = res.events.map(event => {
-              const occurredAt = event.occurredAt ? event.occurredAt.split("T")[0] : "";
-              return Object.fromEntries([["occurredAt", occurredAt],...event.dataValues.map(dv => [dv.dataElement, dv.value])])
-           })
+              const records = res.events.map(event => {
+                const record = {
+                  occurredAt: event.occurredAt.split("T")[0] || "", 
+                  orgUnit: event.orgUnit || ""
+                };
+                event.dataValues.forEach(dv => {
+                  record[dv.dataElement] = dv.value;
+                });
+                return record;
+              })
           setCertificate(records);
         })
         .catch(data => setCertificate([]))
