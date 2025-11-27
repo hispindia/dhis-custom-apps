@@ -132,38 +132,35 @@ const styles = {
     fontSemibold: { fontWeight: "600" },
 };
 
-
-
 const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
     const { state } = useLocation();
     const [certificate, setCertificate] = useState(state?.record || null);
     const pdfRef = useRef();
     const {t, i18n} = useTranslation();
-    
     const orgUnitObj = {};
     const currentDate = new Date().toLocaleDateString('en-GB');
+
     orgUnits.forEach(ou => {
         orgUnitObj[ou.id] = ou.name;
     })
-
     orgUnit = {
         ...orgUnit, 
         path: typeof orgUnit.path === "string" 
          ? orgUnit.path.split('/').map(ou => orgUnitObj[ou] ? orgUnitObj[ou] : ou)
          : []
     }
-    const getCitizenshipDisplay = () => {
-    const citizenship = certificate?.["JB1wN0sieDP"] || "";
-    const nrc = certificate?.["wCN9fWzFtKE"] || ""; 
-    const passport = certificate?.["abc3N24sieM"] || ""; 
-    if (citizenship && (citizenship.toLowerCase().includes("Burmese"))) {
-     return `${t("CITIZENSHIP_AND_NRC")} : ${citizenship} ${nrc}`;
-     } else {
-       return `${t("PASSPORT_NUMBER_FOR_NON_MYANMAR")} : ${passport}`;
-     }
-   };
 
+    const getCitizenshipDisplay = (citizenShip, nrcFull, passport) => {
+      var value = '';
+
+      if (citizenShip) value = citizenShip; 
+      else if(nrcFull) value = nrcFull; 
+      
+      if(passport) value += passport; 
+
+      return value;
+    };
 
     useEffect(() => {
         if (state?.record) {
@@ -292,7 +289,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                     paddingLeft: "5px",
                   }}
                 >
-                  {orgUnitObj[certificate?.["orgUnit"]]}
+                  {orgUnitObj[certificate.orgUnit]}
                 </span>
               </div>
               <div style={{ marginTop: 8 }}>
@@ -376,15 +373,6 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                     paddingLeft: "5px",
                   }}
                 >{currentDate}</span>
-                /{" "}
-                <span
-                  style={{
-                    display: "inline-block",
-                    width: 24,
-                    verticalAlign: "middle",
-                  }}
-                ></span>{" "}
-                /
               </p>
             </div>
           </div>
@@ -553,7 +541,8 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                 </td>
                 <td style={styles.td}>
                   {t("8")}
-                  {getCitizenshipDisplay()}
+                  {t("CITIZENSHIP_AND_NRC")}
+                  {getCitizenshipDisplay(certificate["JB1wN0sieDP"], certificate["wCN9fWzFtKE"], '')}
                 </td>
               </tr>
 

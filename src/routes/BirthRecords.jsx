@@ -1,26 +1,19 @@
   import React, { useEffect, useState } from "react";
   import styles from '../App.module.css';
-  // import { fetchBirthRecords } from "../API/BirthAPI";
   import { useNavigate } from "react-router-dom";
   import { fetchBirthCertificateRecords } from "../API/BirthCertAPI";
   import { TablePagination, TextField } from "@mui/material";
   import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useTranslation } from "react-i18next";
+  import { useTranslation } from "react-i18next";
 
   const BirthRecords = ({orgUnit, status}) => {
-
-  
     const [certificate, setCertificate] = useState([]);
     const [loading, setLoading] = useState(false);
     const[page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const[showField, setShowField] = useState(null);
-
     const {t, i18n} = useTranslation();
-  
-
     const navigate = useNavigate();
-
 
     useEffect(() => {
       setLoading(true);
@@ -63,8 +56,6 @@ import { useTranslation } from "react-i18next";
       motherNRC: "M8pvzjPdija"
 
     }
-
-    
 
     const renderFilterField = (fieldKey, label) => {
     return (

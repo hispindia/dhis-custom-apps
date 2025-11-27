@@ -94,10 +94,8 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
   const { t } = useTranslation();
   const orgUnitObj = {};
   const currentDate = new Date().toLocaleDateString('en-GB');
-  console.log(`---------- ${orgUnit}`);
-  console.log(`------------------${orgUnits}`);
+  
   orgUnits.forEach((ou) => {
-    debugger;
     orgUnitObj[ou.id] = ou.name;
   });
   orgUnit = {
@@ -110,7 +108,15 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
         : [],
   };
 
-  console.log("OrgUnit", orgUnit);
+  const getCitizenshipDisplay = (citizenShip, passport) => {
+    var value = '';
+
+    if (citizenShip) value = citizenShip; 
+    
+    if(passport) value += passport; 
+
+    return value;
+  };
 
   useEffect(() => {
     if (state?.record) {
@@ -278,7 +284,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                       paddingLeft: "5px",
                     }}
                   >
-                    {orgUnitObj[certificate?.["orgUnit"]]}
+                    {orgUnitObj[certificate.orgUnit]}
                   </span>
                 </div>
                 <div style={{ marginTop: 8 }}>
@@ -425,15 +431,6 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                       paddingLeft: "5px",
                     }}
                   > {currentDate}</span>
-                  /{" "}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      width: 24,
-                      verticalAlign: "middle",
-                    }}
-                  ></span>{" "}
-                  /
                 </p>
               </div>
             </div>
@@ -764,7 +761,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                         }}
                       >
                         {t("6")}{t("CITIZENSHIP_AND_NRC")}:{" "}
-                        {certificate?.["ed2RBrhMhnN"] || ""}
+                        {getCitizenshipDisplay(certificate["ed2RBrhMhnN"],certificate["YE1wx1a4Ky4"])}
                       </div>{" "}
                       {/*  7 index */}
                     </div>
@@ -849,7 +846,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                     >
                       <div style={{ width: "50%", color: "blue" }}>
                          {t("11")}{t("CITIZENSHIP_AND_NRC")}:{" "}
-                        {certificate?.["r8oFvT4PZwL"] || ""}
+                        {getCitizenshipDisplay(certificate["r8oFvT4PZwL"],certificate["CowkFxAoqnl"])}
                       </div>{" "}
                       {/*  12 index */}
                       <div style={{ width: "50%", color: "blue" }}>

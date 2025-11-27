@@ -3,7 +3,6 @@ import html2pdf from "html2pdf.js";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from 'react-i18next'
 
-
 const borderDotted = {
   display: "inline-block",
   borderBottom: "2px dotted red",
@@ -82,10 +81,10 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
   const { state } = useLocation();
   const [certificate, setCertificate] = useState(state?.record || null);
   const {t}  = useTranslation();
-
   const pdfRef = useRef();
   const orgUnitObj = {};
-  const currentDate = new Date().toLocaleDateString('en-GB')
+  const currentDate = new Date().toLocaleDateString('en-GB');
+
   orgUnits.forEach(ou => {
     orgUnitObj[ou.id] = ou.name;
   })
@@ -95,6 +94,16 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
     ? orgUnit.path.split('/').map(ou => orgUnitObj[ou] ? orgUnitObj[ou] : ou)
     : []
   }
+    
+  const getCitizenshipDisplay = (citizenShip, passport) => {
+    var value = '';
+
+    if (citizenShip) value = citizenShip; 
+    
+    if(passport) value += passport; 
+
+    return value;
+  };
 
   useEffect(() => {
     if (state?.record) {
@@ -162,7 +171,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                 <div>{t("PAGE_NUMBER")}<span style={{display: "inline-block", borderBottom: "2px dotted red", verticalAlign: "middle", minWidth: "192px", paddingLeft: "5px"}}>{certificate?.["PS99q9IRjKy"] || ""}</span></div>
                 <div style={{ marginTop: 8}}>{t("BOOK_NUMBER")} <span style={{display: "inline-block", borderBottom: "2px dotted red", verticalAlign: "middle", minWidth: "165px", paddingLeft: "5px"}}>{certificate?.["l0Pm3ydZ2om"] || ""}</span></div>
                 <div style={{ marginTop: 8}}>{t("ENTRY_NUMBER")} <span style={{display: "inline-block", borderBottom: "2px dotted red", verticalAlign: "middle", minWidth: "152px", paddingLeft: "5px"}}>{certificate?.["MrtKbjcsHnk"] || ""}</span></div>
-                 <div style={{ marginTop: 8 }}>{t("PLACE_OF_REGISTRATION")} <span style={{display: "inline-block", borderBottom: "2px dotted red", verticalAlign: "middle", minWidth: "136px", paddingLeft: "5px"}}>{orgUnitObj[certificate?.["orgUnit"]] || "Org Unit Name Not Present"}</span></div>
+                 <div style={{ marginTop: 8 }}>{t("PLACE_OF_REGISTRATION")} <span style={{display: "inline-block", borderBottom: "2px dotted red", verticalAlign: "middle", minWidth: "136px", paddingLeft: "5px"}}>{orgUnitObj[certificate.orgUnit]}</span></div>
                 <div style={{ marginTop: 8 }}>{t("DATE_OF_REGISTRATION")} <span style={{display: "inline-block", borderBottom: "2px dotted red", verticalAlign: "middle", minWidth: "136px", paddingLeft: "5px"}}>{certificate?.["occurredAt"] || ""}</span></div>
               </div>
             </div>
@@ -210,7 +219,6 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                  <div>
                   <p style={{ marginTop: 0 }}>
                      {t("DATE_OF_ISSUE")} <span style={{ display: "inline-block", width: 24, verticalAlign: "middle", paddingLeft: "5px"}}>{currentDate}</span>
-                    / <span style={{ display: "inline-block", width: 24, verticalAlign: "middle" }}></span> / 
                   </p>
                 </div>
                 
@@ -336,7 +344,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                     </div>
                     <div style={{ ...borderBlack, marginBottom: '2px' }}></div>
                     <div>
-                      <div style={{ width: "50%", padding: '8px', color: "red"}}>{t("7")}{t("CITIZENSHIP_AND_NRC")}: {certificate?.["ed2RBrhMhnN"] || ""}</div>
+                      <div style={{ width: "50%", padding: '8px', color: "red"}}>{t("7")}{t("CITIZENSHIP_AND_NRC")}: {getCitizenshipDisplay(certificate["ed2RBrhMhnN"],certificate["YE1wx1a4Ky4"])}</div>
                     </div>
                   </div>
                 </div>
@@ -361,8 +369,8 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                     </div>
                     <div style={{ ...borderBlack, marginBottom: '2px' }}></div>
                     <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                      <div style={{ width: "50%", color: "red"}}>{t("12")}{t("CITIZENSHIP_AND_NRC")}: {certificate?.["JB1wN0sieDP"] || ""}{""}</div>
-                      <div style={{ width: "50%", color: "red"}}>{t("15")}{t("PERMANENT_ADDRESS")}: {certificate?.["r8oFvT4PZwL"] || ""}</div>
+                      <div style={{ width: "50%", color: "red"}}>{t("12")}{t("CITIZENSHIP_AND_NRC")}: {getCitizenshipDisplay(certificate["r8oFvT4PZwL"],certificate["CowkFxAoqnl"])}</div>
+                      <div style={{ width: "50%", color: "red"}}>{t("15")}{t("PERMANENT_ADDRESS")}: {certificate?.["bVyrfnpCd6i"] || ""}</div>
                     </div>
                   </div>
                 </div>
