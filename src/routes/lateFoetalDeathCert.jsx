@@ -207,7 +207,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
           fontWeight: "bold",
         }}
       >
-        Download PDF
+         Issue Certificate
       </button>
 
       <main
@@ -680,8 +680,8 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                           color: "blue",
                         }}
                     >
-                        {t("2")}{t("DATE_AND_TIME_OF_BIRTH")}
-                        {certificate?.["zAetLzp3cT1"]}{" "}{certificate?.["uOK1Wcm91NB"] || ""}
+                        {t("2")}{t("DATE_AND_TIME_OF_BIRTH")}:
+                        {certificate?.["zAetLzp3cT1"]} {" "} {certificate?.["uOK1Wcm91NB"] || ""}
                       </div>{" "}
                       {/* gender - 2 index */}
                       {/* <div style={{ width: "50%", color: 'blue' }}>4. Place of Birth: {certificate?.["JAU9NM7UqQP"] || ""}</div> 4 index */}

@@ -84,6 +84,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
   const pdfRef = useRef();
   const orgUnitObj = {};
   const currentDate = new Date().toLocaleDateString('en-GB');
+  let count = 1;
 
   orgUnits.forEach(ou => {
     orgUnitObj[ou.id] = ou.name;
@@ -159,7 +160,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
           fontWeight: "bold"
         }}
       >
-        Download PDF
+         Issue Certificate
       </button>
 
       
@@ -323,7 +324,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
 
                     <div style={{ ...borderBlack, marginBottom: '2px' }}></div>
                     <div style={{ display: "flex", justifyContent: "space-between", padding: '8px' }}>
-                      <div style={{ width: "50%",color: 'red' }}>{t("2")}{t("MALE")}:{certificate?.["wxrDsUO1ELy"] || ""}</div>
+                      <div style={{ width: "50%",color: 'red' }}>{t("2")}{t("SEX")}:{certificate?.["wxrDsUO1ELy"] || ""}</div>
                       <div style={{ width: "50%", color: 'red' }}>{t("4")}{t("PLACE_OF_BIRTH")}: {certificate?.["JAU9NM7UqQP"] || ""}</div>
                     </div>
                   </div>

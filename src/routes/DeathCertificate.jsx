@@ -152,7 +152,6 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
     }
 
     const getCitizenshipDisplay = (citizenShip,nrc, passport) => {
-
     if(!citizenShip) {
       return passport ? `${passport}` : "";
     };
@@ -165,6 +164,40 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
     return passport ? ` ${passport}` : c;
   };
+
+  const ageElements = {
+    days: "atkmpYCcz3x",
+    hours: "zvmLxhbRqjY",
+    months: "bQQ995GlXtQ",
+    years: "MhXN2y88M4h"
+  }
+
+  const getAgeDisplay = (certificate) => {
+    const check = (value, singular, plural) => {
+      const num = Number(value);
+      return num === 1 ? `${num} ${singular}` : `${num} ${plural}`;
+    }
+        if (certificate?.[ageElements.days]) {
+          const v = certificate[ageElements.days];
+          return check(v, "day", "days");
+        }
+        if (certificate?.[ageElements.hours]) {
+          const v = certificate[ageElements.hours];
+          return check(v, "hour", "hours");
+        }  
+        if (certificate?.[ageElements.months]) {
+          const v = certificate[ageElements.months];
+          return check(v, "month", "months");
+        }
+        if (certificate?.[ageElements.years]) {
+          const v = certificate[ageElements.years];
+          return check(v, "year", "years");
+        }
+         return ""; 
+ };
+
+
+
     useEffect(() => {
         if (state?.record) {
             setCertificate(state.record);
@@ -212,7 +245,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
         fontWeight: "bold",
       }}
     >
-      Download PDF
+       Issue Certificate
     </button>
 
     <main
@@ -326,7 +359,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                     paddingLeft: "5px",
                   }}
                 >
-                  {certificate?.["RkPGXTudjFI"] || ""}
+                  {certificate?.["YdNUYjH3rct"] || ""}
                 </span>
               </div>
             </div>
@@ -575,7 +608,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
               <tr>
                 <td style={styles.td}>
                   {t("5")}
-                  {t("AGE")}: {certificate?.["KFGxB6wpRxi"] || ""}
+                  {t("AGE")}: {getAgeDisplay(certificate)}
                 </td>
                 <td style={styles.td}>
                   {t("11")}
@@ -598,10 +631,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
               <tr>
                 <td style={styles.td}>
                   {t("13")}{t("CAUSE_OF_DEATH")}:
-                  {dataElements["nQy5xQrOMXj"] &&
-                  dataElements["nQy5xQrOMXj"][certificate["nQy5xQrOMXj"]]
-                    ? dataElements["nQy5xQrOMXj"][certificate["nQy5xQrOMXj"]]
-                    : ""}
+                  {certificate?.["nQy5xQrOMXj"]} , {certificate?.["wJzKgzUWdif"]}
                 </td>
                 <td>
                   {t("14")}{t("Informants_Signature")}:
@@ -614,10 +644,10 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
               <tr>
                 <td style={styles.td}>
-                  {t("(a)_Name")}: {certificate?.["YdNUYjH3rct"] || ""}
+                  {t("(a)_Name")}: {certificate?.["YdNUYjH3rct"] || ""} 
                 </td>
                 <td style={styles.td}>
-                  {t("(b)_Qualification")}: {certificate?.["YdNUYjH3rct"] || ""}
+                  {t("(b)_Qualification")}: {certificate?.[""] || ""}
                 </td>
               </tr>
 
