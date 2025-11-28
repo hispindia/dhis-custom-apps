@@ -108,14 +108,19 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
         : [],
   };
 
-  const getCitizenshipDisplay = (citizenShip, passport) => {
-    var value = '';
+   const getCitizenshipDisplay = (citizenShip,nrc, passport) => {
 
-    if (citizenShip) value = citizenShip; 
-    
-    if(passport) value += passport; 
+    if(!citizenShip) {
+      return passport ? `${passport}` : "";
+    };
+    const c = String(citizenShip).trim();
+    const isMyanmar =
+    c.toLowerCase().includes("myanmar") || c.toLowerCase().includes("burmese");
+    if (isMyanmar) {
+      return nrc ? `${c}, ${nrc}` : c;
+    }
 
-    return value;
+    return passport ? ` ${passport}` : c;
   };
 
   useEffect(() => {
@@ -320,7 +325,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                       paddingLeft: "5px",
                     }}
                   >
-                    {certificate?.["R43kdns3YYL"] || ""}
+                    {certificate?.["wxrDsUO1ELy"] || ""}
                   </span>
                 </div>
               </div>
@@ -642,7 +647,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                           color: "blue",
                         }}
                       >
-                        {t("1")}{t("MALE")}: {certificate?.["wxrDsUO1ELy"] || ""}
+                        {t("1")}{t("SEX")}: {certificate?.["wxrDsUO1ELy"] || ""}
                       </div>{" "}
                       {/* Name - 1 index */}
                       <div
@@ -676,7 +681,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                         }}
                     >
                         {t("2")}{t("DATE_AND_TIME_OF_BIRTH")}
-                        {certificate?.["zAetLzp3cT1"] || ""}{certificate?.["uOK1Wcm91NB"] || ""}
+                        {certificate?.["zAetLzp3cT1"]}{" "}{certificate?.["uOK1Wcm91NB"] || ""}
                       </div>{" "}
                       {/* gender - 2 index */}
                       {/* <div style={{ width: "50%", color: 'blue' }}>4. Place of Birth: {certificate?.["JAU9NM7UqQP"] || ""}</div> 4 index */}
@@ -707,7 +712,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                           color: "blue",
                         }}
                       >
-                        (t{"4"}){t("NAME")}: {certificate?.["RKs8td9BnNj"] || ""}
+                        {t("4")}{t("NAME")}: {certificate?.["RKs8td9BnNj"] || ""}
                       </div>{" "}
                       {/*  5 index */}
                       <div
@@ -761,7 +766,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                         }}
                       >
                         {t("6")}{t("CITIZENSHIP_AND_NRC")}:{" "}
-                        {getCitizenshipDisplay(certificate["ed2RBrhMhnN"],certificate["YE1wx1a4Ky4"])}
+                        {getCitizenshipDisplay(certificate["ed2RBrhMhnN"],certificate["Fwa7gEzjZAH"], certificate["YE1wx1a4Ky4"])}
                       </div>{" "}
                       {/*  7 index */}
                     </div>
@@ -846,7 +851,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                     >
                       <div style={{ width: "50%", color: "blue" }}>
                          {t("11")}{t("CITIZENSHIP_AND_NRC")}:{" "}
-                        {getCitizenshipDisplay(certificate["r8oFvT4PZwL"],certificate["CowkFxAoqnl"])}
+                        {getCitizenshipDisplay(certificate["r8oFvT4PZwL"],certificate["M8pvzjPdija"], certificate["CowkFxAoqnl"])}
                       </div>{" "}
                       {/*  12 index */}
                       <div style={{ width: "50%", color: "blue" }}>
@@ -937,12 +942,12 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                       <div style={{ width: "50%", color: "blue" }}>
                         {" "}
                         {t("SIGNATURE")}:{" "}
-                        {certificate?.["YdNUYjH3rct"] || ""}
+                        {certificate?.[""] || ""}
                       </div>
                       <div style={{ width: "50%", color: "blue" }}>
                         {" "}
-                        {t("RELATION_TO_CHILD")}:{" "}
-                        {certificate?.["rRpqp6TPWlh"] || ""}{" "}
+                        {t("RELATION_TO_CHILD")}:
+                        {certificate?.["eYh3U6sXrTQ"] || ""}{" "}
                       </div>
                     </div>
                     <div
@@ -956,14 +961,14 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                         style={{ width: "50%", padding: "4px", color: "blue" }}
                       >
                         {t("NAME")}:{" "}
-                        {certificate?.["eYh3U6sXrTQ"] || ""}
+                        {certificate?.["YdNUYjH3rct"] || ""}
                       </div>
                       <div
                         style={{ width: "50%", padding: "4px", color: "blue" }}
                       >
                         {" "}
-                        {t("ADDRESS")}
-                        {certificate?.["eYh3U6sXrTQ"] || ""}
+                        {t("ADDRESS")} :
+                        {certificate?.["rRpqp6TPWlh"] || ""}
                       </div>
                     </div>
                   </div>
@@ -1038,9 +1043,6 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                         marginLeft: 6,
                       }}
                     >{currentDate}</span>
-                    /{" "}
-                    <span style={{ display: "inline-block", width: 18 }}></span>{" "}
-                    /
                   </p>
                 </div>
 
@@ -1109,7 +1111,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
                         width: "70px",
                         display: "inline-block",
                       }}
-                    >{certificate?.["bVyrfnpCd6i"]}</span>
+                    >{certificate?.["B1QxOlRIEVk"]}</span>
                   </div>
 
                   {/* Designation */}

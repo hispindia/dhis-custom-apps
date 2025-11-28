@@ -62,7 +62,7 @@ const DeathRecords = ({orgUnit, dataElements}) => {
       name: "aTbE3kYe98D",
       gender: "wxrDsUO1ELy",
       age: "KFGxB6wpRxi",
-      nrcFull: "Fwa7gEzjZAH",
+      nrcFull: "wCN9fWzFtKE", 
       permanentAddress: "iXXvJAxbOtd",
       causeOfDeath: "XXDApzQFycS"
 

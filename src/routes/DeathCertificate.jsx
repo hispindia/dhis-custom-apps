@@ -151,17 +151,20 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
          : []
     }
 
-    const getCitizenshipDisplay = (citizenShip, nrcFull, passport) => {
-      var value = '';
+    const getCitizenshipDisplay = (citizenShip,nrc, passport) => {
 
-      if (citizenShip) value = citizenShip; 
-      else if(nrcFull) value = nrcFull; 
-      
-      if(passport) value += passport; 
-
-      return value;
+    if(!citizenShip) {
+      return passport ? `${passport}` : "";
     };
+    const c = String(citizenShip).trim();
+    const isMyanmar =
+    c.toLowerCase().includes("myanmar") || c.toLowerCase().includes("burmese");
+    if (isMyanmar) {
+      return nrc ? `${c}, ${nrc}` : c;
+    }
 
+    return passport ? ` ${passport}` : c;
+  };
     useEffect(() => {
         if (state?.record) {
             setCertificate(state.record);
@@ -541,8 +544,8 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                 </td>
                 <td style={styles.td}>
                   {t("8")}
-                  {t("CITIZENSHIP_AND_NRC")}
-                  {getCitizenshipDisplay(certificate["JB1wN0sieDP"], certificate["wCN9fWzFtKE"], '')}
+                  {t("CITIZENSHIP_AND_NRC")} :
+                  {getCitizenshipDisplay(certificate["JB1wN0sieDP"], certificate["wCN9fWzFtKE"], certificate["YE1wx1a4Ky4"])}
                 </td>
               </tr>
 
@@ -689,11 +692,8 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                         marginLeft: 6,
                       }}
                     >{currentDate}</span>
-                    /{" "}
-                    <span style={{ display: "inline-block", width: 18 }}></span>{" "}
-                    /
-                  </p>
-                </div>
+           </p>
+           </div>
 
               <div
                 style={{
