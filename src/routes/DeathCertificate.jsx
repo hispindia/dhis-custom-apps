@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import html2pdf from "html2pdf.js";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const styles = {
     body: {
@@ -105,15 +106,15 @@ const styles = {
     },
     td: {
         width: "16.666%",
-        padding: "0.2rem 0.25rem",
+        padding: "0.1rem 0.25rem",
         verticalAlign: "top",
     },
     tdWide: {
         width: "33.333%",
-        padding: "0.5rem 0.25rem",
+        padding: "0.25rem 0.25rem",
         verticalAlign: "top",
     },
-    pt4: { paddingTop: "1rem" },
+    pt4: { paddingTop: "0.25rem" },
     mt2: { marginTop: "0.5rem" },
     footer: {
         marginTop: "0rem",
@@ -136,7 +137,13 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
     const { state } = useLocation();
     const [certificate, setCertificate] = useState(state?.record || null);
+    const [downloadCount, setDownloadCount] = useState(0);
+    const [showModal, setShowModal] = useState(false);
+    const [reason, setReason] = useState("");
+    const [issueCount, setIssueCount] = useState(0);
+    const [showToast, setShowToast] = useState(false);
     const pdfRef = useRef();
+    const navigate = useNavigate();
     const {t, i18n} = useTranslation();
     const orgUnitObj = {};
     const currentDate = new Date().toLocaleDateString('en-GB');
@@ -206,6 +213,14 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
         }
     }, [state]);
 
+    const handleIssueClick = () => {
+      if(downloadCount >= 1){
+        setShowModal(true);
+        return;
+      }
+      handleDownloadPDF();
+      setDownloadCount(prev => prev + 1);
+    }
     const handleDownloadPDF = () => {
         if (pdfRef.current) {
             const options = {
@@ -215,22 +230,38 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                 jsPDF: { orientation: 'landscape', unit: 'in', format: 'a4' }
             };
             html2pdf().from(pdfRef.current).set(options).save();
+            setIssueCount(prev => prev + 1);
+
+            setShowToast(true);
+            setTimeout(() => {
+                setShowToast(false);
+            }, 3000);
         }
     };
 
+    const handleSubmitReason = () => {
+      console.log('reason', reason);
+      setShowModal(false);
+      setReason(""); // Clear reason after submission
+      handleDownloadPDF();
+    }
+
+    if (!certificate) return <div>No certificate data found.</div>;
+
     return (
-  <div
-    style={{
-      background: "#fff",
-      padding: 32,
-      fontFamily: "sans-serif",
-      width: "100%",
-      display: "flex",
-      position: "relative",
-    }}
-  >
+  <>
+    <div
+      style={{
+        background: "#fff",
+        padding: 32,
+        fontFamily: "sans-serif",
+        width: "100%",
+        display: "flex",
+        position: "relative",
+      }}
+    >
     <button
-      onClick={handleDownloadPDF}
+      onClick={handleIssueClick}
       style={{
         position: "absolute",
         top: 16,
@@ -245,7 +276,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
         fontWeight: "bold",
       }}
     >
-       Issue Certificate
+       Issue Certificate {issueCount > 0 && `(${issueCount})`}
     </button>
 
     <main
@@ -261,9 +292,12 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
         {/* LEFT PANE */}
         <aside style={styles.leftPane}>
-          <h4 style={{ fontWeight: 600, textAlign: "left" }}>
-            {t("DEATH_CERTIFICATE_COUNTERFOIL")}
-          </h4>
+          <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => navigate(-1)}>
+              <ArrowBackIcon style={{ color: 'black' }}/>
+              <h4 style={{ fontWeight: 600, textAlign: "left", marginLeft: '8px', marginBottom: '0', marginTop: '0' }}>
+                {t("DEATH_CERTIFICATE_COUNTERFOIL")}
+              </h4>
+          </div>
 
           <div style={{ marginTop: "15px", fontSize: "15px" }}>
             <div style={{ fontWeight: 600 }}>{t("VR_103") || "V.R Form 203"}</div>
@@ -696,7 +730,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
           {/* --- FOOTER --- */}
           <footer style={styles.footer}>
             <div>
-              <p style={{ width: "100%", marginBottom: 2 }}>
+              <p style={{ width: "100%", marginBottom: 1 }}>
                 {t("DEAD_PARA1_VALIDATION")}
               </p>
               <p style={{ width: "100%", marginBottom: 0 }}>
@@ -723,8 +757,8 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                       }}
                     >{currentDate}</span>
            </p>
-           </div>
-
+              </div>
+              
               <div
                 style={{
                   display: "flex",
@@ -761,13 +795,84 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
       </div>
     </main>
-  </div>
-);
+    </div>
+
+    {showModal && (
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.45)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 9999,
+        }}
+      >
+        <div
+          style={{
+            background: "#fff",
+            padding: "24px 28px",
+            borderRadius: 10,
+            width: 360,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}
+        >
+          <h3>Please provide the reason</h3>
+
+          <textarea
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder="Enter your reason..."
+            style={{
+              width: "100%",
+              height: 90,
+              padding: 10,
+              borderRadius: 6,
+              border: "1px solid #ccc",
+              marginBottom: 12,
+            }}
+          />
+
+          <button
+            onClick={handleSubmitReason}
+            style={{
+              padding: "8px 16px",
+              background: "#1976d2",
+              color: "white",
+              border: "none",
+              borderRadius: 4,
+              width: "100%",
+              fontWeight: "bold",
+            }}
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+    )}
+
+    {/* TOAST */}
+    {showToast && (
+      <div
+        style={{
+          position: "fixed",
+          bottom: 30,
+          right: 30,
+          background: "#333",
+          color: "#fff",
+          padding: "12px 20px",
+          borderRadius: 8,
+          zIndex: 9999,
+        }}
+      >
+        Certificate issued successfully
+      </div>
+    )}
+  </>
+  );
 
 };
 export default DeathCertificate;
-
-
-
-
-

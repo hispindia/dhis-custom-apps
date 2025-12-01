@@ -18,7 +18,11 @@ import './i18n'
 
 function AppContent() {
   const location = useLocation();
-  const hideSidebar = location.pathname === "/downloadBirthCertificate";
+  const hideSidebar = [
+    "/birth-certificate",
+    "/death-certificate",
+    "/late-Foetal-death-certificate",
+  ].includes(location.pathname);
   const navigate = useNavigate();
   const [orgUnit, setOrgUnit] = useState({id:'', name: ''})
   const [dataElements, setDataElements] = useState({});
@@ -78,7 +82,7 @@ function AppContent() {
     <>
       {/* <Header /> */}
       <div className={styles.container}>
-        <Sidebar  setOrgUnit={setOrgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>
+        {!hideSidebar && <Sidebar  setOrgUnit={setOrgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>}
 
         <div style={{flex: 1}}>
           <Routes>

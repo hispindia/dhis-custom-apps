@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import html2pdf from "html2pdf.js";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const borderDotted = {
   display: "inline-block",
@@ -93,6 +94,12 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
   const pdfRef = useRef();
   const { t } = useTranslation();
   const orgUnitObj = {};
+  const [downloadCount, setDownloadCount] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [reason, setReason] = useState("");
+  const [issueCount, setIssueCount] = useState(0);
+  const [showToast, setShowToast] = useState(false);
+  const navigate = useNavigate();
   const currentDate = new Date().toLocaleDateString('en-GB');
   
   orgUnits.forEach((ou) => {
@@ -134,7 +141,16 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
   //if there is no certificate data
   if (!certificate) return <div>No certificate data found.</div>;
 
-  const handleDownloadPDF = async () => {
+  const handleIssueClick = () => {
+    if(downloadCount >= 1){
+      setShowModal(true);
+      return;
+    }
+    handleDownloadPDF();
+    setDownloadCount(prev => prev + 1);
+  }
+
+  const handleDownloadPDF = async () => { 
     if (!pdfRef.current) return;
 
     const el = pdfRef.current;
@@ -173,6 +189,13 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
         pagebreak: { mode: ["avoid-all", "css"] },
       };
       await html2pdf().set(options).from(pdfRef.current).save();
+      setIssueCount(prev => prev + 1);
+
+      setShowToast(true);
+      setTimeout(() => {
+          setShowToast(false);
+      }, 3000);
+
     } finally {
       el.style.transform = prevTransform || "";
       el.style.transformOrigin = prevTransformOrigin || "";
@@ -180,8 +203,16 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
     }
   };
 
+  const handleSubmitReason = () => {
+    console.log('reason', reason);
+    setShowModal(false);
+    setReason(""); // Clear reason after submission
+    handleDownloadPDF();
+  }
+
   return (
-    <div
+    <>
+    <div 
       style={{
         background: "#fff",
         padding: 16,
@@ -192,13 +223,13 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
       }}
     >
       <button
-        onClick={handleDownloadPDF}
+        onClick={handleIssueClick}
         style={{
           position: "absolute",
           top: 16,
-          right: 8,
+          right: 16,
           zIndex: 10,
-          padding: "4px 8px",
+          padding: "8px 16px",
           background: "#1976d2",
           color: "#000",
           border: "none",
@@ -207,7 +238,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
           fontWeight: "bold",
         }}
       >
-         Issue Certificate
+         Issue Certificate {issueCount > 0 && `(${issueCount})`}
       </button>
 
       <main
@@ -227,9 +258,12 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
       >
         <div style={styles.container}>
           <aside style={styles.leftPane}>
-            <h4 style={{ fontWeight: 600, textAlign: "left" }}>
-              {t("LATE_FOETAL_DEATH_CERTIFICATE_COUNTERFOIL")}
-            </h4>
+            <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => navigate(-1)}>
+                <ArrowBackIcon style={{ color: 'black' }} />
+                <h4 style={{ fontWeight: 600, textAlign: "left", marginLeft: '8px', marginBottom: '0', marginTop: '0' }}>
+                  {t("LATE_FOETAL_DEATH_CERTIFICATE_COUNTERFOIL")}
+                </h4>
+            </div>
 
             <div style={{ marginTop: "15px", fontSize: "13px" }}>
               <div style={{ fontWeight: 600 }}>
@@ -1142,6 +1176,81 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
         </div>
       </main>
     </div>
+
+    {showModal && (
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.45)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 9999,
+        }}
+      >
+        <div
+          style={{
+            background: "#fff",
+            padding: "24px 28px",
+            borderRadius: 10,
+            width: 360,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}
+        >
+          <h3 style={{ textAlign: "center" }}>Please provide the reason</h3>
+
+          <textarea
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder="Enter your reason..."
+            style={{
+              width: "100%",
+              height: 90,
+              padding: 10,
+              borderRadius: 6,
+              border: "1px solid #ccc",
+              marginBottom: 12,
+            }}
+          />
+
+          <button
+            onClick={handleSubmitReason}
+            style={{
+              padding: "8px 16px",
+              background: "#1976d2",
+              color: "white",
+              border: "none",
+              borderRadius: 4,
+              width: "100%",
+              fontWeight: "bold",
+            }}
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+    )}
+
+    {showToast && (
+      <div
+        style={{
+          position: "fixed",
+          bottom: 30,
+          right: 30,
+          background: "#333",
+          color: "#fff",
+          padding: "12px 20px",
+          borderRadius: 8,
+          zIndex: 9999,
+        }}
+      >
+        Certificate issued successfully
+      </div>
+    )}
+    </>
   );
 };
 

@@ -162,7 +162,7 @@ const DeathRecords = ({orgUnit, dataElements}) => {
               <td>{record["aTbE3kYe98D"] || ""}</td>  {/* name */}
               <td>{record["wxrDsUO1ELy"] || ""}</td>  {/* gender*/}
               <td>{record["KFGxB6wpRxi"] || ""}</td>  {/* age */}
-              <td>{record["Fwa7gEzjZAH"] || ""}</td>  {/* nrc full (make change here in the id)*/}
+              <td>{record["wCN9fWzFtKE"] || ""}</td>  {/* nrc full */}
               <td>{record["iXXvJAxbOtd"] || ""}</td>  {/*permanent address */} 
               <td>{(dataElements['nQy5xQrOMXj'] && dataElements['nQy5xQrOMXj'][record["nQy5xQrOMXj"]]) ? dataElements['nQy5xQrOMXj'][record["nQy5xQrOMXj"]] : ""}</td>   {/* cause of death */} 
                  <td>
