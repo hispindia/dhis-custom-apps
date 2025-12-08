@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import html2pdf from "html2pdf.js";
-import { useLocation, useNavigate } from "react-router-dom";
+import { data, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
@@ -78,7 +78,7 @@ const styles = {
 };
 
 
-const BirthCertificate = ({orgUnit, orgUnits}) => {
+const BirthCertificate = ({orgUnit, orgUnits, dataElements}) => {
   const { state } = useLocation();
   const [certificate, setCertificate] = useState(state?.record || null);
   const {t}  = useTranslation();
@@ -89,6 +89,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
   const [reason, setReason] = useState("");
   const [issueCount, setIssueCount] = useState(0);
   const [showToast, setShowToast] = useState(false);
+  const [hideBackArrow, setHideBackArrow] = useState(false);
   const navigate = useNavigate();
   const currentDate = new Date().toLocaleDateString('en-GB');
   let count = 1;
@@ -102,6 +103,30 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
     ? orgUnit.path.split('/').map(ou => orgUnitObj[ou] ? orgUnitObj[ou] : ou)
     : []
   }
+
+  const updateEventInDHIS2 = async(issueCount, reason) => {
+  const eventId = certificate.event; 
+  const payload = {
+    event: eventId,
+    dataValues: [
+      {
+        dataElement: "UlMXHCJhyNZ",
+        value: issueCount
+      },
+      {
+        dataElement: "ofuG4AdYrY1",
+        value: reason || ""
+      }
+    ]
+  };
+
+  await fetch(`/api/events/${eventId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+};
+
     
   const getCitizenshipDisplay = (citizenShip,nrc, passport) => {
 
@@ -138,8 +163,11 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
   }
 
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
+    setHideBackArrow(true);
+
     if (pdfRef.current) {
+      let newCount = issueCount + 1;
       const options = {
         margin: [0.315, 0, 0, 0], // [top, right, bottom, left] in inches (0.8cm)
         filename: 'Birth Certificate.pdf',
@@ -153,20 +181,24 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
       html2pdf()
         .set(options)
         .from(pdfRef.current)
-        .save();
-        setIssueCount(prev => prev + 1);
+        .save()
+        .then(async () => {
+          await updateEventInDHIS2(newCount, reason);
 
-        setShowToast(true);
-        setTimeout(() => {
-            setShowToast(false);
-        }, 3000);
+          setIssueCount(newCount);
+          setHideBackArrow(false);
+          setShowToast(true);
+          setTimeout(() => setShowToast(false), 3000);
+        });      
     }
   };
 
-  const handleSubmitReason = () => {
-    console.log('reason', reason);
+  const handleSubmitReason = async() => {
+    // console.log('reason', reason);
     setShowModal(false);
-    setReason(""); // Clear reason after submission
+    const newCount = issueCount + 1;
+    await updateEventInDHIS2(newCount, reason);
+    setReason(""); 
     handleDownloadPDF();
   }
 
@@ -200,10 +232,13 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
 
           
           <aside style={styles.leftPane}>
+            {!hideBackArrow && (
             <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginBottom: '15px' }} onClick={() => navigate(-1)}>
                 <ArrowBackIcon style={{ color: 'black' }} />
+            
                 <h4 style={{fontWeight: 600, textAlign: "left", marginLeft: '8px', marginBottom: '0', marginTop: '0'}}>{t("BIRTH_CERTIFICATE_COUNTERFOIL")}</h4>
             </div>
+            )}
             <div style={{ fontSize: "15px"}}>
               <div style={{ fontWeight: 600 }}>{t("VR_103") || "V.R Form 103"}</div>
               <div style={{ marginTop: "12px"}}>
@@ -228,6 +263,10 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
 
               <div style={{ marginBottom: 8}}>
                 <div>{t("PLACE_OF_BIRTH")}<span style={{display: "inline-block", borderBottom: "2px dotted red", verticalAlign: "middle", minWidth: "180px", paddingLeft: "5px"}}>{certificate?.["JAU9NM7UqQP"] || ""}</span></div>
+              </div>
+
+              <div style={{ marginBottom: 8}}>
+                <div>{t("DATE_AND_TIMEOFBIRTH")}<span style={{display: "inline-block", borderBottom: "2px dotted red", verticalAlign: "middle", minWidth: "180px", paddingLeft: "5px"}}>{certificate?.["JAU9NM7UqQP"] || ""}</span></div>
               </div>
            
             <div style={{ marginBottom: 8}}>
@@ -307,16 +346,25 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                     {orgUnit.path[2] ? orgUnit.path[2] : ''}
                   </span>
                 </p>
-                <p style={{ marginBottom: 8, fontWeight: 'normal'}}>
+                <div style={{display: "flex"}}>
+                  <p style={{ marginBottom: 8, fontWeight: 'normal'}}>
                   {t("DISTRICT")}
-                  <span style={{ display: 'inline-block', borderBottom: '2px dotted red', width: '46%', verticalAlign: 'middle', marginLeft: 4, paddingLeft: '4px' }}>
+                  <span style={{ display: 'inline-block', borderBottom: '2px dotted red', width: '30%', verticalAlign: 'middle', marginLeft: 4, paddingLeft: '4px' }}>
                     {orgUnit.path[3] ? orgUnit.path[3] : ''}
                   </span>
                 </p>
                 <p style={{ marginBottom: 8, fontWeight: 'normal'}}>
                   {t("TOWNSHIP")}
-                  <span style={{ display: 'inline-block', borderBottom: '2px dotted red', width: '53px', verticalAlign: 'middle', marginLeft: 4, paddingLeft: '4px' }}>
+                  <span style={{ display: 'inline-block', borderBottom: '2px dotted red', width: '30%', verticalAlign: 'middle', marginLeft: 4, paddingLeft: '4px' }}>
                     {orgUnit.path[4] ? orgUnit.path[4]: ''}
+                  </span>
+                </p>
+                </div>
+
+                <p style={{ marginBottom: 8, fontWeight: 'normal'}}>
+                  {t("BIRTH_AND_DEATH_REGISTRATION_PLACE")}
+                  <span style={{ display: 'inline-block', borderBottom: '2px dotted red', width: '53px', verticalAlign: 'middle', marginLeft: 4, paddingLeft: '4px' }}>
+                    {orgUnit.path[5] ? orgUnit.path[5]: ''}
                   </span>
                 </p>
               </div>
@@ -383,7 +431,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                     </div>
                     <div style={{ ...borderBlack, marginBottom: '2px' }}></div>
                     <div>
-                      <div style={{ width: "50%", padding: '8px', color: "red"}}>{t("7")}{t("CITIZENSHIP_AND_NRC")}: {getCitizenshipDisplay(certificate["ed2RBrhMhnN"],certificate["Fwa7gEzjZAH"], certificate["YE1wx1a4Ky4"])}</div>
+                      <div style={{ width: "50%", padding: '8px', color: "red"}}>{t("7")}{t("CITIZENSHIP_AND_NRC")}: {getCitizenshipDisplay(dataElements["ed2RBrhMhnN"][certificate["ed2RBrhMhnN"]], certificate["YE1wx1a4Ky4"])}</div>
                     </div>
                   </div>
                 </div>
@@ -408,7 +456,7 @@ const BirthCertificate = ({orgUnit, orgUnits}) => {
                     </div>
                     <div style={{ ...borderBlack, marginBottom: '2px' }}></div>
                     <div style={{ display: "flex", justifyContent: "space-between", padding: '2px' }}>
-                      <div style={{ width: "50%", color: "red"}}>{t("12")}{t("CITIZENSHIP_AND_NRC")}: {getCitizenshipDisplay(certificate["r8oFvT4PZwL"],certificate["M8pvzjPdija"], certificate["CowkFxAoqnl"])}</div>
+                      <div style={{ width: "50%", color: "red"}}>{t("12")}{t("CITIZENSHIP_AND_NRC")}: {getCitizenshipDisplay(dataElements["r8oFvT4PZwL"][certificate["r8oFvT4PZwL"]], certificate["CowkFxAoqnl"])}</div>
                       <div style={{ width: "50%", color: "red"}}>{t("15")}{t("PERMANENT_ADDRESS")}: {certificate?.["bVyrfnpCd6i"] || ""}</div>
                     </div>
                   </div>
