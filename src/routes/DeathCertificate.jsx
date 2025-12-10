@@ -226,8 +226,6 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
                 jsPDF: { orientation: 'landscape', unit: 'in', format: 'a4' }
             };
             html2pdf().from(pdfRef.current).set(options).save();
-            setIssueCount(prev => prev + 1);
-
             setShowToast(true);
             setTimeout(() => {
                 setShowToast(false);
@@ -237,6 +235,13 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
   const updateEventInDHIS2 = async(issueCount, reason) => {
     console.log(certificate);
+    const dataValues = [];
+    if(issueCount) {
+      dataValues.push({ dataElement: "UlMXHCJhyNZ", value: issueCount })
+    }
+    if(reason) {
+      dataValues.push({dataElement: "ofuG4AdYrY1", value: reason })
+    }
     const payload = {
       events: [{
         event: certificate.event,
@@ -244,34 +249,32 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
         orgUnit: certificate.orgUnit,
         programStage: certificate.programStage,
         occurredAt: certificate.occurredAt,
-        dataValues: [
-          {
-            dataElement: "UlMXHCJhyNZ",
-            value: issueCount
-          },
-          {
-            dataElement: "ofuG4AdYrY1",
-            value: reason || ""
-          }
-        ]
+        dataValues
       }]
     };
     await api.pushEvents(payload);
   };
 
-    const handleIssueClick = () => {
-      if(issueCount > 0) setShowModal(true);
-      else handleDownloadPDF();
-    }
-
-    const handleSubmitReason =  async() => {
-      console.log('reason', reason);
-    const newCount = issueCount + 1;
-    await updateEventInDHIS2(newCount, reason);
-      setShowModal(false);
-      setReason(""); // Clear reason after submission
+  const handleIssueClick = async () => {
+    if(issueCount > 0) setShowModal(true);
+    else {
+      const count = issueCount+1;
+      setIssueCount(count);
+      await updateEventInDHIS2(count);
       handleDownloadPDF();
     }
+  }
+
+  const handleSubmitReason = async() => {
+    // console.log('reason', reason);
+    setShowModal(false);
+    const count = issueCount+1;
+    setIssueCount(count);
+    await updateEventInDHIS2(count, reason);
+    setReason(""); 
+    handleDownloadPDF();
+  }
+
 
     if (!certificate) return <div>No certificate data found.</div>;
 

@@ -131,6 +131,13 @@ const BirthCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
   const updateEventInDHIS2 = async(issueCount, reason) => {
     console.log(certificate);
+    const dataValues = [];
+    if(issueCount) {
+      dataValues.push({ dataElement: "UlMXHCJhyNZ", value: issueCount })
+    }
+    if(reason) {
+      dataValues.push({dataElement: "ofuG4AdYrY1", value: reason })
+    }
     const payload = {
       events: [{
         event: certificate.event,
@@ -138,16 +145,7 @@ const BirthCertificate = ({orgUnit, orgUnits, dataElements}) => {
         orgUnit: certificate.orgUnit,
         programStage: certificate.programStage,
         occurredAt: certificate.occurredAt,
-        dataValues: [
-          {
-            dataElement: "UlMXHCJhyNZ",
-            value: issueCount
-          },
-          {
-            dataElement: "ofuG4AdYrY1",
-            value: reason || ""
-          }
-        ]
+        dataValues
       }]
     };
     await api.pushEvents(payload);
@@ -173,9 +171,6 @@ const BirthCertificate = ({orgUnit, orgUnits, dataElements}) => {
         .from(pdfRef.current)
         .save()
         .then(async () => {
-          await updateEventInDHIS2(newCount, reason);
-
-          setIssueCount(newCount);
           setHideBackArrow(false);
           setShowToast(true);
           setTimeout(() => setShowToast(false), 3000);
@@ -183,16 +178,22 @@ const BirthCertificate = ({orgUnit, orgUnits, dataElements}) => {
     }
   };
 
-  const handleIssueClick = () => {
+  const handleIssueClick = async () => {
     if(issueCount > 0) setShowModal(true);
-    else handleDownloadPDF();
+    else {
+      const count = issueCount+1;
+      setIssueCount(count);
+      await updateEventInDHIS2(count);
+      handleDownloadPDF();
+    }
   }
 
   const handleSubmitReason = async() => {
     // console.log('reason', reason);
     setShowModal(false);
-    const newCount = issueCount + 1;
-    await updateEventInDHIS2(newCount, reason);
+    const count = issueCount+1;
+    setIssueCount(count);
+    await updateEventInDHIS2(count, reason);
     setReason(""); 
     handleDownloadPDF();
   }

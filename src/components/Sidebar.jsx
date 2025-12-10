@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import TreeNode from "./TreeNode";
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../App.module.css';
-import { fetchOrgUnits } from "../API/OrganizationAPI";
 import { Button, Menu, MenuItem, ListItemText, ListItemIcon } from "@mui/material";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 const Sidebar = ({setOrgUnit, userOrgunit, orgUnits}) => {
@@ -13,8 +12,6 @@ const Sidebar = ({setOrgUnit, userOrgunit, orgUnits}) => {
     const[selectedTab, setSelectedTab] = useState(null);
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
-
-
 
     useEffect(() => {
 
@@ -25,7 +22,6 @@ const Sidebar = ({setOrgUnit, userOrgunit, orgUnits}) => {
       }
 
     }, []);
-
 
     // opening the dropdown
     const handleMenuClick = (e) => {
@@ -40,10 +36,8 @@ const Sidebar = ({setOrgUnit, userOrgunit, orgUnits}) => {
           setSelectedTab(route);
           navigate(route);
         }
-
     };
 
-  
    return (
     <div className={styles.sidebar}>
       <div className="card">
@@ -82,10 +76,7 @@ const Sidebar = ({setOrgUnit, userOrgunit, orgUnits}) => {
             width: anchorEl ? anchorEl.clientWidth : undefined
           },
         }
-      }
-      
-      
-      >
+      }>
           <MenuItem onClick={() => handleMenuClose("/born-alive")}>
             <ListItemText>Live Birth</ListItemText>
           </MenuItem>
@@ -94,7 +85,6 @@ const Sidebar = ({setOrgUnit, userOrgunit, orgUnits}) => {
           </MenuItem>
         </Menu>
 
-       
         <Link to="/death"
          className="button"
         style={{ 
