@@ -1,32 +1,28 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from '../App.module.css';
-// import { fetchBirthRecords } from "../API/BirthAPI";
 import { useNavigate } from "react-router-dom";
-import { fetchBirthCertificateRecords } from "../API/BirthCertAPI";
+import api from '../api';
 import { TablePagination, TextField } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useTranslation } from "react-i18next";
 
 const LateFoetalDeathRecord = ({orgUnit, status}) => {
 
-
   const [certificate, setCertificate] = useState([]);
   const [loading, setLoading] = useState(false);
-  const[page, setPage] = useState(0);
+  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const[showField, setShowField] = useState(null);
-  const {t, i18n} = useTranslation();
+  const [showField, setShowField] = useState(null);
+  const { i18n } = useTranslation();
 
   const navigate = useNavigate();
 
-
   useEffect(() => {
-    setLoading(true);
-    
-    console.log("LateFoetalDeathRecord - orgUnit:", orgUnit);
-    console.log("LateFoetalDeathRecord - status:", status);
-     setLoading(true);
-      fetchBirthCertificateRecords(orgUnit.id, status)
+    const fetchEvents = async () => {
+      if(!orgUnit || !status) return;
+      setLoading(true);
+      
+      return await api.fetchEvents([`program=cUjoGJK4gPL`, `orgUnit=${orgUnit.id}`], {}, {filter: `seXQ3F3kY3x:eq:${status}`})
        .then(res => {       
           const records = res.events.map(event => {
           const record = {
@@ -40,15 +36,16 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
         })
          setCertificate(records);
        })
-       .catch(data => setCertificate([]))
+       .catch((_err) => {
+        setCertificate([])
+        console.log(_err);
+       })
        .finally(() => setLoading(false));
- 
-   }, [orgUnit]);
 
+    }
+      fetchEvents();
+   }, [orgUnit, status]);
 
-//   const filteredRecords = certificate.filter((r) =>
-//     (r["R43kdns3YYL"] || "").toLowerCase().includes(searchQuery.toLowerCase())
-//   );
   const [filters, setFilters] = useState({
       dob: "",
       gender: "",
@@ -131,8 +128,6 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
           [field]:value
         }));
     }
-  
-
  
   if(loading) return <div>Loading...</div>
 

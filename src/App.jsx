@@ -1,7 +1,5 @@
 import React from "react";
-import { Routes, Route, HashRouter, useLocation, useNavigate } from "react-router-dom";
-
-import Header from "./components/Header";
+import { Routes, Route, HashRouter, useLocation } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import styles from './App.module.css';
 import BirthRecords from "./routes/BirthRecords";
@@ -9,11 +7,11 @@ import DeathRecords from "./routes/DeathRecords";
 import BirthCertificate from "./routes/BirthCertificate";
 import DeathCertificate from "./routes/DeathCertificate";
 import { useState, useEffect } from "react";
-import { fetchOrgUnits } from "./API/OrganizationAPI"
 import LateFoetalDeathRecord from "./routes/LateFoetalDeathRecord";
 import LateFoetalDeathCert from "./routes/lateFoetalDeathCert";
-import { useDataQuery } from "@dhis2/app-runtime";
 import { InitialQuery } from "./components/constants";
+import Dhis2HeaderBar from "./components/HeaderBar/HeaderBar.component";
+import api from "./api";
 import './i18n'
 
 function AppContent() {
@@ -23,64 +21,56 @@ function AppContent() {
     "/death-certificate",
     "/late-Foetal-death-certificate",
   ].includes(location.pathname);
-  const navigate = useNavigate();
-  const [orgUnit, setOrgUnit] = useState({id:'', name: ''})
-  const [dataElements, setDataElements] = useState({});
-
-  const[userOrgunit, setUserOrgunit] = useState(null);
+  const [orgUnit, setOrgUnit] = useState(null);
   const [orgUnits, setOrgUnits] = useState([]);
+  const [dataElements, setDataElements] = useState({});
+  const[userOrgunit, setUserOrgunit] = useState(null);
 
-  const { loading, error, data } = useDataQuery(InitialQuery);
-
-      useEffect(()=> {
-        // const getOrgData = async() => {
-        //   try {
-        //     const allOrgUnit = await fetchOrgUnits();
-        //     const myanmar = allOrgUnit.find(unit => unit.name === "Myanmar");
-        //       // console.log(allOrgUnit.map(u => u.name))
-        //       setUserOrgunit(myanmar);
-        //       setOrgUnits(allOrgUnit);
-        //   } catch (error) {
-        //     console.log("Error while fetching data");
-        //   }
-        // }
-        if(data) {
-          if(data.me) {
-            setUserOrgunit(data.me.organisationUnits[0]);
-          }
-          if(data.ouList) {
-            setOrgUnits(data.ouList.organisationUnits)
-          }
-          if(data.dataElements && data.optionSets) {
-            var de = {};
-            data.dataElements.dataElements.forEach(dataElement => {
-              if(dataElement.optionSetValue) {
-                de[dataElement.id] = {};
-                const optionSet = data.optionSets.optionSets.find(option => option.id == dataElement.optionSet.id)
-                optionSet?.options?.forEach(option => {
-                  const my = option?.translations?.find(translation => translation.locale == "my");
-                  if(my) {
-                    de[dataElement.id][option.code] = my.value;
-                  }
-                  else {
-                    de[dataElement.id][option.code] = option.name;
-                  }
-                })
+  useEffect(() => {
+    const fetchData = async () => {
+      const [me, ouList, optionSets, dataElements] = await Promise.all([
+        api.fetchOthers( InitialQuery.me.resource, [`fields=${InitialQuery.me.params.fields.join(',')}`]),
+        api.fetchOthers( InitialQuery.ouList.resource, [`fields=${InitialQuery.ouList.params.fields.join(',')}`]),
+        api.fetchOthers( InitialQuery.optionSets.resource, [`fields=${InitialQuery.optionSets.params.fields.join(',')}`]),
+        api.fetchOthers( InitialQuery.dataElements.resource, [`fields=${InitialQuery.dataElements.params.fields.join(',')}`]),
+      ]);
+      if (me) {
+        setUserOrgunit(me.organisationUnits[0]);
+      }
+      if (ouList) {
+        setOrgUnits(ouList.organisationUnits);
+      }
+      if (dataElements && optionSets) {
+        var de = {};
+        dataElements.dataElements.forEach((dataElement) => {
+          if (dataElement.optionSetValue) {
+            de[dataElement.id] = {};
+            const optionSet = optionSets.optionSets.find(
+              (option) => option.id == dataElement.optionSet.id
+            );
+            optionSet?.options?.forEach((option) => {
+              const my = option?.translations?.find(
+                (translation) => translation.locale == "my"
+              );
+              if (my) {
+                de[dataElement.id][option.code] = my.value;
+              } else {
+                de[dataElement.id][option.code] = option.name;
               }
-            })
-            setDataElements(de);
+            });
           }
-        }
-  
-        // getOrgData();
-      }, [data])
+        });
+        setDataElements(de);
+      }
+    };
 
-
+    fetchData();
+  }, []);
 
   return (
 
     <>
-      {/* <Header /> */}
+      <Dhis2HeaderBar title={'Birth & Death Certificate'} />
       <div className={styles.container}>
         {!hideSidebar && <Sidebar  setOrgUnit={setOrgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>}
 

@@ -2,27 +2,27 @@
 export const reportFilter = '';
 export const InitialQuery = {
   me: {
-    resource: "me.json",
+    resource: "/api/me.json",
     params: {
       fields: ["id", "organisationUnits[id,displayName,code,path]"],
     },
   },
   ouList: {
-    resource: "organisationUnits.json",
+    resource: "/api/organisationUnits.json",
     params: {
       fields: ["id,name,code,path,children[id,displayName,path]"],
       paging: false,
     },
   },
   optionSets: {
-    resource: "optionSets.json",
+    resource: "/api/optionSets.json",
     params: {
       fields:["id,name,options[code,name]"],
       paging:false,
     }
   },
   dataElements: {
-    resource: "dataElements.json",
+    resource: "/api/dataElements.json",
     params: {
       fields:["id,name,optionSet,optionSetValue"],
       paging:false,

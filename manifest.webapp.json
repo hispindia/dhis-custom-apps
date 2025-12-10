@@ -1,0 +1,21 @@
+
+{
+   "version": "2.0",
+   "name": "Birth & Death Certificate",
+   "description": "Display certificate with qr code",
+   "launch_path": "/index.html",
+   "appType": "APP",
+   "icons": {
+      "16": "images/dhis2-app-icon.png",
+       "48": "images/dhis2-app-icon.png",
+       "128": "images/dhis2-app-icon.png",
+       "512": "images/dhis2-app-icon.png"
+   },
+   "default_locale": "en",
+   "activities": {
+       "dhis": {
+           "href": "*",
+           "namespace": "certificate-app"
+       }
+   }
+}

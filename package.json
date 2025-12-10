@@ -1,31 +1,46 @@
 {
   "name": "birth-death-certificate",
-  "version": "1.0.0",
-  "description": "",
-  "license": "BSD-3-Clause",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "build": "d2-app-scripts build",
-    "start": "d2-app-scripts start",
-    "test": "d2-app-scripts test",
-    "deploy": "d2-app-scripts deploy"
-  },
-  "devDependencies": {
-    "@dhis2/cli-app-scripts": "^12.6.3",
-    "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.6"
+    "dev": "vite",
+    "build": "VITE_MODE=production VITE_BASE_URL=../../.. VITE_USERNAME= VITE_PASSWORD= vite build && cd dist && bestzip birth-death-certificate.zip *",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@dhis2/app-runtime": "^3.14.4",
+    "@dhis2/app-runtime": "^3.14.6",
+    "@dhis2/d2-i18n": "^1.2.0",
+    "@dhis2/ui": "^10.9.2",
+    "@dhis2/ui-widgets": "^6.24.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@mui/icons-material": "^7.2.0",
-    "@mui/material": "^7.2.0",
-    "html2pdf.js": "^0.10.3",
-    "i18next": "^25.3.2",
+    "@mui/icons-material": "^7.3.5",
+    "@mui/material": "^7.3.5",
+    "bestzip": "^2.2.1",
+    "html2pdf.js": "^0.12.1",
+    "i18next": "^25.7.0",
     "i18next-browser-languagedetector": "^8.2.0",
     "i18next-http-backend": "^3.0.2",
-    "react-i18next": "^15.6.0",
-    "react-router-dom": "^7.6.2"
-  }
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-i18next": "^16.3.5",
+    "react-router-dom": "^7.9.6",
+    "styled-jsx": "3.3.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "vite": "^7.2.4",
+    "vite-plugin-static-copy": "^3.1.4"
+  },
+  "packageManager": "yarn@4.12.0+sha512.f45ab632439a67f8bc759bf32ead036a1f413287b9042726b7cc4818b7b49e14e9423ba49b18f9e06ea4941c1ad062385b1d8760a8d5091a1a31e5f6219afca8"
 }

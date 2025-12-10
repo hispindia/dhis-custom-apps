@@ -1,7 +1,7 @@
-  import React, { useEffect, useState } from "react";
+  import { useEffect, useState } from "react";
   import styles from '../App.module.css';
   import { useNavigate } from "react-router-dom";
-  import { fetchBirthCertificateRecords } from "../API/BirthCertAPI";
+  import api from "../api";
   import { TablePagination, TextField } from "@mui/material";
   import MoreVertIcon from '@mui/icons-material/MoreVert';
   import { useTranslation } from "react-i18next";
@@ -9,15 +9,18 @@
   const BirthRecords = ({orgUnit, status}) => {
     const [certificate, setCertificate] = useState([]);
     const [loading, setLoading] = useState(false);
-    const[page, setPage] = useState(0);
+    const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const[showField, setShowField] = useState(null);
-    const {t, i18n} = useTranslation();
+    const [showField, setShowField] = useState(null);
+    const { i18n } = useTranslation();
     const navigate = useNavigate();
 
     useEffect(() => {
+      const fetchEvents = async () => {
+      if(!orgUnit || !status) return;
       setLoading(true);
-        fetchBirthCertificateRecords(orgUnit.id, status)
+
+      return await api.fetchEvents([`program=cUjoGJK4gPL`, `orgUnit=${orgUnit.id}`], {filter: `seXQ3F3kY3x:eq:${status}`})
         .then(res => {      
               const records = res.events.map(event => {
                 const record = {
@@ -31,10 +34,15 @@
               })
           setCertificate(records);
         })
-        .catch(data => setCertificate([]))
+        .catch((_err) => {
+          setCertificate([])
+          console.log(_err)
+        })
         .finally(() => setLoading(false));
-  
-    }, [orgUnit]);
+      } 
+        
+      fetchEvents();
+    }, [orgUnit, status]);
 
       const [filters, setFilters] = useState({
       infantName: "",

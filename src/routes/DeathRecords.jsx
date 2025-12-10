@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
-
-// import { fetchDeathRecords } from "../API/DeathAPI";
+import { useEffect, useState } from "react";
 import styles from '../App.module.css';
-import { fetchDeathCertficateRecords } from "../API/DeathCertAPI";
+import api from '../api';
 import { useNavigate } from "react-router-dom";
 import { TablePagination, TextField } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -13,17 +11,20 @@ const DeathRecords = ({orgUnit, dataElements}) => {
   const [certificate, setCertificate] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const[rowsPerPage, setRowsPerPage] = useState(10);
-  const[showField, setShowField] = useState(null);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [showField, setShowField] = useState(null);
 
-  const {t, i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    setLoading(true);
-          fetchDeathCertficateRecords(orgUnit.id)
+    const fetchEvents = async () => {
+      if(!orgUnit) return;
+      setLoading(true);
+
+      return await api.fetchEvents([`program=TXuxHniKS6l`, `orgUnit=${orgUnit.id}`])
           .then(res => {     
             const records = res.events.map(event => {
             const record = {
@@ -37,14 +38,17 @@ const DeathRecords = ({orgUnit, dataElements}) => {
             })
             setCertificate(records);
           })
-          .catch(data => setCertificate([]))
+          .catch((_err) => {
+            setCertificate([]);
+            console.log(_err)
+          })
           .finally(() => setLoading(false));
+    }
+
+    fetchEvents();
     
   }, [orgUnit])
   
-    
-
-
   const [filters, setFilters] = useState({
           dateOfReporting: "",
           dateOfDeath: "",
@@ -131,6 +135,7 @@ const DeathRecords = ({orgUnit, dataElements}) => {
         }));
     }
 
+  if(loading) return <div>Loading...</div>
 
   return (
     <div className={styles.main}>
