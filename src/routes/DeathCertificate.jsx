@@ -3,6 +3,8 @@ import html2pdf from "html2pdf.js";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import api from "../api";
+import { Button } from "@mui/material";
 
 const styles = {
     body: {
@@ -137,7 +139,6 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
     const { state } = useLocation();
     const [certificate, setCertificate] = useState(state?.record || null);
-    const [downloadCount, setDownloadCount] = useState(0);
     const [showModal, setShowModal] = useState(false);
     const [reason, setReason] = useState("");
     const [issueCount, setIssueCount] = useState(0);
@@ -145,7 +146,7 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
     const [hideBackArrow, setHideBackArrow] = useState(false);
     const pdfRef = useRef();
     const navigate = useNavigate();
-    const {t, i18n} = useTranslation();
+    const { t } = useTranslation();
     const orgUnitObj = {};
     const currentDate = new Date().toLocaleDateString('en-GB');
 
@@ -208,20 +209,13 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
     useEffect(() => {
         if (state?.record) {
-            setCertificate(state.record);
+          setCertificate(state.record);
+          setIssueCount(state.record['UlMXHCJhyNZ'] ? Number(state.record['UlMXHCJhyNZ']) : 0);
         } else {
             setCertificate(null);
         }
     }, [state]);
 
-    const handleIssueClick = () => {
-      if(downloadCount >= 1){
-        setShowModal(true);
-        return;
-      }
-      handleDownloadPDF();
-      setDownloadCount(prev => prev + 1);
-    }
     const handleDownloadPDF = () => {
         setHideBackArrow(true);
         if (pdfRef.current) {
@@ -241,8 +235,39 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
         }
     };
 
-    const handleSubmitReason = () => {
+  const updateEventInDHIS2 = async(issueCount, reason) => {
+    console.log(certificate);
+    const payload = {
+      events: [{
+        event: certificate.event,
+        program: certificate.program,
+        orgUnit: certificate.orgUnit,
+        programStage: certificate.programStage,
+        occurredAt: certificate.occurredAt,
+        dataValues: [
+          {
+            dataElement: "UlMXHCJhyNZ",
+            value: issueCount
+          },
+          {
+            dataElement: "ofuG4AdYrY1",
+            value: reason || ""
+          }
+        ]
+      }]
+    };
+    await api.pushEvents(payload);
+  };
+
+    const handleIssueClick = () => {
+      if(issueCount > 0) setShowModal(true);
+      else handleDownloadPDF();
+    }
+
+    const handleSubmitReason =  async() => {
       console.log('reason', reason);
+    const newCount = issueCount + 1;
+    await updateEventInDHIS2(newCount, reason);
       setShowModal(false);
       setReason(""); // Clear reason after submission
       handleDownloadPDF();
@@ -865,20 +890,14 @@ const DeathCertificate = ({orgUnit, orgUnits, dataElements}) => {
             }}
           />
 
-          <button
+          <Button 
+            color="primary"
+            variant="contained" 
+            disabled= {!reason ? true: false} 
             onClick={handleSubmitReason}
-            style={{
-              padding: "8px 16px",
-              background: "#1976d2",
-              color: "white",
-              border: "none",
-              borderRadius: 4,
-              width: "100%",
-              fontWeight: "bold",
-            }}
-          >
+            >
             Submit
-          </button>
+            </Button>
         </div>
       </div>
     )}

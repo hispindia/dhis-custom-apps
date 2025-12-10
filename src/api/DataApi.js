@@ -1,4 +1,4 @@
-import get from './fetch';
+import {get, push} from './fetch';
 
 export default class DataApi {
 
@@ -21,4 +21,10 @@ export default class DataApi {
   fetchOthers = (endPoint, param, paging)  => {
     return get(this.baseUrl, this.username, this.password, endPoint, param, paging);
   }
+
+  pushEvents = (payload) => {
+    const endPoint = '/api/tracker?async=false';
+    return push(this.baseUrl, this.username, this.password, endPoint, payload);
+  }
+  
 }

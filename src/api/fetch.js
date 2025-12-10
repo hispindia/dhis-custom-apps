@@ -60,4 +60,26 @@ const get = (baseUrl, username, password, endPoint, params, pagingObject) => {
   // .catch((err) => err);
 };
 
-export default get;
+const push = (baseUrl, username, password, endPoint, payload, method) => {
+  return fetchWrapper(baseUrl + endPoint, {
+    method: method ? method : "POST",
+    credentials: "include",
+    body: JSON.stringify(payload),
+    headers: {
+      "Content-Type": "application/json",
+      ...(username && { Authorization: "Basic " + btoa(`${username}:${password}`) }),
+    },
+  }).then((result) => {
+    if (result.headers.get("content-type").includes("application/json")) {
+      return result.json().then((res) => {
+        return res;
+      });
+    } else {
+      alert("Session expired. Please login again.");
+      window.location.href = "../../../dhis-web-commons-security/logout.action";
+      throw new Error("Invalid content type, expected application/json");
+    }
+  });
+};
+
+export { get, push };

@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import html2pdf from "html2pdf.js";
-import { data, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import api from "../api";
+import { Button } from "@mui/material";
 
 const borderDotted = {
   display: "inline-block",
@@ -84,7 +86,6 @@ const BirthCertificate = ({orgUnit, orgUnits, dataElements}) => {
   const {t}  = useTranslation();
   const pdfRef = useRef();
   const orgUnitObj = {};
-  const [downloadCount, setDownloadCount] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [reason, setReason] = useState("");
   const [issueCount, setIssueCount] = useState(0);
@@ -92,7 +93,6 @@ const BirthCertificate = ({orgUnit, orgUnits, dataElements}) => {
   const [hideBackArrow, setHideBackArrow] = useState(false);
   const navigate = useNavigate();
   const currentDate = new Date().toLocaleDateString('en-GB');
-  let count = 1;
 
   orgUnits.forEach(ou => {
     orgUnitObj[ou.id] = ou.name;
@@ -103,29 +103,6 @@ const BirthCertificate = ({orgUnit, orgUnits, dataElements}) => {
     ? orgUnit.path.split('/').map(ou => orgUnitObj[ou] ? orgUnitObj[ou] : ou)
     : []
   }
-
-  const updateEventInDHIS2 = async(issueCount, reason) => {
-  const eventId = certificate.event; 
-  const payload = {
-    event: eventId,
-    dataValues: [
-      {
-        dataElement: "UlMXHCJhyNZ",
-        value: issueCount
-      },
-      {
-        dataElement: "ofuG4AdYrY1",
-        value: reason || ""
-      }
-    ]
-  };
-
-  await fetch(`/api/events/${eventId}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-};
 
     
   const getCitizenshipDisplay = (citizenShip,nrc, passport) => {
@@ -146,22 +123,35 @@ const BirthCertificate = ({orgUnit, orgUnits, dataElements}) => {
   useEffect(() => {
     if (state?.record) {
       setCertificate(state.record);
+      setIssueCount(state.record['UlMXHCJhyNZ'] ? Number(state.record['UlMXHCJhyNZ']) : 0);
     } else {
       setCertificate(null);
     }
   }, [state]);
 
-  if (!certificate) return <div>No certificate data found.</div>
-
-  const handleIssueClick = () => {
-    if(downloadCount >= 1){
-      setShowModal(true);
-      return;
-    }
-    handleDownloadPDF();
-    setDownloadCount(prev => prev + 1);
-  }
-
+  const updateEventInDHIS2 = async(issueCount, reason) => {
+    console.log(certificate);
+    const payload = {
+      events: [{
+        event: certificate.event,
+        program: certificate.program,
+        orgUnit: certificate.orgUnit,
+        programStage: certificate.programStage,
+        occurredAt: certificate.occurredAt,
+        dataValues: [
+          {
+            dataElement: "UlMXHCJhyNZ",
+            value: issueCount
+          },
+          {
+            dataElement: "ofuG4AdYrY1",
+            value: reason || ""
+          }
+        ]
+      }]
+    };
+    await api.pushEvents(payload);
+  };
 
   const handleDownloadPDF = async () => {
     setHideBackArrow(true);
@@ -193,6 +183,11 @@ const BirthCertificate = ({orgUnit, orgUnits, dataElements}) => {
     }
   };
 
+  const handleIssueClick = () => {
+    if(issueCount > 0) setShowModal(true);
+    else handleDownloadPDF();
+  }
+
   const handleSubmitReason = async() => {
     // console.log('reason', reason);
     setShowModal(false);
@@ -202,6 +197,8 @@ const BirthCertificate = ({orgUnit, orgUnits, dataElements}) => {
     handleDownloadPDF();
   }
 
+
+  if (!certificate) return <div>No certificate data found.</div>
 
   return (
     <>
@@ -565,20 +562,14 @@ const BirthCertificate = ({orgUnit, orgUnits, dataElements}) => {
             }}
           />
 
-          <button
+          <Button 
+            color="primary"
+            variant="contained" 
+            disabled= {!reason ? true: false} 
             onClick={handleSubmitReason}
-            style={{
-              padding: "8px 16px",
-              background: "#1976d2",
-              color: "white",
-              border: "none",
-              borderRadius: 4,
-              width: "100%",
-              fontWeight: "bold",
-            }}
-          >
+            >
             Submit
-          </button>
+            </Button>
         </div>
       </div>
     )}

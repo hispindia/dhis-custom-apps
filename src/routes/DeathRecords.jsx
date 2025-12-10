@@ -16,7 +16,6 @@ const DeathRecords = ({orgUnit, dataElements}) => {
 
   const { i18n } = useTranslation();
 
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,8 +27,11 @@ const DeathRecords = ({orgUnit, dataElements}) => {
           .then(res => {     
             const records = res.events.map(event => {
             const record = {
+                event: event.event,
+                orgUnit: event.orgUnit,
+                program: event.program,
+                programStage: event.programStage,
                 occurredAt: event.occurredAt.split("T")[0] || "", 
-                orgUnit: event.orgUnit || ""
               };
               event.dataValues.forEach(dv => {
                 record[dv.dataElement] = dv.value;
