@@ -75,7 +75,7 @@ const DeathRecords = ({orgUnit, dataElements}) => {
     }
     const renderFilterField = (fieldKey, label) => {
     return (
-      <div style={{ minWidth: "140px" }}>
+      <div>
         {showField === fieldKey ? (
           <TextField
             label={label}
@@ -140,8 +140,7 @@ const DeathRecords = ({orgUnit, dataElements}) => {
   if(loading) return <div>Loading...</div>
 
   return (
-    <div className={styles.main}>
-      <div className={styles.card}>
+    <div className={styles.card}>
         <h3> Death Certificate Records</h3>
       
     <table>
@@ -215,7 +214,6 @@ const DeathRecords = ({orgUnit, dataElements}) => {
         
         />
       </div>
-    </div>
   );
 }
 

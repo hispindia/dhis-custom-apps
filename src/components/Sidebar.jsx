@@ -1,26 +1,28 @@
 
 import React, { useEffect, useState } from "react";
-// import { Link } from "react-router-dom";
 import TreeNode from "./TreeNode";
 import { Link, useNavigate } from 'react-router-dom';
-import styles from '../App.module.css';
-import { Button, Menu, MenuItem, ListItemText, ListItemIcon } from "@mui/material";
+import { Button, Menu, MenuItem, ListItemText } from "@mui/material";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-const Sidebar = ({setOrgUnit, userOrgunit, orgUnits}) => {
 
-    const[selectedOrgUnitId, setSelectedOrgUnitId] = useState(null);
-    const[selectedTab, setSelectedTab] = useState(null);
+const Sidebar = ({orgUnit, setOrgUnit, userOrgunit, orgUnits}) => {
+
+    const [selectedOrgUnitId, setSelectedOrgUnitId] = useState(null);
+    const [selectedTab, setSelectedTab] = useState(null);
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-
-      if(userOrgunit && userOrgunit.id){
+      if( localStorage.getItem('orgUnit')) {
+      const orgUnitLocal = JSON.parse(localStorage.getItem('orgUnit'));
+        setOrgUnit(orgUnitLocal);
+        setSelectedOrgUnitId(orgUnitLocal.id)
+      }
+      else if(userOrgunit && userOrgunit.id){
         setOrgUnit(userOrgunit);
       }else if(orgUnits && orgUnits.length){
         setOrgUnit(orgUnits[0]);
       }
-
     }, []);
 
     // opening the dropdown
@@ -39,10 +41,8 @@ const Sidebar = ({setOrgUnit, userOrgunit, orgUnits}) => {
     };
 
    return (
-    <div className={styles.sidebar}>
+    <>
       <div className="card">
-       {/* Birth Record dropDown */}
-
       <Button
         variant="outlined"
         endIcon={ <ArrowDropDownIcon />}
@@ -107,17 +107,18 @@ const Sidebar = ({setOrgUnit, userOrgunit, orgUnits}) => {
          {
          userOrgunit ? 
         <TreeNode 
-        node={userOrgunit}
-        orgUnits={orgUnits} 
-        setOrgUnit={setOrgUnit}
-        selectedOrgUnitId={selectedOrgUnitId}
-        setSelectedOrgUnitId={setSelectedOrgUnitId}
-      />
+          node={userOrgunit}
+          path={orgUnit?.path || ''}
+          orgUnits={orgUnits} 
+          setOrgUnit={setOrgUnit}
+          selectedOrgUnitId={selectedOrgUnitId}
+          setSelectedOrgUnitId={setSelectedOrgUnitId}
+        />
          : <p>Loading..</p>
          }
         </div>
       </div>
-      </div>
+    </>
   );
 }
 

@@ -70,7 +70,7 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
 
      const renderFilterField = (fieldKey, label) => {
         return (
-          <div style={{ minWidth: "140px" }}>
+          <div>
             {showField === fieldKey ? (
               <TextField
                 label={label}
@@ -135,7 +135,7 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
   if(loading) return <div>Loading...</div>
 
   return (
-    <div className={styles.main}>
+    <>
       <div className={styles.card}>
         <h3>Still Birth Certificate Records</h3>
         
@@ -205,7 +205,7 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
 
         
       </div>
-    </div>
+    </>
   );
 }
 

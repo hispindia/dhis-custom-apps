@@ -203,32 +203,27 @@ const BirthCertificate = ({orgUnit, orgUnits, dataElements}) => {
 
   return (
     <>
-    <div style={{ background: "#fff", padding: "16px", fontFamily: "sans-serif", width: "100%", position: "relative" }}>
-
-      <button
-        onClick={handleIssueClick}
-        style={{
-          position: "absolute",
-          top: 16,
-          right: 16,
-          zIndex: 10,
-          padding: "8px 16px",
-          background: "#1976d2",
-          color: "black",
-          border: "none",
-          borderRadius: 4,
-          cursor: "pointer",
-          fontWeight: "bold"
-        }}
-      >
-         Issue Certificate {issueCount > 0 && `(${issueCount})`}
-      </button>
+    <div style={{ background: "#fff", padding: "16px", fontFamily: "sans-serif", width: "100%" }}>
+    <div style={{textAlign: 'right'}}>
+          <button
+            onClick={handleIssueClick}
+            style={{
+              padding: "8px 16px",
+              background: "#1976d2",
+              color: "#fff",
+              border: "none",
+              borderRadius: 4,
+              cursor: "pointer",
+              fontWeight: "bold"
+            }}
+          >
+            Issue Certificate {issueCount > 0 && `(${issueCount})`}
+          </button>
+    </div>
 
       
       <main ref={pdfRef} style={{ width: "100%", display: 'flex', justifyContent: 'center', boxSizing: 'border-box' }}>
         <div style={styles.container}>
-
-          
           <aside style={styles.leftPane}>
             {!hideBackArrow && (
             <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginBottom: '15px' }} onClick={() => navigate(-1)}>

@@ -70,7 +70,7 @@
 
     const renderFilterField = (fieldKey, label) => {
     return (
-      <div style={{ minWidth: "140px" }}>
+      <div>
         {showField === fieldKey ? (
           <TextField
             label={label}
@@ -100,7 +100,6 @@
      
      return (      
           (record[FIELD_KEYS.infantName] || "")?.toLowerCase()?.includes(filters.infantName.toLowerCase()) &&
-          // earlier it is not working because if any field field record[field_keys.dob] may be undefine
           (record[FIELD_KEYS.dob ]|| "")?.toLowerCase()?.includes(filters.dob.toLowerCase()) &&
           (record[FIELD_KEYS.gender] || "")?.toLowerCase()?.includes(filters.gender.toLowerCase()) &&
           (record[FIELD_KEYS.mothersName] || "")?.toLowerCase()?.includes(filters.mothersName.toLowerCase()) &&
@@ -141,24 +140,21 @@
     if(loading) return <div>Loading...</div>
 
     return (
-      <div className={styles.main}>
-        <div className={styles.card}>
-          <h3> Birth Certificate Records</h3>
-        
-    <table>
-    <thead>
-    <tr>
-      <th>{renderFilterField("infantName", "Infant Name")}</th>
-      <th>{renderFilterField("dob", "Date of Birth")}</th>
-      <th>{renderFilterField("gender", "Gender")}</th>
-      <th>{renderFilterField("mothersName", "Mother Name")}</th>
-      <th>{renderFilterField("fathersName", "Father Name")}</th>
-      <th>{renderFilterField("fatherNRC", "Father NRC (Full)")}</th>
-      <th>{renderFilterField("motherNRC", "Mother NRC (Full)")}</th>
-      <th></th>
-    </tr>
-
-  </thead>
+     <div className={styles.card}>
+      <h3> Birth Certificate Records</h3>
+      <table>
+      <thead>
+        <tr>
+          <th>{renderFilterField("infantName", "Infant Name")}</th>
+          <th>{renderFilterField("dob", "Date of Birth")}</th>
+          <th>{renderFilterField("gender", "Gender")}</th>
+          <th>{renderFilterField("mothersName", "Mother Name")}</th>
+          <th>{renderFilterField("fathersName", "Father Name")}</th>
+          <th>{renderFilterField("fatherNRC", "Father NRC (Full)")}</th>
+          <th>{renderFilterField("motherNRC", "Mother NRC (Full)")}</th>
+          <th></th>
+        </tr>
+      </thead>
 
   <tbody>
     {paginatedRecords.map((record, index) => (
@@ -215,8 +211,7 @@
 
 
           
-        </div>
-      </div>
+    </div>
     );
   }
 

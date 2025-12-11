@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import styles from '../App.module.css';
 
-function TreeNode({ node, orgUnits, setOrgUnit, selectedOrgUnitId,  setSelectedOrgUnitId }) {
+function TreeNode({ node, path, orgUnits, setOrgUnit, selectedOrgUnitId,  setSelectedOrgUnitId }) {
   const [isOpen, setIsOpen] = useState(false);
-
 
   const children = orgUnits.find(orgUnit=> orgUnit.id == node.id)?.children.sort((a,b) => a.displayName.localeCompare(b.displayName));
 
   const isSelected = selectedOrgUnitId === node.id;
+
+  if(path.includes(node.id)) {
+    setIsOpen(true)
+  }
 
   return (
     <>
@@ -25,6 +27,7 @@ function TreeNode({ node, orgUnits, setOrgUnit, selectedOrgUnitId,  setSelectedO
           if(children.length) setIsOpen(!isOpen);
           setOrgUnit(node);
           setSelectedOrgUnitId(node.id);
+          localStorage.setItem('orgUnit', JSON.stringify(node));
         }}
       >
 
@@ -42,6 +45,7 @@ function TreeNode({ node, orgUnits, setOrgUnit, selectedOrgUnitId,  setSelectedO
             <TreeNode
              key={child.id} 
              node={child} 
+             path={path}
              orgUnits={orgUnits} 
              setOrgUnit={setOrgUnit}
              selectedOrgUnitId={selectedOrgUnitId}

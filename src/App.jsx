@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, HashRouter, useLocation } from "react-router-dom";
+import { Routes, Route, HashRouter, useLocation, Navigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import styles from './App.module.css';
 import BirthRecords from "./routes/BirthRecords";
@@ -10,7 +10,6 @@ import { useState, useEffect } from "react";
 import LateFoetalDeathRecord from "./routes/LateFoetalDeathRecord";
 import LateFoetalDeathCert from "./routes/lateFoetalDeathCert";
 import { InitialQuery } from "./components/constants";
-import Dhis2HeaderBar from "./components/HeaderBar/HeaderBar.component";
 import api from "./api";
 import './i18n'
 
@@ -68,27 +67,29 @@ function AppContent() {
   }, []);
 
   return (
-
-    <>
-      <Dhis2HeaderBar title={'Birth & Death Certificate'} />
       <div className={styles.container}>
-        {!hideSidebar && <Sidebar  setOrgUnit={setOrgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>}
-
-        <div style={{flex: 1}}>
+        {
+        
+        !hideSidebar && (
+          <div className={styles.sidebar}>
+            <Sidebar  orgUnit={orgUnit} setOrgUnit={setOrgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits}/>
+          </div>)
+        }
+        
+        <div className={styles.main}>
           <Routes>
-          <Route path="/" element={<BirthRecords orgUnit={orgUnit} status={'Live Birth'} />} />
+          <Route path="/" element={<Navigate to="/born-alive" replace />} />
           <Route path="/born-alive" element={<BirthRecords orgUnit={orgUnit} status={'Live Birth'}/>} />
           <Route path="/death" element={<DeathRecords orgUnit={orgUnit} dataElements={dataElements}/>} />
           <Route path="/still-born" element={<LateFoetalDeathRecord orgUnit={orgUnit} status={'Stillbirth'}/>} />
           <Route path="/birth-certificate" element={<BirthCertificate orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits} dataElements={dataElements}/>} />
           <Route path="/death-certificate" element={<DeathCertificate orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits} dataElements={dataElements}/>} />
           <Route path="/late-Foetal-death-certificate" element={<LateFoetalDeathCert orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits} dataElements={dataElements}/>} />
-          <Route path="*" element={<BirthRecords orgUnit={orgUnit} status={'Live-Birth'} />} />
+          <Route path="*" element={<Navigate to="/born-alive" replace />} />
         </Routes>
 
         </div>
       </div>
-    </>
   );
 }
 
