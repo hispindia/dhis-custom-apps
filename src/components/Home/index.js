@@ -520,7 +520,7 @@ const Home = () => {
           >
             ProgramRules
           </button>
-          {/* {activeTab === "Indicators" ? */}
+          {activeTab === "Indicators" ?
             <div className="group-indicator-dropdown">
               <label htmlFor="group-indicator-select">
                 Filter by Group Indicator:
@@ -538,7 +538,7 @@ const Home = () => {
                 ))}
               </select>
             </div> : ''
-          {/* } */}
+          }
 
 
           <div className="search-bar">

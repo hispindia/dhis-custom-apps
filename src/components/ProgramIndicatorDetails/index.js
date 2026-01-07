@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { ApiService } from "../../services/apiService";
 
-
 import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
+import { use } from "react";
 
 const ProgramIndicatorDetails = () => {
   const { id: programindicatorId } = useParams();
   // const  indicatorId  = location.state.id || {}; // Retrieve the passed state
   const navigate = useNavigate(); // Initialize useNavigate
   const [programindicatorDetails, setProgramindicatorDetails] = useState(null);
+  const [programStages, setProgramStages] = useState();
+  const [dataElements, setDataElements] = useState();
+  const [trackentityAttributes, setTrackentityAttributes] = useState();
   const [loading, setLoading] = useState(true);
-
+  useEffect(() => {
+    fetchProgramstages();
+    fetchDataElements();
+    fetchTrackedEntityAttributes();
+  }, []);
   useEffect(() => {
     if (programindicatorId) {
       fetchProgramIndicatorDetails(programindicatorId);
@@ -28,11 +35,101 @@ const ProgramIndicatorDetails = () => {
       setLoading(false);
     }
   };
+  const fetchProgramstages = async () => {
+    // fetch single indicator details
+    try {
+      const response = await ApiService.getProgramStages();
+      setProgramStages(response?.programStages);
+    } catch {
+      console.error("Failed to fetch indicator details");
+    }
+  };
+  const fetchDataElements = async () => {
+    // fetch single indicator details
+    try {
+      const response = await ApiService.getDataElements();
+      setDataElements(response?.dataElements);
+    } catch {
+      console.error("Failed to fetch indicator details");
+    }
+  };
+  const fetchTrackedEntityAttributes = async () => {
+    // fetch single indicator details
+    try {
+      const response = await ApiService.getTrackedEntityAttributes();
+      setTrackentityAttributes(response?.trackedEntityAttributes);
+    } catch {
+      console.error("Failed to fetch indicator details");
+    }
+  };
   const handleBack = () => {
     navigate(-1); // Go back to the previous page
   };
-  console.log("indicator==========", programindicatorDetails);
-  console.log("id======", programindicatorId);
+  // function replaceProgramStageIds(filter, programStages,dataElements) {
+  //   if (!filter || !Array.isArray(programStages)) return filter;
+
+  //   return filter.replace(
+  //     /#\{([^.}]+)\.([^}]+)\}/g,
+  //     (match, stageId, dataElementId) => {
+  //       const stageObj = programStages.find(
+  //         stage => stage.id === stageId
+  //       );
+
+  //       const stageName = stageObj ? stageObj.name : stageId;
+  //         // find data element name
+  //       const deObj = dataElements?.find(
+  //         de => de.id === dataElementId
+  //       );
+  //       const dataElementName = deObj ? deObj.name : dataElementId;
+
+  //       return `#{${stageName}.${dataElementName}}`;
+  //     }
+  //   );
+  // }
+  function replaceProgramStageIds(
+    filter,
+    programStages,
+    dataElements,
+    trackentityAttributes
+  ) {
+    if (!filter) return filter;
+
+    let updatedFilter = filter;
+
+    // 🔹 Replace ProgramStage.DataElement
+    updatedFilter = updatedFilter.replace(
+      /#\{([^.}]+)\.([^}]+)\}/g,
+      (match, stageId, dataElementId) => {
+        const stageObj = programStages?.find((stage) => stage.id === stageId);
+        const stageName = stageObj ? stageObj.name : stageId;
+
+        const deObj = dataElements?.find((de) => de.id === dataElementId);
+        const dataElementName = deObj ? deObj.name : dataElementId;
+
+        return `#{${stageName}.${dataElementName}}`;
+      }
+    );
+
+    // 🔹 Replace Tracked Entity Attributes A{UID}
+    updatedFilter = updatedFilter.replace(
+      /A\{([^}]+)\}/g,
+      (match, attributeId) => {
+        const attrObj = trackentityAttributes?.find(
+          (attr) => attr.id === attributeId
+        );
+        const attributeName = attrObj ? attrObj.name : attributeId;
+
+        return `A{${attributeName}}`;
+      }
+    );
+
+    return updatedFilter;
+  }
+
+  // console.log("indicator==========", programindicatorDetails);
+  // console.log("id======shashi", programindicatorId);
+  // console.log("programStages===",programStages)
+  // console.log("dataelements====",dataElements)
 
   return (
     <div
@@ -42,7 +139,7 @@ const ProgramIndicatorDetails = () => {
       <button
         onClick={handleBack}
         className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        style={{background:'#2C6693'}}
+        style={{ background: "#2C6693" }}
       >
         Back
       </button>
@@ -55,6 +152,15 @@ const ProgramIndicatorDetails = () => {
         <p>Identifed by:{programindicatorId}</p>
         <p> {programindicatorDetails?.favorite} </p>
         <p>{programindicatorDetails?.externalAccess}</p>
+        <p>
+          Filter:
+          {replaceProgramStageIds(
+            programindicatorDetails?.filter,
+            programStages,
+            dataElements,
+            trackentityAttributes
+          )}
+        </p>
       </section>
 
       <section className="mb-6">
