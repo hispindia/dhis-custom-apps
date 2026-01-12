@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "VITE_MODE=production VITE_BASE_URL=../../.. VITE_USERNAME= VITE_PASSWORD= vite build && cd dist && bestzip birth-death-certificate.zip *",
+    "build": "cross-env VITE_MODE=production VITE_BASE_URL=../../.. VITE_USERNAME= VITE_PASSWORD= vite build && cd dist && bestzip birth-death-certificate.zip *",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -27,6 +27,7 @@
     "react-dom": "^19.2.0",
     "react-i18next": "^16.3.5",
     "react-router-dom": "^7.9.6",
+    "react-to-print": "^3.2.0",
     "styled-jsx": "3.3.0"
   },
   "devDependencies": {
@@ -35,6 +36,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "babel-plugin-react-compiler": "^1.0.0",
+    "cross-env": "^10.1.0",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
