@@ -1,98 +1,19 @@
 import React, { useEffect, useState, useRef } from "react";
 import html2pdf from "html2pdf.js";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import api from "../api";
 import { Button } from "@mui/material";
+import QrCode  from "qrcode";
+import { NUMBERS } from "../constants";
 
-const borderDotted = {
-  display: "inline-block",
-  borderBottom: "2px dotted blue",
-  verticalAlign: "middle",
-};
-const borderSolid = {
-  borderBottom: "2px solid blue",
-  width: "100%",
-};
-const borderGray = {
-  borderBottom: "2px solid blue",
-  width: "100%",
-};
+const LateFoetalDeathCert = () => {
+  const [url, setUrl] = useState('');
+  const [certificate, setCertificate] = useState({});
+  const [options, setOptions] = useState({});
+  const [orgUnit, setOrgUnit] = useState({});
 
-const borderBlack = {
-  borderBottom: "2px dotted blue",
-  width: "100%",
-};
-
-const styles = {
-  container: {
-    display: "flex",
-    gap: "6px",
-    width: "100%",
-    maxWidth: "100%",
-    boxSizing: "border-box",
-  },
-  leftPane: {
-    width: "8.3cm",
-    padding: "8px",
-    boxSizing: "border-box",
-    color: "blue",
-    fontSize: 11,
-    borderRight: "none",
-    flexShrink: 0,
-  },
-  // new shared style for the left column inside each table row
-  leftColumn: {
-    width: "25%",
-    textAlign: "right", // align text to the right so it's close to separator
-    color: "blue",
-    fontWeight: 600,
-    display: "flex",
-    alignItems: "center", // vertically center labels
-    justifyContent: "flex-end", // push text adjacent to separator
-    paddingRight: 4, // minimal gap to dotted separator
-    paddingTop: 6,
-    paddingBottom: 6,
-    borderRight: "2px dotted blue", // dotted vertical separator per-section
-    boxSizing: "border-box",
-  },
-  separator: {
-    // full-height separator between panes
-    width: 0,
-    alignSelf: "stretch",
-    borderRight: "2px dotted blue",
-    boxSizing: "border-box",
-    margin: "0 4px", // small horizontal gap
-  },
-  rightPane: {
-    flex: 1,
-    padding: "6px",
-    boxSizing: "border-box",
-    color: "blue",
-    fontSize: 10,
-    display: "flex",
-    flexDirection: "column",
-    gap: "4px",
-    justifyContent: "space-between",
-    lineHeight: 1.05,
-  },
-  // move dotted inline closer to label
-  dottedLineInline: {
-    display: "inline-block",
-    borderBottom: "2px dotted blue",
-    verticalAlign: "middle",
-    minWidth: 24, // shorter field underline
-    marginLeft: 4, // tighten distance from label
-  },
-
-  footerSmall: { fontSize: 9, color: "blue" }, // reduced footer font
-};
-
-const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
-  // const {eventId} = useParams();
-  const { state } = useLocation();
-  const [certificate, setCertificate] = useState(state?.record || null);
   const pdfRef = useRef();
   const { t } = useTranslation();
   const orgUnitObj = {};
@@ -104,42 +25,58 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
   const navigate = useNavigate();
   const currentDate = new Date().toLocaleDateString('en-GB');
   
-  orgUnits.forEach((ou) => {
-    orgUnitObj[ou.id] = ou.name;
-  });
-  orgUnit = {
-    ...orgUnit,
-    path:
-      typeof orgUnit.path === "string"
-        ? orgUnit.path
-            .split("/")
-            .map((ou) => (orgUnitObj[ou] ? orgUnitObj[ou] : ou))
-        : [],
-  };
-
-   const getCitizenshipDisplay = (citizenShip,nrc, passport) => {
-
-    if(!citizenShip) {
-      return passport ? `${passport}` : "";
-    };
-    const c = String(citizenShip).trim();
-    const isMyanmar =
-    c.toLowerCase().includes("myanmar") || c.toLowerCase().includes("burmese");
-    if (isMyanmar) {
-      return nrc ? `${c}, ${nrc}` : c;
-    }
-
-    return passport ? ` ${passport}` : c;
-  };
-
+  const { search } = useLocation();
+  const event = new URLSearchParams(search).get("stillbirth");
+  // if(!event) return;
+  
   useEffect(() => {
-    if (state?.record) {
-      setCertificate(state.record);
-      setIssueCount(state.record['UlMXHCJhyNZ'] ? Number(state.record['UlMXHCJhyNZ']) : 0)
-    } else {
-      setCertificate(null);
+    if(event) {
+      const default_url = `https://hmistraining.mm.dhis2.net/train/api/apps/Birth-Death-Certificate/index.html#/birth-certificate?death=${event}`
+      QrCode.toDataURL(default_url,{
+        width: 200,
+        margin: 1,
+        errorCorrectionLevel: "H",
+        color: {
+          dark: "#0033cc",   // QR dots (red)
+          light: "#ffffff", // background (white)
+        },
+      })
+      .then(setUrl)
+      .catch(console.error);
+      const fetchEvents = async() => {
+        const resOptions = await api.fetchOthers("/api/optionSets/FYXoXlEZXae.json", ["fields=options[id,name,code]"]);
+        if(resOptions.options) {
+          const options = {};
+          resOptions.options.forEach(option => {
+            options[option.code] = option.name;
+          })
+          setOptions(options);
+        }
+        
+        const resEvent = await api.fetchEvent(event);
+        if(resEvent) {
+          const event = {};
+          resEvent.dataValues.forEach(dv => event[dv.dataElement] = dv.value);
+          const issueCount = event["UlMXHCJhyNZ"] ? Number(event["UlMXHCJhyNZ"]) : 0;
+          setCertificate(event);
+          setIssueCount(issueCount);
+          let orgUnit = await api.fetchOrgUnits([`fields=id,name,path,ancestors[id,name]`, `filter=id:eq:${resEvent.orgUnit}`]);       
+          setOrgUnit(orgUnit.organisationUnits[0])
+        }
+      }
+      fetchEvents();
     }
-  }, [state]);
+  }, [event])
+
+  const getCitizenshipDisplay = (citizenShip, nrc, passport) => {
+    if(passport) return passport;
+    var element = '';
+    if(citizenShip) element += options[citizenShip];
+    if(nrc) {
+      element = `, ${nrc.replace(/\d/g, digit => NUMBERS[digit])}`;
+    }
+    return element;
+  };
 
   const handleDownloadPDF = async () => { 
     setHideBackArrow(true);
@@ -151,7 +88,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
     const CM_TO_PX = 37.7952755906;
     const targetHeightPx = 19.1 * CM_TO_PX;
 
-    //measuing actual rendered height
+    //measuing actual rendeblue height
     const currHeight =
       el.getBoundingClientRect().height || el.offsetHeight || el.clientHeight;
     const scale = Math.min(1, targetHeightPx / currHeight);
@@ -208,7 +145,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
         program: certificate.program,
         orgUnit: certificate.orgUnit,
         programStage: certificate.programStage,
-        occurredAt: certificate.occurredAt,
+        occurblueAt: certificate.occurblueAt,
         dataValues
       }]
     };
@@ -235,996 +172,244 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
     handleDownloadPDF();
   }
 
+  const handlePrint = () => {
+      window.print();
+  };
+
   //if there is no certificate data
   if (!certificate) return <div>No certificate data found.</div>;
 
   return (
     <>
+      <style>
+        {`
+        @page {
+          size: A4 landscape;
+          margin: 0;
+        }
+
+        @media print {
+          .no-print {
+            display: none;
+          }
+          * {
+            padding: 0;
+            margin: 0;
+          }
+          div {
+            box-sizing: border-box; 
+          }
+        }
+        #certificate {
+          display: flex;
+          justify-content: flex-end; /* push content right */
+        }
+      `}
+      </style>
+
+    <div
+      style={{
+          background: "#fff",
+          padding: "22px"
+      }}
+    >
     <div 
       style={{
         background: "#fff",
-        padding: 16,
         fontFamily: "sans-serif",
-        width: "100%",
-        display: "flex",
-        position: "relative",
       }}
-    >
-      <button
-        onClick={handleIssueClick}
-        style={{
-          position: "absolute",
-          top: 16,
-          right: 16,
-          zIndex: 10,
-          padding: "8px 16px",
-          background: "#1976d2",
-          color: "#000",
-          border: "none",
-          borderRadius: 4,
-          cursor: "pointer",
-          fontWeight: "bold",
-        }}
-      >
-         Issue Certificate {issueCount > 0 && `(${issueCount})`}
-      </button>
-
-      <main
+    >  
+      <div className="no-print" style={{ textAlign: "right" }}>
+        <button
+          onClick={handleIssueClick}
+          style={{
+              padding: "8px 16px",
+              background: "#1976d2",
+              color: "#fff",
+              border: "none",
+              borderRadius: 4,
+              cursor: "pointer",
+              fontWeight: "bold",
+              marginRight: "2px"
+          }}
+        >
+          Issue Certificate {issueCount > 0 && `(${issueCount})`}
+        </button>
+        <button
+          onClick={handlePrint}
+          style={{
+            padding: "8px 12px",
+            background: "#d32f2f",
+            color: "#fff",
+            border: "none",
+            marginRight: "8px",
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+        > Print </button>
+      </div>
+      <div 
         ref={pdfRef}
-        style={{
-          width: "27.7cm",
-          height: "19.1cm",
-          padding: "0.0cm 1.0cm 0.0cm 1.0cm",
-          paddingTop: "0.8cm",
-          paddingBottom: "1.1cm",
-          margin: "0 auto",
-          boxSizing: "border-box",
-          background: "#fff",
-          WebkitPrintColorAdjust: "exact",
-          overflow: "visible",
-        }}
+        id="certificate"
+        style={{display:"flex", fontSize: "3mm", color: "blue", marginRight: "0.5cm", justifyContent: "flex-end"}}
       >
-        <div style={styles.container}>
-          <aside style={styles.leftPane}>
-            {!hideBackArrow &&(
-            <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => navigate(-1)}>
-                <ArrowBackIcon style={{ color: 'black' }} />
-                <h4 style={{ fontWeight: 600, textAlign: "left", marginLeft: '8px', marginBottom: '0', marginTop: '0' }}>
-                  {t("LATE_FOETAL_DEATH_CERTIFICATE_COUNTERFOIL")}
-                </h4>
+        <div id="aside" style={{width:"6.25cm", borderRight:"2px dotted blue", }}>
+            <p style={{display: "flex",justifyContent: "center", alignItems: "center", fontWeight: "bold"}}> 
+              <ArrowBackIcon style={{ color: 'white', border:"2px solid #A9A9A9", borderRadius: "40px", background: "#A9A9A9", marginRight: "5px", cursor: "pointer"}} className="no-print" onClick={() => navigate(-1)} /> 
+              {t("LATE_FOETAL_DEATH_CERTIFICATE_COUNTERFOIL")}
+            </p>
+            <div style={{marginBottom: "0.9cm"}}>{t("VR_153")}</div>
+            <div>{t("PAGE_NUMBER")} <span> {certificate?.["PS99q9IRjKy"] || ""} </span></div>
+            <div>{t("BOOK_NUMBER")} <span> {certificate?.["l0Pm3ydZ2om"] || ""} </span></div>
+            <div>{t("ENTRY_NUMBER")} <span> {certificate?.["MrtKbjcsHnk"] || ""} </span></div>
+            <div style={{height: "2.5cm"}}>{t("PLACE_OF_REGISTRATION")} <span> {orgUnit?.name} </span></div>
+            <div>{t("DATE_OF_REGISTRATION")} <span> {certificate?.["occurblueAt"] || ""} </span></div>
+            <div>{t("SEX")} <span> {certificate?.["R43kdns3YYL"] || ""} </span></div>
+            <div>{t("DEATH_OF_BIRTH")} <span>{certificate?.["JAU9NM7UqQP"] || ""} </span></div>
+            <div>{t("PLACE_OF_BIRTH")} <span> {certificate?.["JAU9NM7UqQP"] || ""} </span> </div>
+            <div>{t("NAME_OF_FATHER")} <span>{certificate?.["RKs8td9BnNj"] || ""}</span></div>
+            <div>{t("NAME_OF_MOTHER")}<span> {certificate?.["UYmZMZt32hZ"] || ""} </span></div>
+            <div>{t("ADDRESS")} <span> {certificate?.["bVyrfnpCd6i"] || ""} </span></div>
+            <div>{t("SIGNATURE_OF_ISSUING_PERSON")} <span>__________</span></div>
+            <div>{t("NAME_OF_ISSUING_PERSON")} <span>__________</span></div>
+            <div>{t("DATE_OF_ISSUE")} <span> {currentDate} </span></div>
+            <div id="qr-user">
+              {url ? <img src={url} alt="qr-code.svg" /> : null}
             </div>
-            )}
-
-            <div style={{ marginTop: "15px", fontSize: "13px" }}>
-              <div style={{ fontWeight: 600 }}>
-                {t("VR_153") || "V.R Form 153"}
-              </div>
-              <div style={{ marginTop: "12px" }}>
-                <div>
-                  {t("PAGE_NUMBER")}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      borderBottom: "2px dotted blue",
-                      verticalAlign: "middle",
-                      minWidth: "192px",
-                      paddingLeft: "5px",
-                    }}
-                  >
-                    {certificate?.["PS99q9IRjKy"] || ""}
-                  </span>
-                </div>
-                <div style={{ marginTop: 8 }}>
-                  {t("BOOK_NUMBER")}{" "}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      borderBottom: "2px dotted blue",
-                      verticalAlign: "middle",
-                      minWidth: "165px",
-                      paddingLeft: "5px",
-                    }}
-                  >
-                    {certificate?.["l0Pm3ydZ2om"] || ""}
-                  </span>
-                </div>
-                <div style={{ marginTop: 8 }}>
-                  {t("ENTRY_NUMBER")}{" "}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      borderBottom: "2px dotted blue",
-                      verticalAlign: "middle",
-                      minWidth: "152px",
-                      paddingLeft: "5px",
-                    }}
-                  >
-                    {certificate?.["MrtKbjcsHnk"] || ""}
-                  </span>
-                </div>
-                 <div style={{ marginTop: 8 }}>
-                  {t("PLACE_OF_REGISTRATION")}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      borderBottom: "2px dotted blue",
-                      verticalAlign: "middle",
-                      minWidth: "136px",
-                      paddingLeft: "5px",
-                    }}
-                  >
-                    {orgUnitObj[certificate.orgUnit]}
-                  </span>
-                </div>
-                <div style={{ marginTop: 8 }}>
-                  {t("DATE_OF_REGISTRATION")}{" "}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      borderBottom: "2px dotted blue",
-                      verticalAlign: "middle",
-                      minWidth: "136px",
-                      paddingLeft: "5px",
-                    }}
-                  >
-                    {certificate?.["occurredAt"] || ""}
-                  </span>
-                </div>
-               
-              </div>
-            </div>
-
-            <div style={{ fontSize: 13, marginTop: "40px" }}>
-              {" "}
-              {/* reduced top gap and font */}
-              <div style={{ marginBottom: 10 }}>
-                <div>
-                  {t("SEX")}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      borderBottom: "2px dotted blue",
-                      verticalAlign: "middle",
-                      minWidth: "230px",
-                      paddingLeft: "5px",
-                    }}
-                  >
-                    {certificate?.["wxrDsUO1ELy"] || ""}
-                  </span>
-                </div>
-              </div>
-              <div style={{ marginBottom: 8 }}>
-                <div>
-                  {t("DEATH_OF_BIRTH")}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      borderBottom: "2px dotted blue",
-                      verticalAlign: "middle",
-                      minWidth: "140px",
-                      paddingLeft: "5px",
-                    }}
-                  >
-                    {certificate?.["zAetLzp3cT1"] || ""}
-                  </span>
-                </div>
-              </div>
-              <div style={{ marginBottom: 8 }}>
-                <div>
-                  {t("PLACE_OF_BIRTH")}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      borderBottom: "2px dotted blue",
-                      verticalAlign: "middle",
-                      minWidth: "180px",
-                      paddingLeft: "5px",
-                    }}
-                  >
-                    {certificate?.["JAU9NM7UqQP"] || ""}
-                  </span>
-                </div>
-              </div>
-              <div style={{ marginBottom: 8 }}>
-                <div>
-                  {t("NAME_OF_FATHER")}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      borderBottom: "2px dotted blue",
-                      verticalAlign: "middle",
-                      minWidth: "164px",
-                      paddingLeft: "5px",
-                    }}
-                  >
-                    {certificate?.["RKs8td9BnNj"] || ""}
-                  </span>
-                </div>
-              </div>
-              <div style={{ marginBottom: 8 }}>
-                <div>
-                  {t("NAME_OF_MOTHER")}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      borderBottom: "2px dotted blue",
-                      verticalAlign: "middle",
-                      minWidth: "140px",
-                      paddingLeft: "5px",
-                    }}
-                  >
-                    {certificate?.["UYmZMZt32hZ"] || ""}
-                  </span>
-                </div>
-              </div>
-              <div style={{ marginBottom: 8 }}>
-                <div>
-                  {t("NAME_OF_MOTHER")}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      borderBottom: "2px dotted blue",
-                      verticalAlign: "middle",
-                      minWidth: "140px",
-                      paddingLeft: "5px",
-                    }}
-                  >
-                    {certificate?.["UYmZMZt32hZ"] || ""}
-                  </span>
-                </div>
-              </div>
-              <div style={{ marginBottom: 8 }}>
-                <div>
-                  {t("ADDRESS")}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      borderBottom: "2px dotted blue",
-                      verticalAlign: "middle",
-                      minWidth: "140px",
-                      paddingLeft: "5px",
-                    }}
-                  >
-                    {certificate?.["rRpqp6TPWlh"] || ""}
-                  </span>
-                </div>
-              </div>
-              <div style={{ marginBottom: 8 }}>
-                <div>
-                  {t("SIGNATURE_OF_ISSUING_PERSON")}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      borderBottom: "2px dotted blue",
-                      verticalAlign: "middle",
-                      minWidth: "80px",
-                      paddingLeft: "5px",
-                    }}
-                  >
-                    {certificate?.[""] || ""}
-                  </span>
-                </div>
-              </div>
-              <div style={{ marginBottom: 8 }}>
-                <div>
-                  {t("NAME_OF_ISSUING_PERSON")}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      borderBottom: "2px dotted blue",
-                      verticalAlign: "middle",
-                      minWidth: "100px",
-                      paddingLeft: "5px",
-                    }}
-                  >
-                    {certificate?.["l0Pm3ydZ2om"] || ""}
-                  </span>
-                </div>
-              </div>
-              <div>
-                <p style={{ marginTop: 0 }}>
-                  {t("DATE_OF_ISSUE")}{" "}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      width: 24,
-                      verticalAlign: "middle",
-                      paddingLeft: "5px",
-                    }}
-                  > {currentDate}</span>
-                </p>
-              </div>
-            </div>
-          </aside>
-          <div style={styles.separator} />
-          <section style={styles.rightPane}>
-            <h2
-              style={{
-                fontSize: 16,
-                color: "blue",
-                fontWeight: "bold",
-                textAlign: "center",
-                marginBottom: 4,
-                breakInside: "avoid",
-                pageBreakInside: "avoid",
-                WebkitColumnBreakInside: "avoid",
-              }}
-            >
-              {t("LATE_FOETAL_DEATH_CERTIFICATE")}
-            </h2>
-          
-            <header
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-                marginBottom: "0.5rem",
-                color: "blue",
-                backgroundColor: "#fff",
-              }}
-            >
-              {/* Left Section */}
-              <section style={{ color: "#000", fontSize: 13, width: "30%" }}>
-                <p
-                  style={{
-                    marginBottom: 2,
-                    marginTop: 8,
-                    fontWeight: "normal",
-                    color: "blue",
-                  }}
-                >
-                  {t("VR_153")}
-                </p>
-                <div>
-                  <p
-                    style={{
-                      marginBottom: 2,
-                      marginTop: 8,
-                      fontWeight: "normal",
-                      color: "blue",
-                    }}
-                  >
-                    {t("STATE_REGION")}
-                    <span
-                      style={{
-                        display: "inline-block",
-                        borderBottom: "2px dotted blue",
-                        width: "31%",
-                        verticalAlign: "middle",
-                        marginLeft: 8,
-                      }}
-                    >
-                      {orgUnit.path[2] ? orgUnit.path[2] : ""}
-                    </span>
-                  </p>
-                </div>
-                <div style={{display: "flex", color: "blue"}}>
-                  <p style={{ marginBottom: 8, fontWeight: 'normal'}}>
-                  {t("DISTRICT")}
-                  <span style={{ display: 'inline-block', borderBottom: '2px dotted blue', width: '30%', verticalAlign: 'middle', marginLeft: 4, paddingLeft: '4px' }}>
-                    {orgUnit.path[3] ? orgUnit.path[3] : ''}
-                  </span>
-                </p>
-                <p style={{ marginBottom: 8, fontWeight: 'normal'}}>
-                  {t("TOWNSHIP")}
-                  <span style={{ display: 'inline-block', borderBottom: '2px dotted blue', width: '30%', verticalAlign: 'middle', marginLeft: 4, paddingLeft: '4px' }}>
-                    {orgUnit.path[4] ? orgUnit.path[4]: ''}
-                  </span>
-                </p>
-                </div>
-
-                <p style={{ marginBottom: 8, fontWeight: 'normal', color: 'blue'}}>
-                  {t("BIRTH_AND_DEATH_REGISTRATION_PLACE")}
-                  <span style={{ display: 'inline-block', borderBottom: '2px dotted blue', width: '53px', verticalAlign: 'middle', marginLeft: 4, paddingLeft: '4px' }}>
-                    {orgUnit.path[5] ? orgUnit.path[5]: ''}
-                  </span>
-                </p>
-              </section>
-
-              {/* Right Section */}
-              <section
-                style={{
-                  marginTop: 16,
-                  color: "blue",
-                  fontSize: 13,
-                  width: "30%",
-                }}
-              >
-                <p style={{ fontWeight: "normal" }}>
-                  {t("PAGE_NUMBER")}
-                  {
-                    <span
-                      style={{
-                        display: "inline-block",
-                        borderBottom: "2px dotted blue",
-                        width: "31%",
-                        verticalAlign: "middle",
-                        marginLeft: 8,
-                      }}
-                    >
-                      {certificate?.["PS99q9IRjKy"] || ""}
-                    </span>
-                  }
-                </p>
-                <p style={{ fontWeight: "normal", color: "blue" }}>
-                  {t("BOOK_NUMBER")}
-
-                  <span
-                    style={{
-                      display: "inline-block",
-                      borderBottom: "2px dotted blue",
-                      width: 60,
-                      verticalAlign: "middle",
-                      marginLeft: 8,
-                    }}
-                  >
-                    {certificate?.["l0Pm3ydZ2om"] || ""}
-                  </span>
-                </p>
-                <p
-                  style={{
-                    marginBottom: 4,
-                    fontWeight: "normal",
-                    color: "blue",
-                  }}
-                >
-                  {t("ENTRY_NUMBER")}
-                  {
-                    <span
-                      style={{
-                        display: "inline-block",
-                        borderBottom: "2px dotted blue",
-                        width: 60,
-                        verticalAlign: "middle",
-                        marginLeft: 8,
-                      }}
-                    >
-                      {certificate?.["MrtKbjcsHnk"] || ""}
-                    </span>
-                  }
-                </p>
-                <p
-                  style={{
-                    marginBottom: 4,
-                    fontWeight: "normal",
-                    color: "blue",
-                  }}
-                >
-                  {t("DATE_OF_REGISTRATION")}
-
-                  {
-                    <span
-                      style={{
-                        borderBottom: "2px dotted blue",
-                        width: 60,
-                        verticalAlign: "middle",
-                        marginLeft: 8,
-                      }}
-                    >
-                      {certificate?.["occurredAt"] || ""}
-                    </span>
-                  }
-                </p>
-              </section>
-            </header>
-
-            <div style={{ marginTop: 6, width: "100%" }}>
-              {/* Particular of Child */}
-              <div>
-                <div style={borderSolid}></div>
-                <div style={{ display: "flex" }}>
-                  <div style={styles.leftColumn}>
-                    {t("PARTICULARS_OF_CHILD")}
-                  </div>
-                  <div style={{ width: "75%" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "4px 6px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "50%",
-                          paddingBottom: 4,
-                          color: "blue",
-                        }}
-                      >
-                        {t("1")}{t("SEX")}: {certificate?.["wxrDsUO1ELy"] || ""}
-                      </div>{" "}
-                      {/* Name - 1 index */}
-                      <div
-                        style={{
-                          width: "50%",
-                          paddingBottom: 4,
-                          color: "blue",
-                        }}
-                      >
-                        {t("3")}{t("PLACE_OF_BIRTH")}:{" "}
-                        {certificate?.["JAU9NM7UqQP"] || ""}
-                      </div>{" "}
-                      {/* dob 0th index */}
-                    </div>
-
-                    <div
-                      style={{ ...borderBlack, marginBottom: "4px 6px" }}
-                    ></div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "6px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "50%",
-                          paddingBottom: 4,
-                          color: "blue",
-                        }}
-                    >
-                        {t("2")}{t("DATE_AND_TIME_OF_BIRTH")}:
-                        {certificate?.["zAetLzp3cT1"]} {" "} {certificate?.["uOK1Wcm91NB"] || ""}
-                      </div>{" "}
-                      {/* gender - 2 index */}
-                      {/* <div style={{ width: "50%", color: 'blue' }}>4. Place of Birth: {certificate?.["JAU9NM7UqQP"] || ""}</div> 4 index */}
-                    </div>
-                  </div>
-                </div>
-                <div style={borderGray}></div>
-              </div>
-
-              {/* Particular of Father */}
-              <div>
-                <div style={{ display: "flex" }}>
-                  <div style={styles.leftColumn}>
-                    {t("PATICULAR_OF_FATHER")}
-                  </div>
-                  <div style={{ width: "75%" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "4px 6px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "50%",
-                          paddingBottom: 4,
-                          color: "blue",
-                        }}
-                      >
-                        {t("4")}{t("NAME")}: {certificate?.["RKs8td9BnNj"] || ""}
-                      </div>{" "}
-                      {/*  5 index */}
-                      <div
-                        style={{
-                          width: "50%",
-                          paddingBottom: 4,
-                          color: "blue",
-                        }}
-                      >
-                        {t("7")}{t("RELIGION")}: {certificate?.["m4b4SSlipKJ"] || ""}
-                      </div>{" "}
-                      {/*  8 index */}
-                    </div>
-                    <div style={{ ...borderBlack, marginBottom: "4px" }}></div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "4px 6px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "50%",
-                          paddingBottom: 4,
-                          color: "blue",
-                        }}
-                      >
-                        {t("5")}{t("RACE")}: {certificate?.["mIRVmCzC7Tt"] || ""}
-                      </div>{" "}
-                      {/*  6 index */}
-                      <div
-                        style={{
-                          width: "50%",
-                          paddingBottom: 4,
-                          color: "blue",
-                        }}
-                      >
-                        {t("8")}{t("OCCUPATION")}:{" "}
-                        {certificate?.["CjjgDMbqfXX"] || ""}
-                      </div>{" "}
-                      {/*  9 index */}
-                    </div>
-                    <div style={{ ...borderBlack, marginBottom: "4px" }}></div>
-                    <div>
-                      <div
-                        style={{
-                          width: "50%",
-                          padding: "2px 6px",
-                          color: "blue",
-                        }}
-                      >
-                        {t("6")}{t("CITIZENSHIP_AND_NRC")}:{" "}
-                        {getCitizenshipDisplay(certificate["ed2RBrhMhnN"][certificate["ed2RBrhMhnN"]], certificate["YE1wx1a4Ky4"])}
-                      </div>{" "}
-                      {/*  7 index */}
-                    </div>
-                  </div>
-                </div>
-                <div style={borderGray}></div>
-              </div>
-
-              {/* Particular of Mother */}
-              <div>
-                <div style={{ display: "flex" }}>
-                  <div style={styles.leftColumn}>
-                    {t("PARTICULAR_OF_MOTHER")}
-                  </div>
-                  <div style={{ width: "75%" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "4px 6px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "50%",
-                          paddingBottom: 4,
-                          color: "blue",
-                        }}
-                      >
-                        {t("9")}{t("NAME")}: {certificate?.["UYmZMZt32hZ"] || ""}
-                      </div>{" "}
-                      {/*  10 index */}
-                      <div
-                        style={{
-                          width: "50%",
-                          paddingBottom: 4,
-                          color: "blue",
-                        }}
-                      >
-                         {t("12")}{t("RELIGION")}:{" "}
-                        {certificate?.["QsUp6BSb8Du"] || ""}
-                      </div>{" "}
-                      {/*  13 index */}
-                    </div>
-                    <div style={{ ...borderBlack, marginBottom: "4px" }}></div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "2px 6px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "50%",
-                          paddingBottom: 2,
-                          color: "blue",
-                        }}
-                      >
-                        {t("10")}{t("RACE")}: {certificate?.["XFmGvaRAJqP"] || ""}
-                      </div>{" "}
-                      {/*  11 index */}
-                      <div
-                        style={{
-                          width: "50%",
-                          paddingBottom: 4,
-                          color: "blue",
-                        }}
-                      >
-                        {t("13")}{t("OCCUPATION")}:{" "}
-                        {certificate?.["vg5hhREmzXe"] || ""}
-                      </div>{" "}
-                      {/*  14 index */}
-                    </div>
-                    <div style={{ ...borderBlack, marginBottom: "4px" }}></div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "4px 6px",
-                      }}
-                    >
-                      <div style={{ width: "50%", color: "blue" }}>
-                         {t("11")}{t("CITIZENSHIP_AND_NRC")}:{" "}
-                        {getCitizenshipDisplay(dataElements["r8oFvT4PZwL"][certificate["r8oFvT4PZwL"]], certificate["CowkFxAoqnl"])}
-                      </div>{" "}
-                      {/*  12 index */}
-                      <div style={{ width: "50%", color: "blue" }}>
-                        {t("14")}{t("PERMANENT_ADDRESS")}:{" "}
-                        {certificate?.["bVyrfnpCd6i"] || ""}
-                      </div>{" "}
-                      {/*  15 index */}
-                    </div>
-                  </div>
-                </div>
-                <div style={borderGray}></div>
-              </div>
-
-              {/* Particular of person who certify that the child was still born */}
-              <div>
-                <div style={{ display: "flex" }}>
-                  <div style={styles.leftColumn}>
-                    {t("PARTICULAR_OF_PERSON")}
-                  </div>
-                  <div style={{ width: "75%" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "4px 6px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "50%",
-                          paddingBottom: 4,
-                          color: "blue",
-                        }}
-                      >
-                        {t("SIGNATURE")}: {certificate?.[""] || ""}
-                      </div>{" "}
-                      {/*  10 index */}
-                      <div
-                        style={{
-                          width: "50%",
-                          paddingBottom: 4,
-                          color: "blue",
-                        }}
-                      >
-                        {" "}
-                        {t("QUALIFICATION")}: {certificate?.[""] || ""}
-                      </div>{" "}
-                      {/*  13 index */}
-                    </div>
-                    <div style={{ ...borderBlack, marginBottom: "4px" }}></div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "4px 6px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "50%",
-                          paddingBottom: 4,
-                          color: "blue",
-                        }}
-                      >
-                        {t("NAME")}: {certificate?.[""] || ""}
-                      </div>{" "}
-                      {/*  14 index */}
-                    </div>
-                  </div>
-                </div>
-                <div style={borderGray}></div>
-              </div>
-
-              {/* Particular of Informant */}
-              <div>
-                <div style={{ display: "flex" }}>
-                  <div style={styles.leftColumn}>
-                    {t("PARTICULAR_OF_INFORMANT")}
-                  </div>
-                  <div style={{ width: "75%" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "4px 6px",
-                      }}
-                    >
-                      <div style={{ width: "50%", color: "blue" }}>
-                        {" "}
-                        {t("SIGNATURE")}:{" "}
-                        {certificate?.[""] || ""}
-                      </div>
-                      <div style={{ width: "50%", color: "blue" }}>
-                        {" "}
-                        {t("RELATION_TO_CHILD")}:
-                        {certificate?.["eYh3U6sXrTQ"] || ""}{" "}
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        paddingTop: "4px",
-                      }}
-                    >
-                      <div
-                        style={{ width: "50%", padding: "4px", color: "blue" }}
-                      >
-                        {t("NAME")}:{" "}
-                        {certificate?.["YdNUYjH3rct"] || ""}
-                      </div>
-                      <div
-                        style={{ width: "50%", padding: "4px", color: "blue" }}
-                      >
-                        {" "}
-                        {t("ADDRESS")} :
-                        {certificate?.["rRpqp6TPWlh"] || ""}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div style={borderSolid}></div>
-              </div>
-            </div>
-
-            {/* Footer */}
-            <footer
-              style={{
-                breakInside: "avoid",
-                pageBreakInside: "avoid",
-                WebkitColumnBreakInside: "avoid",
-                marginTop: "12px",
-              }}
-            >
-              <div
-                style={{
-                  marginTop: 8,
-                  fontSize: 10,
-                  lineHeight: 1.2,
-                }}
-              >
-                <p
-                  style={{
-                    width: "100%",
-                    color: "blue",
-                    display: "block",
-                    marginBottom: 6,
-                  }}
-                >
-                  {t("STILL_BORN_PARA1_VALIDATION")}
-                </p>
-
-                <p
-                  style={{
-                    width: "100%",
-                    color: "blue",
-                    display: "block",
-                    marginBottom: 10,
-                  }}
-                >
-                  {t("STILL_BORN_PARA2_VALIDATION")}
-                </p>
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  marginTop: 8,
-                  color: "blue",
-                }}
-              >
-                {/* Date of Issue */}
-                <div style={{ minWidth: "22%" }}>
-                  <p
-                    style={{
-                      marginTop: 0,
-                      fontWeight: 600,
-                      fontSize: 10,
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {t("DATE")}
-                    <span
-                      style={{
-                        display: "inline-block",
-                        width: 18,
-                        marginLeft: 6,
-                      }}
-                    >{currentDate}</span>
-                  </p>
-                </div>
-
-                {/* Registration Officer Label */}
-                <div
-                  style={{
-                    minWidth: "22%",
-                    textAlign: "center",
-                    fontSize: 10,
-                    fontWeight: 600,
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {t("REGISTRATION_OFFICER")}
-                </div>
-
-                {/* Registrar’s Signature / Name / Designation */}
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    minWidth: "22%",
-                    maxWidth: "22%",
-                  }}
-                >
-                  {/* Signature */}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      fontWeight: 600,
-                      fontSize: 10,
-                      whiteSpace: "nowrap",
-                      marginBottom: 4,
-                    }}
-                  >
-                    <span style={{ marginRight: 6 }}>
-                      {t("SIGNATURE")}
-                    </span>
-                    <span
-                      style={{
-                        ...borderDotted,
-                        width: "70px",
-                        display: "inline-block",
-                      }}
-                    ></span>
-                  </div>
-
-                  {/* Name */}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      fontWeight: 600,
-                      fontSize: 10,
-                      whiteSpace: "nowrap",
-                      marginBottom: 4,
-                    }}
-                  >
-                    <span style={{ marginRight: 6 }}>
-                      {t("NAME")}
-                    </span>
-                    <span
-                      style={{
-                        ...borderDotted,
-                        width: "70px",
-                        display: "inline-block",
-                      }}
-                    >{certificate?.["B1QxOlRIEVk"]}</span>
-                  </div>
-
-                  {/* Designation */}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      fontWeight: 600,
-                      fontSize: 10,
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    <span style={{ marginRight: 6 }}>
-                      {t("DESIGNATION")}
-                    </span>
-                    <span
-                      style={{
-                        ...borderDotted,
-                        width: "70px",
-                        display: "inline-block",
-                      }}
-                    >{certificate?.["qsIjbrXLBL5"]}</span>
-                  </div>
-                </div>
-              </div>
-            </footer>
-          </section>
         </div>
-      </main>
+        <div id="main" style={{ marginLeft: "0.4cm", width: "19.8cm"}}>
+          <div id="header">
+            <div id="top" style={{marginTop: "1cm", marginBottom: "0.5cm", display: "grid", gridTemplateColumns: "auto 1fr"}}>
+              <div>{t("VR_153")}</div>
+              <div style={{justifySelf: "center", fontWeight: "bold"}}>
+                  {t("LATE_FOETAL_DEATH_CERTIFICATE")}
+              </div>
+            </div>
+            <div id="bottom" style={{display:"flex"}}>
+              <div id="first" style={{width:"10.5cm", heigth: "2.55cm"}}>
+                <div>{t("STATE_REGION")}: <span>{orgUnit?.ancestors?.[1].name || ""}</span></div>
+                <div>
+                  <span style={{width:"3.85cm"}}>{t("DISTRICT")}: <span>{orgUnit?.ancestors?.[2].name || ""}</span></span>
+                  <span>{t("TOWNSHIP")}: <span>{orgUnit?.ancestors?.[3].name || ""}</span></span>
+                </div>
+                <div>{t("BIRTH_AND_DEATH_REGISTRATION_PLACE")}: <span> {orgUnit.name || ""} </span></div>
+              </div>
+              {/* <div id="qr-client">
+                {url ? <img src={url} alt="qr-code.svg" height={50} width={50}/> : null}
+              </div> */}
+              <div id="second">
+                <div>{t("BOOK_NUMBER")} <span> {certificate?.["l0Pm3ydZ2om"] || ""} </span></div>
+                <div>{t("PAGE_NUMBER")} <span> {certificate?.["PS99q9IRjKy"] || ""} </span></div>
+                <div>{t("ENTRY_NUMBER")} <span> {certificate?.["MrtKbjcsHnk"] || ""} </span></div>
+                <div>{t("DATE_OF_REGISTRATION")} <span> {certificate?.["JAU9NM7UqQP"] || ""} </span></div>
+              </div>
+            </div>
+          </div>
+          <div id="main-content">
+            <div style={{display: "flex", height: "2.05cm", borderTop: "2px solid blue", borderBottom: "2px solid blue"}}>
+              <div style={{display: "flex", flexShrink: "0", width: "10.4cm"}}>
+                <div style={{width: "3.15cm", flexShrink: "0", borderRight: "2px solid blue", textAlign:"center"}}>{<Trans i18nKey="PARTICULARS_OF_CHILD" />}</div>
+                <div style={{width: "100%"}}>
+                  <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("1")} {t("SEX")}: <span>{certificate?.["wxrDsUO1ELy"] || ""}</span></div>
+                  <div style={{height: "0.6cm", borderBottom: "2px dotted blue"}}></div>
+                  <div><span style={{marginLeft: "0.3cm"}}></span> {t("2")} {t("DATE_AND_TIME_OF_BIRTH")}: <span> {certificate?.["zAetLzp3cT"] || ""} {certificate?.["uOK1Wcm91NB"] || ""}</span></div>
+                </div>
+              </div>  
+              <div style={{width: "100%"}}>
+                <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("3")} {t("PLACE_OF_BIRTH")}: <span>{certificate?.["JAU9NM7UqQP"] || ""}</span></div>
+                <div style={{height: "0.6cm", borderBottom: "2px dotted blue"}}></div>
+                <div style={{height: "0.6cm"}}></div>
+              </div>
+            </div>
+            <div style={{display: "flex", height: "2cm", borderBottom: "2px solid blue"}}>
+              <div style={{display:"flex", flexShrink: "0", width: "10.4cm"}}>
+                <div style={{width: "3.15cm", flexShrink: "0", borderRight: "2px solid blue", textAlign:"center"}}>{<Trans i18nKey="PARTICULAR_OF_FATHER" />}</div>
+                <div style={{width: "100%"}}>
+                  <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("4")} {t("NAME")}: <span>{certificate?.["RKs8td9BnNj"] || ""}</span></div>
+                  <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("5")} {t("RACE")}: <span>{certificate?.["mIRVmCzC7Tt"] || ""}</span></div>
+                  <div><span style={{marginLeft: "0.3cm"}}></span> {t("6")} {t("CITIZENSHIP_AND_NRC")}: 
+                    <span>
+                        {getCitizenshipDisplay(
+                          certificate["ed2RBrhMhnN"],
+                          certificate["Fwa7gEzjZAH"],
+                          certificate["YE1wx1a4Ky4"]
+                        )}
+                    </span>
+                  </div>
+                </div>
+                </div>
+              <div style={{width: "100%"}}>
+                <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("7")} {t("RELIGION")}: <span>{certificate?.["m4b4SSlipKJ"] || ""}</span></div>
+                <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("8")} {t("OCCUPATION")}:<span>{certificate?.["CjjgDMbqfXX"] || ""}</span></div>
+              </div>        
+            </div>
+            <div style={{display: "flex", height: "2cm", borderBottom: "2px solid blue"}}>
+              <div style={{display: "flex", flexShrink: "0", width: "10.2cm"}}>
+                <div style={{width: "3.15cm", flexShrink: "0", borderRight: "2px solid blue", textAlign:"center"}}>{<Trans i18nKey="PARTICULAR_OF_MOTHER" />}</div>
+                <div style={{width: "100%"}}>
+                  <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("9")} {t("NAME")}: <span>{certificate?.["UYmZMZt32hZ"] || ""}</span></div>
+                  <div style={{borderBottom: "2px dotted blue"}}>{t("10")} {t("RACE")}: <span>{certificate?.["XFmGvaRAJqP"] || ""}</span></div>
+                  <div>{t("11")} {t("CITIZENSHIP_AND_NRC")}: 
+                    <span>
+                      {getCitizenshipDisplay( 
+                        certificate["r8oFvT4PZwL"],
+                        certificate["M8pvzjPdija"],
+                        certificate["CowkFxAoqnl"]
+                      )}
+                    </span>
+                  </div>
+                </div>  
+              </div>
+              <div style={{width: "100%"}}>
+                <div style={{borderBottom: "2px dotted blue"}}>{t("12")} {t("RELIGION")}:<span>{certificate?.["bVyrfnpCd6i"] || ""}</span></div>
+                <div style={{borderBottom: "2px dotted blue"}}>{t("13")} {t("OCCUPATION")}:<span>{certificate?.["vg5hhREmzXe"] || ""}</span></div>
+                <div>{t("14")} {t("PERMANENT_ADDRESS")}:<span>{certificate?.["bVyrfnpCd6i"] || ""}</span></div>
+              </div>
+            </div>
+            <div style={{display: "flex",  flexShrink: "0",height: "1.95cm", borderBottom: "2px solid blue"}}>
+              <div style={{display: "flex", flexShrink: "0", width: "11.2cm"}}>
+                <div style={{width: "3.15cm", flexShrink: "0", borderRight: "2px solid blue", textAlign:"center"}}>{<Trans i18nKey="PARTICULAR_OF_PERSON" />}</div>
+                <div style={{width: "100%"}}>
+                  <div style={{ height: "0.9cm", width: "8cm", display: "flex", alignItems: "flex-end", borderBottom: "2px dotted blue"}}><span style={{marginLeft: "1cm"}}></span>{t("SIGNATURE")}: <span></span></div>
+                  <div style={{ height: "0.9cm", width: "8cm", display: "flex", alignItems: "flex-end"}}><span style={{marginLeft: "1cm"}}></span>{t("NAME")}: <span></span></div>
+                </div>
+              </div>
+              <div style={{width: "100%"}}>
+                <div style={{ height: "0.9cm", display: "flex", alignItems: "flex-end", borderBottom: "2px dotted blue"}}>{t("QUALIFICATION")}: <span></span></div>
+              </div>
+            </div>
+            <div style={{display: "flex",  flexShrink: "0",height: "1.75cm", borderBottom: "2px solid blue"}}>
+              <div style={{display: "flex", flexShrink: "0", width: "11.2cm"}}>
+                <div style={{width: "3.15cm", flexShrink: "0", borderRight: "2px solid blue", textAlign:"center"}}>{<Trans i18nKey="PARTICULAR_OF_INFORMANT" />}</div>
+                <div style={{width: "100%"}}>
+                  <div style={{ height: "0.9cm", display: "flex", alignItems: "flex-end", borderBottom: "2px dotted blue"}}><span style={{marginLeft: "1cm"}}></span>{t("SIGNATURE")}: <span></span></div>
+                  <div style={{ height: "0.9cm", display: "flex", alignItems: "flex-end"}}><span style={{marginLeft: "1cm"}}></span>{t("NAME")}: <span>{certificate?.["YdNUYjH3rct"] || ""}</span></div>
+                </div>
+              </div>
+              <div style={{width: "100%", height: "0.9cm",borderBottom: "2px dotted blue"}}>
+                <div style={{ height: "0.9cm", display: "flex", alignItems: "flex-end", borderBottom: "2px dotted blue"}}>{t("RELATION_TO_CHILD")}: <span>{certificate?.["eYh3U6sXrTQ"] || ""}</span></div>
+                <div style={{ height: "0.9cm", display: "flex", alignItems: "flex-end"}}>{t("ADDRESS")}: <span>{certificate?.["rRpqp6TPWlh"]}</span></div>
+              </div>
+            </div>
+          </div>
+          <div id="footer">
+            <div style={{height: "3.35", width: "19.8cm"}}>
+              <div style={{wordSpacing: "16px"}}><span style={{ paddingRight: "1.5cm"}}></span>{t("STILL_BORN_PARA1_VALIDATION")}</div>
+              <div style={{wordSpacing: "16px"}}><span style={{paddingRight: "1.5cm"}}></span>{t("STILL_BORN_PARA2_VALIDATION")}</div>
+            </div>
+            <div style={{height: "1.9cm, width: 19.8cm", display:"flex", justifyContent:"space-between"}}>
+              <div>{t("DATE")} <span>{currentDate}</span></div>
+              <div>{t("REGISTRATION_OFFICER")}</div>
+
+              <div>
+                <div>{t("SIGNATURE")} <span></span></div>
+                <div>{t("NAME")} <span> {certificate?.["B1QxOlRIEVk"]} </span></div>
+                <div>{t("DESIGNATION")} <span> {certificate?.["qsIjbrXLBL5"]} </span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     {showModal && (
@@ -1295,6 +480,7 @@ const LateFoetalDeathCert = ({ orgUnit, orgUnits, dataElements }) => {
         Certificate issued successfully
       </div>
     )}
+    </div>
     </>
   );
 };

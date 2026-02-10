@@ -12,6 +12,11 @@ export default class DataApi {
     const endPoint = '/api/tracker/events.json';
     return get(this.baseUrl, this.username, this.password, endPoint, param, paging);
   }
+
+  fetchEvent = (event) => {
+    const endPoint = `/api/tracker/events/${event}.json`;
+    return get(this.baseUrl, this.username, this.password, endPoint, '', '');
+  }
   
   fetchOrgUnits = (param, paging) => {
     const endPoint = '/api/organisationUnits.json';

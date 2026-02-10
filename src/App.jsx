@@ -9,7 +9,7 @@ import DeathCertificate from "./routes/DeathCertificate";
 import { useState, useEffect } from "react";
 import LateFoetalDeathRecord from "./routes/LateFoetalDeathRecord";
 import LateFoetalDeathCert from "./routes/lateFoetalDeathCert";
-import { InitialQuery } from "./components/constants";
+import { InitialQuery } from "./constants";
 import api from "./api";
 import './i18n'
 
@@ -76,7 +76,6 @@ function AppContent() {
           </div>)
         }
         
-        <div className={styles.main}>
           <Routes>
           <Route path="/" element={<Navigate to="/born-alive" replace />} />
           <Route path="/born-alive" element={<BirthRecords orgUnit={orgUnit} status={'Live Birth'}/>} />
@@ -87,8 +86,6 @@ function AppContent() {
           <Route path="/late-Foetal-death-certificate" element={<LateFoetalDeathCert orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits} dataElements={dataElements}/>} />
           <Route path="*" element={<Navigate to="/born-alive" replace />} />
         </Routes>
-
-        </div>
       </div>
   );
 }

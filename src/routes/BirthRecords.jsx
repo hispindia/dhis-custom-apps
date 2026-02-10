@@ -137,10 +137,10 @@
     
   
 
-    if(loading) return <div>Loading...</div>
+    if(loading) return <div className={`${styles.card} ${styles.main}`}> Loading... </div>
 
     return (
-     <div className={styles.card}>
+     <div className={`${styles.card} ${styles.main}`}>
       <h3> Birth Certificate Records</h3>
       <table>
       <thead>
@@ -173,7 +173,7 @@
       <button
         style={{ width: "60px", height: "28px", background: "#BFF4B", border:"1px solid green", borderRadius: "10%" }}
         onClick={() => {
-          navigate("/birth-certificate", { state: { record } })
+          navigate({pathname: "/birth-certificate", search: `?birth=${record.event}`})
           i18n.changeLanguage('br');
         }}
       >
@@ -182,7 +182,7 @@
       <button
         style={{ width: "60px", height: "28px",background: "#ADD8E6", border:"1px solid green", borderRadius: "10%" }}
         onClick={() => {
-          navigate("/birth-certificate", { state: { record } })
+          navigate({pathname: "/birth-certificate", search: `?birth=${record.event}`})
           i18n.changeLanguage('en');
         }}
       >

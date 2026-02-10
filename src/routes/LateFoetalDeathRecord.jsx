@@ -132,11 +132,11 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
         }));
     }
  
-  if(loading) return <div>Loading...</div>
+  if(loading) return <div className={`${styles.card} ${styles.main}`}>Loading...</div>
 
   return (
     <>
-      <div className={styles.card}>
+      <div className={`${styles.card} ${styles.main}`}>
         <h3>Still Birth Certificate Records</h3>
         
       <table>
@@ -168,7 +168,7 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
                     <button
                       style={{ width: "60px", height: "28px", background: "#BFF4B", border:"1px solid green", borderRadius: "10%" }}
                       onClick={() => {
-                        navigate("/late-Foetal-death-certificate", { state: { record } })
+                        navigate({pathname: "/late-Foetal-death-certificate", search: `?stillbirth=${record.event}`})
                         i18n.changeLanguage('br');
                       }}
                     >
@@ -177,7 +177,7 @@ const LateFoetalDeathRecord = ({orgUnit, status}) => {
                     <button
                       style={{ width: "60px", height: "28px",background: "#ADD8E6", border:"1px solid green", borderRadius: "10%" }}
                       onClick={() => {
-                        navigate("/late-Foetal-death-certificate", { state: { record } })
+                        navigate({pathname: "/late-Foetal-death-certificate", search: `?stillbirth=${record.event}`})
                         i18n.changeLanguage('en');
                       }}
                     >
