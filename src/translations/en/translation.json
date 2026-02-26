@@ -83,6 +83,8 @@
     "SIGNATURE": "Signature",
     "SEX": "Sex",
     "SIGNATURE_OF_ISSUING_PERSON": "Signature of issuing person",
+    "DEATH_PARA1_VALIDATION": "အထက်ဖော်ပြပါကလေးသည် ဖော်ပြပါဒေသနှင့် အချိန်တွင်  အမှန်အသေမွေးဖွားပြီး ကျွန်ုပ်၏ လက်ဝယ်တွင် အထက်ပါဒေသအတွက် တရားဝင်ထားရှိသည့် အသေမွေး မှတ်ပုံတင်စာအုပ်၌ အမှတ်စဉ် ----------------ဖြင့် မှတ်ပုံတင်ပြီးကြောင်း သက်သေခံလက်မှတ် ရေးထိုးလိုက်သည်။",
+    "DEATH_PARA2_VALIDATION": "ဤသက်သေခံလက်မှတ်တွင် (၁) အကြောင်းအရာ လိမ်လည်ထည့်သွင်းသောသူ (၂) လိမ်လည်ထားမှန်းသိလျှက်နှင့် အမှန်ကဲ့သို့ အသုံးပြုသော သူများအား တရားစွဲဆိုလိမ့်မည်။",
     "STILL_BORN_PARA1_VALIDATION": "I, the undersigned, do hereby certify that the above mentioned child was still born at the time and place mentioned above and registered with the Entry No. ------------------------------------------------ in the Late Foetal Death which is in my legal custody.",
     "STILL_BORN_PARA2_VALIDATION": "Any person who (1 ) falsifies any of the particulars on this certificate or (2) uses it as true, knowing it to be false is liable to prosecution.",
     "TOWNSHIP": "Township",

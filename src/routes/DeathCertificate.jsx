@@ -14,8 +14,6 @@ const DeathCertificate = () => {
   const [options, setOptions] = useState({});
   const [orgUnit, setOrgUnit] = useState({});
 
-    const [showModal, setShowModal] = useState(false);
-    const [reason, setReason] = useState("");
     const [issueCount, setIssueCount] = useState(0);
     const [showToast, setShowToast] = useState(false);
     const [hideBackArrow, setHideBackArrow] = useState(false);
@@ -38,11 +36,15 @@ const DeathCertificate = () => {
       .then(setUrl)
       .catch(console.error);
       const fetchEvents = async() => {
-        const resOptions = await api.fetchOthers("/api/optionSets/FYXoXlEZXae.json", ["fields=options[id,name,code]"]);
-        if(resOptions.options) {
+        const resOptions = await api.fetchOthers("/api/optionSets.json", ["fields=options[id,name,code,translations]", "filter=id:in:[mRAsObydjNZ,xYdFirocaSj,bc2tQPU8ogy,MDNwHnWn2Ik,pUN5lFHkUu6,YNtzjFwAJVU,G5ojzNPIyxf,fgAaYvqGZqY,MJG9doiGtjX]"]);
+        if(resOptions.optionSets) {
           const options = {};
-          resOptions.options.forEach(option => {
-            options[option.code] = option.name;
+          resOptions.optionSets.forEach(optionSet => {
+            optionSet.options.forEach(option => {
+              var lang = {};
+              option.translations.forEach(translation => lang[translation.locale] = translation.value);
+              options[option.code] = lang?.['my'] || option.name;
+            })
           })
           setOptions(options);
         }
@@ -51,6 +53,11 @@ const DeathCertificate = () => {
         if(resEvent) {
           const event = {};
           resEvent.dataValues.forEach(dv => event[dv.dataElement] = dv.value);
+          event['event'] = resEvent.event;
+          event['orgUnit'] = resEvent.orgUnit;
+          event['occurredAt'] = resEvent.occurredAt;
+          event['program'] = resEvent.program;
+          event['programStage'] = resEvent.programStage;
           const issueCount = event["UlMXHCJhyNZ"] ? Number(event["UlMXHCJhyNZ"]) : 0;
           setCertificate(event);
           setIssueCount(issueCount);
@@ -121,14 +128,11 @@ const DeathCertificate = () => {
         }
     };
 
-  const updateEventInDHIS2 = async(issueCount, reason) => {
+  const updateEventInDHIS2 = async(issueCount) => {
     console.log(certificate);
     const dataValues = [];
     if(issueCount) {
       dataValues.push({ dataElement: "UlMXHCJhyNZ", value: issueCount })
-    }
-    if(reason) {
-      dataValues.push({dataElement: "ofuG4AdYrY1", value: reason })
     }
     const payload = {
       events: [{
@@ -144,29 +148,15 @@ const DeathCertificate = () => {
   };
 
   const handleIssueClick = async () => {
-    if(issueCount > 0) setShowModal(true);
-    else {
       const count = issueCount+1;
       setIssueCount(count);
       await updateEventInDHIS2(count);
       handleDownloadPDF();
-    }
-  }
-
-  const handleSubmitReason = async() => {
-    // console.log('reason', reason);
-    setShowModal(false);
-    const count = issueCount+1;
-    setIssueCount(count);
-    await updateEventInDHIS2(count, reason);
-    setReason(""); 
-    handleDownloadPDF();
   }
 
   const handlePrint = () => {
       window.print();
   };
-
 
     if (!certificate) return <div>No certificate data found.</div>;
 
@@ -174,24 +164,23 @@ const DeathCertificate = () => {
   <>
       <style>
         {`
-        @page {
-          size: A4 landscape;
-          margin: 0;
+        @page { 
+          size: 28.9cm 20.9cm;
         }
 
         @media print {
           .no-print {
             display: none;
           }
-          body {
-            margin: 0;
+
+          div {
+            visibility: visible;
+          }
+          
+          div span {
+            visibility: visible;
           }
         }
-
-  #certificate {
-    display: flex;
-    justify-content: flex-end; /* push content right */
-  }
     `}
       </style>
     <div
@@ -209,18 +198,19 @@ const DeathCertificate = () => {
       <div className="no-print" style={{ textAlign: "right" }}>
         <button
           onClick={handleIssueClick}
+          disabled={issueCount > 0}
           style={{
               padding: "8px 16px",
               background: "#1976d2",
               color: "#fff",
               border: "none",
               borderRadius: 4,
-              cursor: "pointer",
               fontWeight: "bold",
-              marginRight: "2px"
+              marginRight: "2px",
+              cursor: issueCount > 0 ? "not-allowed" : "pointer",
           }}
         >
-          Issue Certificate {issueCount > 0 && `(${issueCount})`}
+          Issue Certificate
         </button>
         <button
           onClick={handlePrint}
@@ -238,11 +228,11 @@ const DeathCertificate = () => {
       <div 
         ref={pdfRef}
         id="certificate"
-        style={{display:"flex", fontSize: "3mm", color: "black", marginRight: "0.5cm", justifyContent: "flex-end"}}
+        style={{display:"flex", fontSize: "3mm", color: "black", paddingLeft: "1cm", marginTop: "0", justifyContent: "flex-end"}}
       >
         <div id="aside" style={{width:"6.85cm",paddingRight: "1.05cm", borderRight:"2px dotted black", }}>
-            <p style={{display: "flex",justifyContent: "center", alignItems: "center", fontWeight: "bold"}}> 
-              <ArrowBackIcon style={{ color: 'white', border:"2px solid #A9A9A9", borderRadius: "40px", background: "#A9A9A9", marginRight: "5px", cursor: "pointer"}} className="no-print" onClick={() => navigate(-1)} /> 
+            <p style={{display: "flex", alignItems: "center", fontWeight: "bold"}}> 
+             {!hideBackArrow  && <ArrowBackIcon style={{ color: 'white', border:"2px solid #A9A9A9", borderRadius: "40px", background: "#A9A9A9", marginRight: "5px", cursor: "pointer"}} className="no-print" onClick={() => navigate(-1)} />} 
               {t("DEATH_CERTIFICATE_COUNTERFOIL")}
             </p>
             <div style={{height: "1.1cm"}}>{t("VR_203")}</div>
@@ -252,17 +242,17 @@ const DeathCertificate = () => {
             <div style={{height: "2.7cm"}}>{t("PLACE_OF_REGISTRATION")} <span> {orgUnit?.name} </span></div>
             <div style={{height: "0.9cm"}}>{t("DATE_OF_REGISTRATION")} <span> {certificate?.["occurblackAt"] || ""} </span></div>
             <div style={{height: "0.9cm"}}>{t("NAME_OF_DECEASED")} <span> {certificate?.["YdNUYjH3rct"] || ""} </span></div>
-            <div style={{height: "0.9cm"}}>{t("PLACE_OF_DEATH")} <span>{certificate?.["MOV6uMBMkph"] || ""} </span></div>
-            <div style={{height: "1.2cm"}}>{t("CAUSE_OF_DEATH")} <span> {certificate?.["nQy5xQrOMXj"] || ""} </span> </div>
-            <div style={{height: "0.9cm"}}>{t("SIGNATURE_OF_ISSUING_PERSON")} <span>__________</span></div>
-            <div style={{height: "0.9cm"}}>{t("NAME_OF_ISSUING_PERSON")} <span>__________</span></div>
+            <div style={{height: "0.9cm"}}>{t("PLACE_OF_DEATH")} <span>{options[certificate?.["MOV6uMBMkph"]] || ""} </span></div>
+            <div style={{height: "1.2cm"}}>{t("CAUSE_OF_DEATH")} <span> {options[certificate?.["nQy5xQrOMXj"]] || ""} </span> </div>
+            <div style={{height: "0.9cm"}}>{t("SIGNATURE_OF_ISSUING_PERSON")} <span></span></div>
+            <div style={{height: "0.9cm"}}>{t("NAME_OF_ISSUING_PERSON")} <span></span></div>
             <div style={{height: "0.9cm"}}>{t("DATE_OF_ISSUE")} <span> {currentDate} </span></div>
             <div id="qr-user">
               {url ? <img src={url} alt="qr-code.svg" /> : null}
             </div>
         </div>
         <div id="main" style={{ marginLeft: "0.4cm", width: "19.2cm"}}>
-          <div id="header">
+          <div id="header" style={{height: "4.5cm"}}>
             <div id="top" style={{display: "grid", gridTemplateColumns: "auto 1fr", height:"1cm"}}>
               <div>{t("VR_203")}</div>
               <div style={{justifySelf: "center", fontWeight: "bold"}}>
@@ -295,14 +285,14 @@ const DeathCertificate = () => {
             <div style={{display:"flex"}}>
               <div style={{width: "9.5cm", flexShrink: "0"}}>
                 <div style={{height: "0.7cm", borderBottom: "1px solid black"}}>{t("1")} {t("NAME")} <span>{certificate?.["aTbE3kYe98D"] || ""}</span></div>
-                <div style={{height: "0.7cm", borderBottom: "1px solid black"}}>{t("2")} {t("GENDER")} <span>{certificate?.["wxrDsUO1ELy"] || ""}</span></div>
-                <div style={{height: "0.7cm", borderBottom: "1px solid black"}}>{t("3")} {t("DATE_AND_TIME_OF_DEATH")} <span>{certificate?.["jGGNvNYhu47"] || ""}{certificate?.["VldUFL2RpDz"] || ""}</span></div>
-                <div style={{height: "0.7cm", borderBottom: "1px solid black"}}>{t("4")} {t("PLACE_OF_DEATH")} <span>{certificate?.["MOV6uMBMkph"] || ""}</span></div>
+                <div style={{height: "0.7cm", borderBottom: "1px solid black"}}>{t("2")} {t("GENDER")} <span>{options[certificate?.["wxrDsUO1ELy"]] || ""}</span></div>
+                <div style={{height: "0.7cm", borderBottom: "1px solid black"}}>{t("3")} {t("DATE_AND_TIME_OF_DEATH")} <span>{certificate?.["jGGNvNYhu47"] || ""} {certificate?.["VldUFL2RpDz"] || ""}</span></div>
+                <div style={{height: "0.7cm", borderBottom: "1px solid black"}}>{t("4")} {t("PLACE_OF_DEATH")} <span>{options[certificate?.["MOV6uMBMkph"]] || ""}</span></div>
                 <div style={{height: "0.7cm", borderBottom: "1px solid black"}}>{t("5")} {t("AGE")} <span>{getAgeDisplay(certificate?.[""])}</span></div>
                 <div style={{height: "0.7cm"}}>{t("6")} {t("OCCUPATION")} <span>{certificate?.["s3wKlMmBs8p"]}</span></div>
               </div>
               <div style={{width:"100%"}}>
-                <div style={{height: "0.7cm", borderBottom: "1px solid black"}}>{t("7")} {t("RACE")} <span>{certificate?.["b9BVo7x8248"] || ""}</span></div>
+                <div style={{height: "0.7cm", borderBottom: "1px solid black"}}>{t("7")} {t("RACE")} <span>{options[certificate?.["b9BVo7x8248"]] || ""}</span></div>
                 <div style={{height: "0.7cm", borderBottom: "1px solid black"}}>{t("8")} {t("CITIZENSHIP_AND_NRC")} <span>
                   {getCitizenshipDisplay(
                     certificate["JB1wN0sieDP"],  
@@ -311,8 +301,8 @@ const DeathCertificate = () => {
                     )}
                   </span>
                 </div>
-                <div style={{height: "0.7cm", borderBottom: "1px solid black"}}>{t("9")} {t("RELIGION")} <span>{certificate?.["TseVgVwxzx9"] || ""}</span></div>
-                <div style={{height: "0.7cm", borderBottom: "1px solid black"}}>{t("10")} {t("PERMANENT_ADDRESS")} <span>{certificate?.["iXXvJAxbOtd"] || ""}</span></div>
+                <div style={{height: "0.7cm", borderBottom: "1px solid black"}}>{t("9")} {t("RELIGION")} <span>{options[certificate?.["TseVgVwxzx9"]] || ""}</span></div>
+                <div style={{height: "0.7cm", borderBottom: "1px solid black"}}>{t("10")} {t("PERMANENT_ADDRESS")} <span>{certificate?.["iXXvJAxbOtd"] ? (certificate?.["iXXvJAxbOtd"].split(',').map(addr => (options[addr] || addr)).join(',')) : ""}</span></div>
                 <div style={{height: "0.7cm", borderBottom: "1px solid black"}}>{t("11")} {t("NAME_OF_FATHER_DECEASED")} <span>{certificate?.["OpzRl6KIFVU"] || ""}</span></div>
                 <div style={{height: "0.7cm"}}>{t("12")} {t("NAME_OF_MOTHER_DECEASED")} <span>{certificate?.["xHcmoS3icZD"]}</span></div>
               </div>
@@ -361,57 +351,6 @@ const DeathCertificate = () => {
         </div>
       </div>
     </div>
-
-    {showModal && (
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(0,0,0,0.45)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 9999,
-        }}
-      >
-        <div
-          style={{
-            background: "#fff",
-            padding: "24px 28px",
-            borderRadius: 10,
-            width: 360,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center'
-          }}
-        >
-          <h3>Please provide the reason</h3>
-
-          <textarea
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-            placeholder="Enter your reason..."
-            style={{
-              width: "100%",
-              height: 90,
-              padding: 10,
-              borderRadius: 6,
-              border: "1px solid #ccc",
-              marginBottom: 12,
-            }}
-          />
-
-          <Button 
-            color="primary"
-            variant="contained" 
-            disabled= {!reason ? true: false} 
-            onClick={handleSubmitReason}
-            >
-            Submit
-            </Button>
-        </div>
-      </div>
-    )}
 
     {/* TOAST */}
     {showToast && (

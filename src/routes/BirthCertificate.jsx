@@ -46,11 +46,15 @@ const BirthCertificate = () => {
       .catch(console.error);
 
       const fetchEvents = async() => {
-        const resOptions = await api.fetchOthers("/api/optionSets/FYXoXlEZXae.json", ["fields=options[id,name,code]"]);
-        if(resOptions.options) {
+        const resOptions = await api.fetchOthers("/api/optionSets.json", ["fields=options[id,name,code,translations]", "filter=id:in:[mRAsObydjNZ,bc2tQPU8ogy,xYdFirocaSj,pUN5lFHkUu6,FYXoXlEZXae,bc2tQPU8ogy,YNtzjFwAJVU,G5ojzNPIyxf,fgAaYvqGZqY,MJG9doiGtjX]"]);
+        if(resOptions.optionSets) {
           const options = {};
-          resOptions.options.forEach(option => {
-            options[option.code] = option.name;
+          resOptions.optionSets.forEach(optionSet => {
+            optionSet.options.forEach(option => {
+              var lang = {};
+              option.translations.forEach(translation => lang[translation.locale] = translation.value);
+              options[option.code] = lang?.['my'] || option.name;
+            })
           })
           setOptions(options);
         }
@@ -59,6 +63,12 @@ const BirthCertificate = () => {
         if(resEvent) {
           const event = {};
           resEvent.dataValues.forEach(dv => event[dv.dataElement] = dv.value);
+          event['event'] = resEvent.event;
+          event['orgUnit'] = resEvent.orgUnit;
+          event['occurredAt'] = resEvent.occurredAt;
+          event['program'] = resEvent.program;
+          event['programStage'] = resEvent.programStage;
+          
           const issueCount = event["UlMXHCJhyNZ"] ? Number(event["UlMXHCJhyNZ"]) : 0;
           setCertificate(event);
           setIssueCount(issueCount);
@@ -166,7 +176,6 @@ const BirthCertificate = () => {
         {`
         @page {
           size: A4 landscape;
-          margin: 0;
         }
 
         @media print {
@@ -175,17 +184,12 @@ const BirthCertificate = () => {
           }
 
           div {
-            box-sizing: border-box; 
+            visibility: hidden;
           }
-
-          body {
-            margin: 0;
+          
+          div span {
+            visibility: visible;
           }
-        }
-
-        #certificate {
-          display: flex;
-          justify-content: flex-end; /* push content right */
         }
     `}
       </style>
@@ -237,11 +241,11 @@ const BirthCertificate = () => {
       <div 
         ref={pdfRef}
         id="certificate"
-        style={{display:"flex", fontSize: "3mm", color: "red", marginRight: "0.5cm", justifyContent: "flex-end"}}
+        style={{display:"flex", justifyContent: "flex-end", fontSize: "3mm", color: "red", marginRight: "0.5cm"}}
       >
         <div id="aside" style={{width:"7.05cm", borderRight:"2px dotted red", }}>
             <p style={{display: "flex", alignItems: "center", fontWeight: "bold", height: "1.2cm"}}> 
-              <ArrowBackIcon style={{ color: 'white', border:"2px solid #A9A9A9", borderRadius: "40px", background: "#A9A9A9", marginRight: "5px", cursor: "pointer"}} className="no-print" onClick={() => navigate(-1)}/> 
+              {!hideBackArrow  && <ArrowBackIcon style={{ color: 'white', border:"2px solid #A9A9A9", borderRadius: "40px", background: "#A9A9A9", marginRight: "5px", cursor: "pointer"}} className="no-print" onClick={() => navigate(-1)}/>}
               {t("BIRTH_CERTIFICATE_COUNTERFOIL")} 
             </p>
             <div style={{height: "1cm"}}>{t("VR_103")}</div>
@@ -251,20 +255,31 @@ const BirthCertificate = () => {
             <div>{t("PLACE_OF_REGISTRATION")} <span> {orgUnit?.name} </span></div>
             <div>{t("DATE_OF_REGISTRATION")} <span> {certificate?.["occurredAt"] || ""} </span></div>
             <div>{t("Name_of_child")} <span> {certificate?.["R43kdns3YYL"] || ""} </span></div>
-            <div>{t("SEX")} <span> {certificate?.["R43kdns3YYL"] || ""} </span></div>
+            <div>{t("SEX")} <span> {options[certificate?.["wxrDsUO1ELy"]] || ""} </span></div>
             <div>{t("PLACE_OF_BIRTH")} <span> {certificate?.["JAU9NM7UqQP"] || ""} </span> </div>
             <div>{t("DATE_AND_TIME_OF_BIRTH")} <span>{certificate?.["zAetLzp3cT1"] || ""} {certificate?.["uOK1Wcm91NB"] || ""} </span></div>
             <div>{t("NAME_OF_FATHER")} <span>{certificate?.["RKs8td9BnNj"] || ""}</span></div>
             <div>{t("NAME_OF_MOTHER")}<span> {certificate?.["UYmZMZt32hZ"] || ""} </span></div>
-            <div>{t("PERMANENT_ADDRESS")} <span> {certificate?.["bVyrfnpCd6i"] || ""} </span></div>
-            <div>{t("SIGNATURE_OF_ISSUING_PERSON")} <span>__________</span></div>
-            <div>{t("NAME_OF_ISSUING_PERSON")} <span>__________</span></div>
+            <div>{t("PERMANENT_ADDRESS")} <span> {certificate?.["bVyrfnpCd6i"] ? (certificate?.["bVyrfnpCd6i"].split(',').map(addr => (options[addr] || addr)).join(',')) : ""} </span></div>
+            <div>{t("SIGNATURE_OF_ISSUING_PERSON")} <span></span></div>
+            <div>{t("NAME_OF_ISSUING_PERSON")} <span></span></div>
             <div>{t("DATE_OF_ISSUE")} <span> {currentDate} </span></div>
             <div id="qr-user">
               {url ? <img src={url} alt="qr-code.svg" /> : null}
             </div>
         </div>
         <div id="main" style={{ marginLeft: "0.4cm", width: "19.9cm"}}>
+          {
+            issueCount > 0 ? 
+            (<div style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%) rotate(-30deg)",
+            fontSize: "100px",
+            opacity: 0.12,
+            }}> Duplicate </div>): ''
+          }
           <div id="header">
             <div id="top" style={{height:"2.15cm", display:"flex", textAlign:"center"}}>
 
@@ -307,13 +322,13 @@ const BirthCertificate = () => {
                 <div style={{width: "3.3cm", flexShrink: "0", borderRight: "2px solid red", textAlign: "center"}}>{<Trans i18nKey="PARTICULARS_OF_CHILD" />}</div>
                 <div style={{width: "100%"}}>
                   <div style={{borderBottom: "2px dotted red"}}>{t("1")} {t("Name_of_child")}: <span>{certificate?.["R43kdns3YYL"] || ""}</span></div>
-                  <div style={{borderBottom: "2px dotted red"}}>{t("2")} {t("SEX")}: <span>{certificate?.["wxrDsUO1ELy"] || ""}</span></div>
+                  <div style={{borderBottom: "2px dotted red"}}>{t("2")} {t("SEX")}: <span>{options[certificate?.["wxrDsUO1ELy"]] || ""}</span></div>
                   <div style={{height: "0.6cm"}}></div>
                 </div>
               </div>  
               <div style={{width: "100%"}}>
-                <div style={{borderBottom: "2px dotted red"}}>{t("3")} {t("DATE_AND_TIME_OF_BIRTH")}: <span> {certificate?.["JAU9NM7UqQP"] || ""}</span></div>
-                <div style={{borderBottom: "2px dotted red"}}>{t("4")} {t("PLACE_OF_BIRTH")}: <span>{certificate?.["JAU9NM7UqQP"] || ""}</span></div>
+                <div style={{borderBottom: "2px dotted red"}}>{t("3")} {t("DATE_AND_TIME_OF_BIRTH")}: <span> {certificate?.["zAetLzp3cT1"] || ""} {certificate?.["uOK1Wcm91NB"] || ""}</span></div>
+                <div style={{borderBottom: "2px dotted red"}}>{t("4")} {t("PLACE_OF_BIRTH")}: <span>{options[certificate?.["JAU9NM7UqQP"]] || ""}</span></div>
                 <div style={{height: "0.6cm"}}></div>
               </div>
             </div>
@@ -322,7 +337,7 @@ const BirthCertificate = () => {
                 <div style={{width: "3.3cm", flexShrink: "0", borderRight: "2px solid red", textAlign: "center"}}>{<Trans i18nKey="PARTICULAR_OF_FATHER" />}</div>
                 <div style={{width: "100%"}}>
                   <div style={{borderBottom: "2px dotted red"}}>{t("5")} {t("NAME")}: <span>{certificate?.["RKs8td9BnNj"] || ""}</span></div>
-                  <div style={{borderBottom: "2px dotted red"}}>{t("6")} {t("RACE")}: <span>{certificate?.["mIRVmCzC7Tt"] || ""}</span></div>
+                  <div style={{borderBottom: "2px dotted red"}}>{t("6")} {t("RACE")}: <span>{options[certificate?.["mIRVmCzC7Tt"]] || ""}</span></div>
                   <div>{t("7")} {t("CITIZENSHIP_AND_NRC")}: 
                     <span>
                         {getCitizenshipDisplay(
@@ -335,7 +350,7 @@ const BirthCertificate = () => {
                 </div>
                 </div>
               <div style={{width: "100%"}}>
-                <div style={{borderBottom: "2px dotted red"}}>{t("8")} {t("RELIGION")}: <span>{certificate?.["m4b4SSlipKJ"] || ""}</span></div>
+                <div style={{borderBottom: "2px dotted red"}}>{t("8")} {t("RELIGION")}: <span>{options[certificate?.["m4b4SSlipKJ"]] || ""}</span></div>
                 <div style={{borderBottom: "2px dotted red"}}>{t("9")} {t("OCCUPATION")}:<span>{certificate?.["CjjgDMbqfXX"] || ""}</span></div>
               </div>        
             </div>
@@ -344,7 +359,7 @@ const BirthCertificate = () => {
                 <div style={{width: "3.3cm", flexShrink: "0", borderRight: "2px solid red", textAlign: "center"}}>{<Trans i18nKey="PARTICULAR_OF_MOTHER" />}</div>
                 <div style={{width: "100%"}}>
                   <div style={{borderBottom: "2px dotted red"}}>{t("10")} {t("NAME")}: <span>{certificate?.["UYmZMZt32hZ"] || ""}</span></div>
-                  <div style={{borderBottom: "2px dotted red"}}>{t("11")} {t("RACE")}: <span>{certificate?.["XFmGvaRAJqP"] || ""}</span></div>
+                  <div style={{borderBottom: "2px dotted red"}}>{t("11")} {t("RACE")}: <span>{options[certificate?.["XFmGvaRAJqP"]] || ""}</span></div>
                   <div style={{borderBottom: "2px dotted red"}}>{t("12")} {t("CITIZENSHIP_AND_NRC")}: 
                     <span>
                             {getCitizenshipDisplay( 
@@ -357,9 +372,9 @@ const BirthCertificate = () => {
                 </div>  
               </div>
               <div style={{width: "100%"}}>
-                <div style={{borderBottom: "2px dotted red"}}>{t("13")} {t("RELIGION")}:<span>{certificate?.["QsUp6BSb8Du"] || ""}</span></div>
+                <div style={{borderBottom: "2px dotted red"}}>{t("13")} {t("RELIGION")}:<span>{options[certificate?.["QsUp6BSb8Du"]] || ""}</span></div>
                 <div style={{borderBottom: "2px dotted red"}}>{t("14")} {t("OCCUPATION")}:<span>{certificate?.["vg5hhREmzXe"] || ""}</span></div>
-                <div style={{borderBottom: "2px dotted red"}}>{t("15")} {t("PERMANENT_ADDRESS")}:<span>{certificate?.["bVyrfnpCd6i"] || ""}</span></div>
+                <div style={{borderBottom: "2px dotted red"}}>{t("15")} {t("PERMANENT_ADDRESS")}:<span>{certificate?.["bVyrfnpCd6i"] ? (certificate?.["bVyrfnpCd6i"].split(',').map(addr => (options[addr] || addr)).join(',')) : ""}</span></div>
               </div>
             </div>
             <div style={{display: "flex",  flexShrink: "0",height: "1.35cm", borderBottom: "2px solid red"}}>

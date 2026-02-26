@@ -20,7 +20,7 @@
       if(!orgUnit || !status) return;
       setLoading(true);
 
-      return await api.fetchEvents([`program=cUjoGJK4gPL`, `orgUnit=${orgUnit.id}`], {filter: `seXQ3F3kY3x:eq:${status}`})
+      api.fetchEvents([`program=cUjoGJK4gPL`, `orgUnit=${orgUnit.id}`, `filter=seXQ3F3kY3x:eq:${status}`], {})
         .then(res => {      
               const records = res.events.map(event => {
                 const record = {

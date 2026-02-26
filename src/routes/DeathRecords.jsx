@@ -6,13 +6,14 @@ import { TablePagination, TextField } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useTranslation } from "react-i18next";
 
-const DeathRecords = ({orgUnit, dataElements}) => {
+const DeathRecords = ({orgUnit}) => {
   
   const [certificate, setCertificate] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showField, setShowField] = useState(null);
+  const [options, setOptions] = useState({});
 
   const { i18n } = useTranslation();
 
@@ -22,8 +23,21 @@ const DeathRecords = ({orgUnit, dataElements}) => {
     const fetchEvents = async () => {
       if(!orgUnit) return;
       setLoading(true);
-
-      return await api.fetchEvents([`program=TXuxHniKS6l`, `orgUnit=${orgUnit.id}`])
+        
+      const resOptions = await api.fetchOthers("/api/optionSets.json", ["fields=options[id,name,code,translations]", "filter=id:in:[MDNwHnWn2Ik]"]);
+        if(resOptions.optionSets) {
+          const options = {};
+          resOptions.optionSets.forEach(optionSet => {
+            optionSet.options.forEach(option => {
+              var lang = {};
+              option.translations.forEach(translation => lang[translation.locale] = translation.value);
+              options[option.code] = lang?.['my'] || option.name;
+            })
+          })
+          setOptions(options);
+        }
+        
+      api.fetchEvents([`program=TXuxHniKS6l`, `orgUnit=${orgUnit.id}`])
           .then(res => {     
             const records = res.events.map(event => {
             const record = {
@@ -170,7 +184,7 @@ const DeathRecords = ({orgUnit, dataElements}) => {
               <td>{record["KFGxB6wpRxi"] || ""}</td>  {/* age */}
               <td>{record["wCN9fWzFtKE"] || ""}</td>  {/* nrc full =*/}
               <td>{record["iXXvJAxbOtd"] || ""}</td>  {/*permanent address */} 
-              <td>{(dataElements['nQy5xQrOMXj'] && dataElements['nQy5xQrOMXj'][record["nQy5xQrOMXj"]]) ? dataElements['nQy5xQrOMXj'][record["nQy5xQrOMXj"]] : ""}</td>   {/* cause of death */} 
+              <td>{options[record["nQy5xQrOMXj"]] || ""}</td>   {/* cause of death */} 
                  <td>
                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                   <i>Generate Certificate</i>

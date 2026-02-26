@@ -16,7 +16,6 @@ const LateFoetalDeathCert = () => {
 
   const pdfRef = useRef();
   const { t } = useTranslation();
-  const orgUnitObj = {};
   const [showModal, setShowModal] = useState(false);
   const [reason, setReason] = useState("");
   const [issueCount, setIssueCount] = useState(0);
@@ -44,11 +43,15 @@ const LateFoetalDeathCert = () => {
       .then(setUrl)
       .catch(console.error);
       const fetchEvents = async() => {
-        const resOptions = await api.fetchOthers("/api/optionSets/FYXoXlEZXae.json", ["fields=options[id,name,code]"]);
-        if(resOptions.options) {
+        const resOptions = await api.fetchOthers("/api/optionSets.json", ["fields=options[id,name,code,translations]", "filter=id:in:[mRAsObydjNZ,bc2tQPU8ogy,xYdFirocaSj,pUN5lFHkUu6,FYXoXlEZXae,bc2tQPU8ogy,YNtzjFwAJVU,G5ojzNPIyxf,fgAaYvqGZqY,MJG9doiGtjX]"]);
+        if(resOptions.optionSets) {
           const options = {};
-          resOptions.options.forEach(option => {
-            options[option.code] = option.name;
+          resOptions.optionSets.forEach(optionSet => {
+            optionSet.options.forEach(option => {
+              var lang = {};
+              option.translations.forEach(translation => lang[translation.locale] = translation.value);
+              options[option.code] = lang?.['my'] || option.name;
+            })
           })
           setOptions(options);
         }
@@ -57,6 +60,12 @@ const LateFoetalDeathCert = () => {
         if(resEvent) {
           const event = {};
           resEvent.dataValues.forEach(dv => event[dv.dataElement] = dv.value);
+          event['event'] = resEvent.event;
+          event['orgUnit'] = resEvent.orgUnit;
+          event['occurredAt'] = resEvent.occurredAt;
+          event['program'] = resEvent.program;
+          event['programStage'] = resEvent.programStage;
+
           const issueCount = event["UlMXHCJhyNZ"] ? Number(event["UlMXHCJhyNZ"]) : 0;
           setCertificate(event);
           setIssueCount(issueCount);
@@ -145,7 +154,7 @@ const LateFoetalDeathCert = () => {
         program: certificate.program,
         orgUnit: certificate.orgUnit,
         programStage: certificate.programStage,
-        occurblueAt: certificate.occurblueAt,
+        occurredAt: certificate.occurredAt,
         dataValues
       }]
     };
@@ -192,17 +201,14 @@ const LateFoetalDeathCert = () => {
           .no-print {
             display: none;
           }
-          * {
-            padding: 0;
-            margin: 0;
-          }
+
           div {
-            box-sizing: border-box; 
+            visibility: hidden;
           }
-        }
-        #certificate {
-          display: flex;
-          justify-content: flex-end; /* push content right */
+          
+          div span {
+            visibility: visible;
+          }
         }
       `}
       </style>
@@ -251,11 +257,11 @@ const LateFoetalDeathCert = () => {
       <div 
         ref={pdfRef}
         id="certificate"
-        style={{display:"flex", fontSize: "3mm", color: "blue", marginRight: "0.5cm", justifyContent: "flex-end"}}
+        style={{display:"flex", fontSize: "3mm", color: "blue", marginRight: "0.3cm", justifyContent: "flex-end"}}
       >
         <div id="aside" style={{width:"6.25cm", borderRight:"2px dotted blue", }}>
-            <p style={{display: "flex",justifyContent: "center", alignItems: "center", fontWeight: "bold"}}> 
-              <ArrowBackIcon style={{ color: 'white', border:"2px solid #A9A9A9", borderRadius: "40px", background: "#A9A9A9", marginRight: "5px", cursor: "pointer"}} className="no-print" onClick={() => navigate(-1)} /> 
+            <p style={{display: "flex", alignItems: "center", fontWeight: "bold"}}> 
+              {!hideBackArrow  && <ArrowBackIcon style={{ color: 'white', border:"2px solid #A9A9A9", borderRadius: "40px", background: "#A9A9A9", marginRight: "5px", cursor: "pointer"}} className="no-print" onClick={() => navigate(-1)} />}
               {t("LATE_FOETAL_DEATH_CERTIFICATE_COUNTERFOIL")}
             </p>
             <div style={{marginBottom: "0.9cm"}}>{t("VR_153")}</div>
@@ -264,20 +270,31 @@ const LateFoetalDeathCert = () => {
             <div>{t("ENTRY_NUMBER")} <span> {certificate?.["MrtKbjcsHnk"] || ""} </span></div>
             <div style={{height: "2.5cm"}}>{t("PLACE_OF_REGISTRATION")} <span> {orgUnit?.name} </span></div>
             <div>{t("DATE_OF_REGISTRATION")} <span> {certificate?.["occurblueAt"] || ""} </span></div>
-            <div>{t("SEX")} <span> {certificate?.["R43kdns3YYL"] || ""} </span></div>
+            <div>{t("SEX")} <span> {options[certificate?.["wxrDsUO1ELy"]] || ""} </span></div>
             <div>{t("DEATH_OF_BIRTH")} <span>{certificate?.["JAU9NM7UqQP"] || ""} </span></div>
             <div>{t("PLACE_OF_BIRTH")} <span> {certificate?.["JAU9NM7UqQP"] || ""} </span> </div>
             <div>{t("NAME_OF_FATHER")} <span>{certificate?.["RKs8td9BnNj"] || ""}</span></div>
             <div>{t("NAME_OF_MOTHER")}<span> {certificate?.["UYmZMZt32hZ"] || ""} </span></div>
-            <div>{t("ADDRESS")} <span> {certificate?.["bVyrfnpCd6i"] || ""} </span></div>
-            <div>{t("SIGNATURE_OF_ISSUING_PERSON")} <span>__________</span></div>
-            <div>{t("NAME_OF_ISSUING_PERSON")} <span>__________</span></div>
+            <div>{t("ADDRESS")} <span> {certificate?.["bVyrfnpCd6i"] ? (certificate?.["bVyrfnpCd6i"].split(',').map(addr => (options[addr] || addr)).join(',')) : ""} </span></div>
+            <div>{t("SIGNATURE_OF_ISSUING_PERSON")} <span></span></div>
+            <div>{t("NAME_OF_ISSUING_PERSON")} <span></span></div>
             <div>{t("DATE_OF_ISSUE")} <span> {currentDate} </span></div>
             <div id="qr-user">
               {url ? <img src={url} alt="qr-code.svg" /> : null}
             </div>
         </div>
         <div id="main" style={{ marginLeft: "0.4cm", width: "19.8cm"}}>
+          {
+            issueCount > 0 ? 
+            (<div style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%) rotate(-30deg)",
+            fontSize: "100px",
+            opacity: 0.12,
+            }}> Duplicate </div>): ''
+          }
           <div id="header">
             <div id="top" style={{marginTop: "1cm", marginBottom: "0.5cm", display: "grid", gridTemplateColumns: "auto 1fr"}}>
               <div>{t("VR_153")}</div>
@@ -310,13 +327,13 @@ const LateFoetalDeathCert = () => {
               <div style={{display: "flex", flexShrink: "0", width: "10.4cm"}}>
                 <div style={{width: "3.15cm", flexShrink: "0", borderRight: "2px solid blue", textAlign:"center"}}>{<Trans i18nKey="PARTICULARS_OF_CHILD" />}</div>
                 <div style={{width: "100%"}}>
-                  <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("1")} {t("SEX")}: <span>{certificate?.["wxrDsUO1ELy"] || ""}</span></div>
+                  <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("1")} {t("SEX")}: <span>{options[certificate?.["wxrDsUO1ELy"]] || ""}</span></div>
                   <div style={{height: "0.6cm", borderBottom: "2px dotted blue"}}></div>
                   <div><span style={{marginLeft: "0.3cm"}}></span> {t("2")} {t("DATE_AND_TIME_OF_BIRTH")}: <span> {certificate?.["zAetLzp3cT"] || ""} {certificate?.["uOK1Wcm91NB"] || ""}</span></div>
                 </div>
               </div>  
               <div style={{width: "100%"}}>
-                <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("3")} {t("PLACE_OF_BIRTH")}: <span>{certificate?.["JAU9NM7UqQP"] || ""}</span></div>
+                <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("3")} {t("PLACE_OF_BIRTH")}: <span>{options[certificate?.["JAU9NM7UqQP"]] || ""}</span></div>
                 <div style={{height: "0.6cm", borderBottom: "2px dotted blue"}}></div>
                 <div style={{height: "0.6cm"}}></div>
               </div>
@@ -326,7 +343,7 @@ const LateFoetalDeathCert = () => {
                 <div style={{width: "3.15cm", flexShrink: "0", borderRight: "2px solid blue", textAlign:"center"}}>{<Trans i18nKey="PARTICULAR_OF_FATHER" />}</div>
                 <div style={{width: "100%"}}>
                   <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("4")} {t("NAME")}: <span>{certificate?.["RKs8td9BnNj"] || ""}</span></div>
-                  <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("5")} {t("RACE")}: <span>{certificate?.["mIRVmCzC7Tt"] || ""}</span></div>
+                  <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("5")} {t("RACE")}: <span>{options[certificate?.["mIRVmCzC7Tt"]]  || ""}</span></div>
                   <div><span style={{marginLeft: "0.3cm"}}></span> {t("6")} {t("CITIZENSHIP_AND_NRC")}: 
                     <span>
                         {getCitizenshipDisplay(
@@ -339,7 +356,7 @@ const LateFoetalDeathCert = () => {
                 </div>
                 </div>
               <div style={{width: "100%"}}>
-                <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("7")} {t("RELIGION")}: <span>{certificate?.["m4b4SSlipKJ"] || ""}</span></div>
+                <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("7")} {t("RELIGION")}: <span>{options[certificate?.["m4b4SSlipKJ"]] || ""}</span></div>
                 <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("8")} {t("OCCUPATION")}:<span>{certificate?.["CjjgDMbqfXX"] || ""}</span></div>
               </div>        
             </div>
@@ -348,7 +365,7 @@ const LateFoetalDeathCert = () => {
                 <div style={{width: "3.15cm", flexShrink: "0", borderRight: "2px solid blue", textAlign:"center"}}>{<Trans i18nKey="PARTICULAR_OF_MOTHER" />}</div>
                 <div style={{width: "100%"}}>
                   <div style={{borderBottom: "2px dotted blue"}}><span style={{marginLeft: "0.3cm"}}></span> {t("9")} {t("NAME")}: <span>{certificate?.["UYmZMZt32hZ"] || ""}</span></div>
-                  <div style={{borderBottom: "2px dotted blue"}}>{t("10")} {t("RACE")}: <span>{certificate?.["XFmGvaRAJqP"] || ""}</span></div>
+                  <div style={{borderBottom: "2px dotted blue"}}>{t("10")} {t("RACE")}: <span>{options[certificate?.["XFmGvaRAJqP"]] || ""}</span></div>
                   <div>{t("11")} {t("CITIZENSHIP_AND_NRC")}: 
                     <span>
                       {getCitizenshipDisplay( 
@@ -361,9 +378,9 @@ const LateFoetalDeathCert = () => {
                 </div>  
               </div>
               <div style={{width: "100%"}}>
-                <div style={{borderBottom: "2px dotted blue"}}>{t("12")} {t("RELIGION")}:<span>{certificate?.["bVyrfnpCd6i"] || ""}</span></div>
+                <div style={{borderBottom: "2px dotted blue"}}>{t("12")} {t("RELIGION")}:<span>{options[certificate?.["QsUp6BSb8Du"]] || ""}</span></div>
                 <div style={{borderBottom: "2px dotted blue"}}>{t("13")} {t("OCCUPATION")}:<span>{certificate?.["vg5hhREmzXe"] || ""}</span></div>
-                <div>{t("14")} {t("PERMANENT_ADDRESS")}:<span>{certificate?.["bVyrfnpCd6i"] || ""}</span></div>
+                <div>{t("14")} {t("PERMANENT_ADDRESS")}:<span>{certificate?.["bVyrfnpCd6i"] ? (certificate?.["bVyrfnpCd6i"].split(',').map(addr => (options[addr] || addr)).join(',')) : ""}</span></div>
               </div>
             </div>
             <div style={{display: "flex",  flexShrink: "0",height: "1.95cm", borderBottom: "2px solid blue"}}>
