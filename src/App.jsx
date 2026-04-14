@@ -53,9 +53,9 @@ function AppContent() {
         
           <Routes>
           <Route path="/" element={<Navigate to="/born-alive" replace />} />
-          <Route path="/born-alive" element={<BirthRecords orgUnit={orgUnit} status={'Live-Birth'}/>} />
+          <Route path="/born-alive" element={<BirthRecords orgUnit={orgUnit} status={'Live Birth'}/>} />
           <Route path="/death" element={<DeathRecords orgUnit={orgUnit} />} />
-          <Route path="/still-born" element={<LateFoetalDeathRecord orgUnit={orgUnit} status={'Still birth'}/>} />
+          <Route path="/still-born" element={<LateFoetalDeathRecord orgUnit={orgUnit} status={'Stillbirth'}/>} />
           <Route path="/birth-certificate" element={<BirthCertificate orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits} />} />
           <Route path="/death-certificate" element={<DeathCertificate orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits} />} />
           <Route path="/late-Foetal-death-certificate" element={<LateFoetalDeathCert orgUnit={orgUnit} userOrgunit={userOrgunit} orgUnits={orgUnits} />} />

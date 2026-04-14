@@ -5,93 +5,123 @@ import { Trans, useTranslation } from "react-i18next";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import api from "../api";
 import { Button } from "@mui/material";
-import QrCode  from "qrcode";
+import QrCode from "qrcode";
 import { NUMBERS } from "../constants";
 
 const BirthCertificate = () => {
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState("");
   const [certificate, setCertificate] = useState({});
   const [options, setOptions] = useState({});
   const [orgUnit, setOrgUnit] = useState({});
 
   const { t } = useTranslation();
   const pdfRef = useRef();
-  
+
   const [showModal, setShowModal] = useState(false);
   const [reason, setReason] = useState("");
   const [issueCount, setIssueCount] = useState(0);
   const [showToast, setShowToast] = useState(false);
   const [hideBackArrow, setHideBackArrow] = useState(false);
-  const currentDate = new Date().toLocaleDateString("en-GB");
+  const currentDate = (() => {
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const yyyy = d.getFullYear();
+    return `${dd}-${mm}-${yyyy}`;
+  })();
 
   const navigate = useNavigate();
 
   const { search } = useLocation();
   const event = new URLSearchParams(search).get("birth");
-  // if(!event) return;
 
   useEffect(() => {
-    if(event) {
-      const default_url = `https://hmistraining.mm.dhis2.net/train/api/apps/Birth-Death-Certificate/index.html#/birth-certificate?birth=${event}`
-      QrCode.toDataURL(default_url,{
+    if (event) {
+      const default_url = `https://hmistraining.mm.dhis2.net/train/api/apps/Birth-Death-Certificate/index.html#/birth-certificate?birth=${event}`;
+      QrCode.toDataURL(default_url, {
         width: 200,
         margin: 1,
         errorCorrectionLevel: "H",
         color: {
-          dark: "#ff0000",   // QR dots (red)
-          light: "#ffffff", // background (white)
+          dark: "#cc0000",
+          light: "#ffffff",
         },
       })
-      .then(setUrl)
-      .catch(console.error);
+        .then(setUrl)
+        .catch(console.error);
 
-      const fetchEvents = async() => {
-        const resOptions = await api.fetchOthers("/api/optionSets.json", ["fields=options[id,name,code,translations]", "filter=id:in:[mRAsObydjNZ,bc2tQPU8ogy,xYdFirocaSj,pUN5lFHkUu6,FYXoXlEZXae,bc2tQPU8ogy,YNtzjFwAJVU,G5ojzNPIyxf,fgAaYvqGZqY,MJG9doiGtjX]"]);
-        if(resOptions.optionSets) {
-          const options = {};
-          resOptions.optionSets.forEach(optionSet => {
-            optionSet.options.forEach(option => {
+      const fetchEvents = async () => {
+        const resOptions = await api.fetchOthers("/api/optionSets.json", [
+          "fields=options[id,name,code,translations]",
+          "filter=id:in:[mRAsObydjNZ,bc2tQPU8ogy,xYdFirocaSj,pUN5lFHkUu6,FYXoXlEZXae,bc2tQPU8ogy,YNtzjFwAJVU,G5ojzNPIyxf,fgAaYvqGZqY,MJG9doiGtjX]",
+        ]);
+        if (resOptions.optionSets) {
+          const opts = {};
+          resOptions.optionSets.forEach((optionSet) => {
+            optionSet.options.forEach((option) => {
               var lang = {};
-              option.translations.forEach(translation => lang[translation.locale] = translation.value);
-              options[option.code] = lang?.['my'] || option.name;
-            })
-          })
-          setOptions(options);
+              option.translations.forEach(
+                (translation) =>
+                  (lang[translation.locale] = translation.value)
+              );
+              opts[option.code] = lang?.["my"] || option.name;
+            });
+          });
+          setOptions(opts);
         }
 
         const resEvent = await api.fetchEvent(event);
-        if(resEvent) {
-          const event = {};
-          resEvent.dataValues.forEach(dv => event[dv.dataElement] = dv.value);
-          event['event'] = resEvent.event;
-          event['orgUnit'] = resEvent.orgUnit;
-          event['occurredAt'] = resEvent.occurredAt;
-          event['program'] = resEvent.program;
-          event['programStage'] = resEvent.programStage;
-          
-          const issueCount = event["UlMXHCJhyNZ"] ? Number(event["UlMXHCJhyNZ"]) : 0;
-          setCertificate(event);
-          setIssueCount(issueCount);
-          let orgUnit = await api.fetchOrgUnits([`fields=id,name,path,ancestors[id,name]`, `filter=id:eq:${resEvent.orgUnit}`]);       
-          setOrgUnit(orgUnit.organisationUnits[0])
+        if (resEvent) {
+          const ev = {};
+          resEvent.dataValues.forEach((dv) => (ev[dv.dataElement] = dv.value));
+          ev["event"] = resEvent.event;
+          ev["orgUnit"] = resEvent.orgUnit;
+          ev["occurredAt"] = resEvent.occurredAt;
+          ev["program"] = resEvent.program;
+          ev["programStage"] = resEvent.programStage;
+
+          const ic = ev["UlMXHCJhyNZ"] ? Number(ev["UlMXHCJhyNZ"]) : 0;
+          setCertificate(ev);
+          setIssueCount(ic);
+          let ou = await api.fetchOrgUnits([
+            `fields=id,name,path,ancestors[id,name]`,
+            `filter=id:eq:${resEvent.orgUnit}`,
+          ]);
+          setOrgUnit(ou.organisationUnits[0]);
         }
-      }
+      };
       fetchEvents();
     }
-  }, [event])
+  }, [event]);
 
   const getCitizenshipDisplay = (citizenShip, nrc, passport) => {
-    if(passport) return passport;
-    var element = '';
-    if(citizenShip) element += options[citizenShip];
-    if(nrc) {
-      element = `, ${nrc.replace(/\d/g, digit => NUMBERS[digit])}`;
+    if (passport) return passport;
+    var element = "";
+    if (citizenShip) element += options[citizenShip];
+    if (nrc) {
+      element = `${nrc.replace(/\d/g, (digit) => NUMBERS[digit])}`;
     }
     return element;
   };
-  
+
+  // Format an ISO date / plain date string (e.g. "2026-04-13T00:00:00.000" or "2026-04-13") to "DD-MM-YYYY"
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    const datePart = String(dateStr).split("T")[0].split(" ")[0];
+    const parts = datePart.split("-");
+    if (parts.length !== 3) return dateStr;
+    const [y, m, d] = parts;
+    return `${d}-${m}-${y}`;
+  };
+
+  // Format date + time → "DD-MM-YYYY HH:MM"
+  const formatDateTime = (dateStr, timeStr) => {
+    const d = formatDate(dateStr);
+    const t = timeStr ? String(timeStr).trim() : "";
+    return t ? `${d} ${t}` : d;
+  };
+
   const updateEventInDHIS2 = async (issueCount, reason) => {
-    console.log(certificate);
     const dataValues = [];
     if (issueCount) {
       dataValues.push({ dataElement: "UlMXHCJhyNZ", value: issueCount });
@@ -116,16 +146,15 @@ const BirthCertificate = () => {
 
   const handleDownloadPDF = async () => {
     setHideBackArrow(true);
-
     if (pdfRef.current) {
-      let newCount = issueCount + 1;
-      const options = {
-        margin: [0.315, 0, 0, 0], // [top, right, bottom, left] in inches (0.8cm)
+      const opts = {
+        margin: 0,
         filename: "Birth Certificate.pdf",
-        image: { type: "jpeg", quality: 0.95 },
+        image: { type: "jpeg", quality: 0.98 },
         html2canvas: {
           scale: 2,
           useCORS: true,
+          letterRendering: true,
         },
         jsPDF: {
           orientation: "landscape",
@@ -134,7 +163,7 @@ const BirthCertificate = () => {
         },
       };
       html2pdf()
-        .set(options)
+        .set(opts)
         .from(pdfRef.current)
         .save()
         .then(async () => {
@@ -156,7 +185,6 @@ const BirthCertificate = () => {
   };
 
   const handleSubmitReason = async () => {
-    // console.log('reason', reason);
     setShowModal(false);
     const count = issueCount + 1;
     setIssueCount(count);
@@ -164,257 +192,902 @@ const BirthCertificate = () => {
     setReason("");
     handleDownloadPDF();
   };
+
   const handlePrint = () => {
-      window.print();
+    window.print();
   };
 
   if (!certificate) return <div>No certificate data found.</div>;
 
+  /* ── shared style fragments ── */
+  const S = {
+    color: "#b71c1c",
+    border: "1px solid #b71c1c",
+    borderDot: "1px dashed #b71c1c",
+    fs: "7.5pt",
+    fsSm: "7pt",
+    fsXs: "6.5pt",
+    fsLg: "9pt",
+    bold: { fontWeight: 700 },
+  };
+
+  const permanentAddress = certificate?.["bVyrfnpCd6i"]
+    ? certificate["bVyrfnpCd6i"]
+        .split(",")
+        .map((addr) => options[addr] || addr)
+        .join(", ")
+    : "";
+
   return (
     <>
-      <style>
-        {`
+      {/* ── print & page styles ── */}
+      <style>{`
         @page {
           size: A4 landscape;
+          margin: 0;
         }
-
         @media print {
-          .no-print {
-            display: none;
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 297mm !important;
+            height: 210mm !important;
+            max-height: 210mm !important;
+            overflow: hidden !important;
+            background: #fff !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
           }
-
-          div {
-            visibility: hidden;
+          .cert-wrapper {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #fff !important;
+            min-height: 0 !important;
+            height: auto !important;
+            overflow: hidden !important;
           }
-          
-          div span {
-            visibility: visible;
+          .no-print { display: none !important; }
+          header,
+          [class*="headerbar"],
+          [class*="HeaderBar"],
+          [data-test*="headerbar"],
+          .dhis2-ui-headerbar,
+          .jsx-headerbar {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+          }
+          .cert-page {
+            margin: 0 !important;
+            padding: 3mm 4mm 2mm 4mm !important;
+            box-shadow: none !important;
+            page-break-inside: avoid !important;
+            page-break-after: avoid !important;
+            overflow: hidden !important;
+            width: 297mm !important;
+            height: 210mm !important;
+            max-height: 210mm !important;
           }
         }
-    `}
-      </style>
-      <div 
-      style={{
-          background: "#fff",
-          padding: "22px"
-      }}>
-      <div
-        style={{
-          // padding: "16px",
-          fontFamily: "sans-serif",
-          width: "100%",
+        @media screen {
+          .cert-page {
+            box-shadow: 0 1px 8px rgba(0,0,0,0.12);
+            margin: 12px auto;
+          }
+        }
+      `}</style>
 
-        }}
-      >
-        <div className="no-print" style={{ textAlign: "right" }}>
+      <div className="cert-wrapper" style={{ background: "#f5f5f5", minHeight: "100vh", padding: "0" }}>
+        {/* ── toolbar ── */}
+        <div
+          className="no-print"
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            gap: 8,
+            padding: "10px 24px",
+            background: "#fff",
+            borderBottom: "1px solid #ddd",
+          }}
+        >
+          {!hideBackArrow && (
+            <button
+              onClick={() => navigate(-1)}
+              style={{
+                marginRight: "auto",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+                color: "#555",
+                fontSize: "14px",
+              }}
+            >
+              <ArrowBackIcon style={{ fontSize: 20 }} /> Back
+            </button>
+          )}
           <button
             onClick={handleIssueClick}
             style={{
-              padding: "8px 16px",
-              background: "#1976d2",
+              padding: "8px 20px",
+              background: "#1565c0",
               color: "#fff",
               border: "none",
               borderRadius: 4,
               cursor: "pointer",
-              fontWeight: "bold",
+              fontWeight: 600,
+              fontSize: "13px",
             }}
           >
             Issue Certificate {issueCount > 0 && `(${issueCount})`}
           </button>
-
-          {/* PRINT BUTTON */}
           <button
             onClick={handlePrint}
             style={{
-              padding: "8px 12px",
-              background: "#d32f2f",
+              padding: "8px 20px",
+              background: "#c62828",
               color: "#fff",
               border: "none",
-              marginRight: "8px",
+              borderRadius: 4,
               cursor: "pointer",
-              fontWeight: "bold",
+              fontWeight: 600,
+              fontSize: "13px",
             }}
           >
             Print
           </button>
         </div>
-      <div 
-        ref={pdfRef}
-        id="certificate"
-        style={{display:"flex", justifyContent: "flex-end", fontSize: "3mm", color: "red", marginRight: "0.5cm"}}
-      >
-        <div id="aside" style={{width:"7.05cm", borderRight:"2px dotted red", }}>
-            <p style={{display: "flex", alignItems: "center", fontWeight: "bold", height: "1.2cm"}}> 
-              {!hideBackArrow  && <ArrowBackIcon style={{ color: 'white', border:"2px solid #A9A9A9", borderRadius: "40px", background: "#A9A9A9", marginRight: "5px", cursor: "pointer"}} className="no-print" onClick={() => navigate(-1)}/>}
-              {t("BIRTH_CERTIFICATE_COUNTERFOIL")} 
-            </p>
-            <div style={{height: "1cm"}}>{t("VR_103")}</div>
-            <div>{t("BOOK_NUMBER")} <span> {certificate?.["l0Pm3ydZ2om"] || ""} </span></div>
-            <div>{t("PAGE_NUMBER")} <span> {certificate?.["PS99q9IRjKy"] || ""} </span></div>
-            <div>{t("ENTRY_NUMBER")} <span> {certificate?.["MrtKbjcsHnk"] || ""} </span></div>
-            <div>{t("PLACE_OF_REGISTRATION")} <span> {orgUnit?.name} </span></div>
-            <div>{t("DATE_OF_REGISTRATION")} <span> {certificate?.["occurredAt"] || ""} </span></div>
-            <div>{t("Name_of_child")} <span> {certificate?.["R43kdns3YYL"] || ""} </span></div>
-            <div>{t("SEX")} <span> {options[certificate?.["wxrDsUO1ELy"]] || ""} </span></div>
-            <div>{t("PLACE_OF_BIRTH")} <span> {certificate?.["JAU9NM7UqQP"] || ""} </span> </div>
-            <div>{t("DATE_AND_TIME_OF_BIRTH")} <span>{certificate?.["zAetLzp3cT1"] || ""} {certificate?.["uOK1Wcm91NB"] || ""} </span></div>
-            <div>{t("NAME_OF_FATHER")} <span>{certificate?.["RKs8td9BnNj"] || ""}</span></div>
-            <div>{t("NAME_OF_MOTHER")}<span> {certificate?.["UYmZMZt32hZ"] || ""} </span></div>
-            <div>{t("PERMANENT_ADDRESS")} <span> {certificate?.["bVyrfnpCd6i"] ? (certificate?.["bVyrfnpCd6i"].split(',').map(addr => (options[addr] || addr)).join(',')) : ""} </span></div>
-            <div>{t("SIGNATURE_OF_ISSUING_PERSON")} <span></span></div>
-            <div>{t("NAME_OF_ISSUING_PERSON")} <span></span></div>
-            <div>{t("DATE_OF_ISSUE")} <span> {currentDate} </span></div>
-            <div id="qr-user">
-              {url ? <img src={url} alt="qr-code.svg" /> : null}
-            </div>
-        </div>
-        <div id="main" style={{ marginLeft: "0.4cm", width: "19.9cm"}}>
-          {
-            issueCount > 0 ? 
-            (<div style={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%) rotate(-30deg)",
-            fontSize: "100px",
-            opacity: 0.12,
-            }}> Duplicate </div>): ''
-          }
-          <div id="header">
-            <div id="top" style={{height:"2.15cm", display:"flex", textAlign:"center"}}>
 
-              {/* <div id="qr-client">
-                {url ? <img src={url} alt="qr-code.svg" heigth={70} width={70}/> : null}
-              </div> */}
-              <div>
-              <div style={{fontWeight: "bold"}}>
-                {t("BIRTH_CERTIFICATE")}
-              </div>
-              <div>
-                {t("THIS_CERTIFICATE_WILL_NOT_BE_PROOF")}
-              </div>
-              </div>
+        {/* ══════════════ A4 LANDSCAPE CERTIFICATE ══════════════ */}
+        <div
+          ref={pdfRef}
+          className="cert-page"
+          style={{
+            width: "297mm",
+            maxHeight: "210mm",
+            height: "210mm",
+            background: "#fff",
+            fontFamily: "'Pyidaungsu', 'Myanmar Text', 'Padauk', sans-serif",
+            fontSize: S.fs,
+            color: S.color,
+            display: "flex",
+            overflow: "hidden",
+            position: "relative",
+            boxSizing: "border-box",
+            padding: "3mm 4mm 2mm 4mm",
+          }}
+        >
+          {/* ── duplicate watermark ── */}
+          {issueCount > 0 && (
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%) rotate(-30deg)",
+                fontSize: "90px",
+                fontWeight: 700,
+                opacity: 0.08,
+                color: S.color,
+                pointerEvents: "none",
+                zIndex: 10,
+                letterSpacing: "12px",
+              }}
+            >
+              DUPLICATE
             </div>
-            <div id="mid">
-              {t("VR_103")}
+          )}
+
+          {/* ╔══════════════════════════════════╗
+             ║   LEFT: COUNTERFOIL              ║
+             ╚══════════════════════════════════╝ */}
+          <div
+            style={{
+              width: "65mm",
+              flexShrink: 0,
+              borderRight: `1.5px dashed ${S.color}`,
+              paddingRight: "3mm",
+              paddingTop: "8mm",
+              display: "flex",
+              flexDirection: "column",
+              fontSize: S.fsSm,
+              lineHeight: 1.45,
+            }}
+          >
+            <div
+              style={{
+                fontWeight: 700,
+                fontSize: S.fsLg,
+                marginBottom: "1mm",
+                lineHeight: 1.2,
+                textAlign: "left",
+              }}
+            >
+              {t("BIRTH_CERTIFICATE_COUNTERFOIL")}
             </div>
-            <div id="bottom" style={{display:"flex"}}>
-              <div id="first" style={{width:"12.1cm", heigth: "2.4cm"}}>
-                <div style={{height: "4mm"}}></div>
-                <div>{t("STATE_REGION")}: <span>{orgUnit?.ancestors?.[1].name || ""}</span></div>
-                <div>
-                  <span style={{width:"3.85cm"}}>{t("DISTRICT")}: <span>{orgUnit?.ancestors?.[2].name || ""}</span></span>
-                  <span>{t("TOWNSHIP")}: <span>{orgUnit?.ancestors?.[3].name || ""}</span></span>
-                </div>
-                <div>{t("BIRTH_AND_DEATH_REGISTRATION_PLACE")}: <span> {orgUnit.name || ""} </span></div>
-              </div>
-              <div id="third">
-                <div>{t("BOOK_NUMBER")} <span> {certificate?.["l0Pm3ydZ2om"] || ""} </span></div>
-                <div>{t("PAGE_NUMBER")} <span> {certificate?.["PS99q9IRjKy"] || ""} </span></div>
-                <div>{t("ENTRY_NUMBER")} <span> {certificate?.["MrtKbjcsHnk"] || ""} </span></div>
-                <div>{t("DATE_OF_REGISTRATION")} <span> {certificate?.["JAU9NM7UqQP"] || ""} </span></div>
-              </div>
+
+            <div style={{ fontWeight: 700, marginBottom: "1mm" }}>
+              <strong>{t("VR_103")}</strong>
+            </div>
+
+            <div>{t("BOOK_NUMBER")} {certificate?.["l0Pm3ydZ2om"] || ""}</div>
+            <div>{t("PAGE_NUMBER")} {certificate?.["PS99q9IRjKy"] || ""}</div>
+            <div>{t("ENTRY_NUMBER")} {certificate?.["MrtKbjcsHnk"] || ""}</div>
+            <div>
+              {t("DATE_OF_REGISTRATION")}{" "}
+              <span style={S.bold}>{formatDate(certificate?.["occurredAt"])}</span>
+            </div>
+            <div>
+              {t("Name_of_child")}{" "}
+              <span style={S.bold}>
+                {certificate?.["R43kdns3YYL"] || ""}
+              </span>
+            </div>
+            <div>
+              {t("SEX")}{" "}
+              {options[certificate?.["wxrDsUO1ELy"]] || ""}
+            </div>
+            <div>
+              {t("DATE_AND_TIME_OF_BIRTH")}{" "}
+              <span style={S.bold}>
+                {formatDateTime(
+                  certificate?.["zAetLzp3cT1"],
+                  certificate?.["uOK1Wcm91NB"]
+                )}
+              </span>
+            </div>
+            <div>
+              {t("PLACE_OF_BIRTH")}{" "}
+              {options[certificate?.["JAU9NM7UqQP"]] || certificate?.["JAU9NM7UqQP"] || ""}
+            </div>
+            <div>
+              {t("NAME_OF_FATHER")}{" "}
+              <span style={S.bold}>
+                {certificate?.["RKs8td9BnNj"] || ""}
+              </span>
+            </div>
+            <div>
+              {t("NAME_OF_MOTHER")}{" "}
+              <span style={S.bold}>
+                {certificate?.["UYmZMZt32hZ"] || ""}
+              </span>
+            </div>
+            <div>
+              {t("PERMANENT_ADDRESS")}{" "}
+              {permanentAddress}
+            </div>
+            <div style={{ marginTop: "2mm" }}>
+              {t("SIGNATURE_OF_ISSUING_PERSON")}
+            </div>
+            <div>{t("NAME_OF_ISSUING_PERSON")}</div>
+            <div>
+              {t("DATE_OF_ISSUE")} {currentDate}
+            </div>
+
+            {/* QR Code - Left */}
+            <div style={{ marginTop: "4mm", textAlign: "center" }}>
+              {url && (
+                <img
+                  src={url}
+                  alt="QR Code"
+                  style={{ width: "24mm", height: "24mm" }}
+                />
+              )}
             </div>
           </div>
-          <div id="main-content">
-            <div style={{display: "flex", height: "1.95cm", borderTop: "2px solid red", borderBottom: "2px solid red"}}>
-              <div style={{display: "flex",flexShrink: "0", width: "10.9cm"}}>
-                <div style={{width: "3.3cm", flexShrink: "0", borderRight: "2px solid red", textAlign: "center"}}>{<Trans i18nKey="PARTICULARS_OF_CHILD" />}</div>
-                <div style={{width: "100%"}}>
-                  <div style={{borderBottom: "2px dotted red"}}>{t("1")} {t("Name_of_child")}: <span>{certificate?.["R43kdns3YYL"] || ""}</span></div>
-                  <div style={{borderBottom: "2px dotted red"}}>{t("2")} {t("SEX")}: <span>{options[certificate?.["wxrDsUO1ELy"]] || ""}</span></div>
-                  <div style={{height: "0.6cm"}}></div>
+
+          {/* ╔══════════════════════════════════╗
+             ║   RIGHT: MAIN CERTIFICATE        ║
+             ╚══════════════════════════════════╝ */}
+          <div
+            style={{
+              flex: 1,
+              paddingLeft: "4mm",
+              paddingRight: "2mm",
+              display: "flex",
+              flexDirection: "column",
+              minWidth: 0,
+              overflow: "hidden",
+            }}
+          >
+            {/* ── Header: Title centered, red box on right with white text ── */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "1.5mm",
+                gap: "4mm",
+              }}
+            >
+              <div style={{ flex: 1 }} />
+              <div
+                style={{
+                  fontWeight: 700,
+                  fontSize: "12pt",
+                  letterSpacing: "1px",
+                  textAlign: "center",
+                  flexShrink: 0,
+                }}
+              >
+                {t("BIRTH_CERTIFICATE")}
+              </div>
+              <div
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <div
+                  style={{
+                    background: S.color,
+                    color: "#fff",
+                    fontSize: S.fsSm,
+                    fontWeight: 700,
+                    padding: "1.5mm 3mm",
+                    textAlign: "center",
+                    lineHeight: 1.3,
+                    maxWidth: "60mm",
+                  }}
+                >
+                  {t("THIS_CERTIFICATE_WILL_NOT_BE_PROOF")}
                 </div>
-              </div>  
-              <div style={{width: "100%"}}>
-                <div style={{borderBottom: "2px dotted red"}}>{t("3")} {t("DATE_AND_TIME_OF_BIRTH")}: <span> {certificate?.["zAetLzp3cT1"] || ""} {certificate?.["uOK1Wcm91NB"] || ""}</span></div>
-                <div style={{borderBottom: "2px dotted red"}}>{t("4")} {t("PLACE_OF_BIRTH")}: <span>{options[certificate?.["JAU9NM7UqQP"]] || ""}</span></div>
-                <div style={{height: "0.6cm"}}></div>
               </div>
             </div>
-            <div style={{display: "flex", height: "1.95cm", borderBottom: "2px solid red"}}>
-              <div style={{display:"flex", flexShrink: "0", width: "10.9cm"}}>
-                <div style={{width: "3.3cm", flexShrink: "0", borderRight: "2px solid red", textAlign: "center"}}>{<Trans i18nKey="PARTICULAR_OF_FATHER" />}</div>
-                <div style={{width: "100%"}}>
-                  <div style={{borderBottom: "2px dotted red"}}>{t("5")} {t("NAME")}: <span>{certificate?.["RKs8td9BnNj"] || ""}</span></div>
-                  <div style={{borderBottom: "2px dotted red"}}>{t("6")} {t("RACE")}: <span>{options[certificate?.["mIRVmCzC7Tt"]] || ""}</span></div>
-                  <div>{t("7")} {t("CITIZENSHIP_AND_NRC")}: 
-                    <span>
+
+            {/* ── Sub-header row: VR form + location + book info ── */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: "1mm",
+                fontSize: S.fsSm,
+                lineHeight: 1.4,
+              }}
+            >
+              {/* Left: VR form + location */}
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 700, marginBottom: "1mm" }}>
+                  <strong>{t("VR_103")}</strong>
+                </div>
+                <div>
+                  {t("STATE_REGION")}{" "}
+                  <span style={S.bold}>
+                    {orgUnit?.ancestors?.[1]?.name || ""}
+                  </span>
+                </div>
+                <div>
+                  {t("DISTRICT")}{" "}
+                  <span style={S.bold}>
+                    {orgUnit?.ancestors?.[2]?.name || ""}
+                  </span>
+                  <span style={{ marginLeft: "6mm" }}>
+                    {t("TOWNSHIP")}{" "}
+                    <span style={S.bold}>
+                      {orgUnit?.ancestors?.[3]?.name || ""}
+                    </span>
+                  </span>
+                </div>
+                <div>
+                  {t("BIRTH_AND_DEATH_REGISTRATION_PLACE")}{" "}
+                  <span style={S.bold}>{orgUnit?.name || ""}</span>
+                </div>
+              </div>
+
+              {/* Right: Book / Page / Entry */}
+              <div
+                style={{
+                  width: "52mm",
+                  flexShrink: 0,
+                  textAlign: "left",
+                  paddingLeft: "4mm",
+                }}
+              >
+                <div>
+                  {t("BOOK_NUMBER")}{" "}
+                  {certificate?.["l0Pm3ydZ2om"] || ""}
+                </div>
+                <div>
+                  {t("PAGE_NUMBER")}{" "}
+                  {certificate?.["PS99q9IRjKy"] || ""}
+                </div>
+                <div>
+                  {t("ENTRY_NUMBER")}{" "}
+                  {certificate?.["MrtKbjcsHnk"] || ""}
+                </div>
+                <div>
+                  {t("DATE_OF_REGISTRATION")}{" "}
+                  <span style={S.bold}>{formatDate(certificate?.["occurredAt"])}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* ═══════ PARTICULARS TABLE ═══════ */}
+            <div style={{ border: S.border, display: "flex", flexDirection: "column" }}>
+
+              {/* ── ROW: Particulars of Child ── */}
+              <div
+                style={{
+                  display: "flex",
+                  borderBottom: S.border,
+                }}
+              >
+                <div
+                  style={{
+                    width: "28mm",
+                    flexShrink: 0,
+                    borderRight: S.border,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    fontWeight: 700,
+                    fontSize: S.fsSm,
+                    padding: "1mm",
+                    lineHeight: 1.3,
+                  }}
+                >
+                  <Trans i18nKey="PARTICULARS_OF_CHILD" />
+                </div>
+                <div style={{ flex: 1, display: "flex" }}>
+                  <div
+                    style={{
+                      flex: 1,
+                      borderRight: S.borderDot,
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <div
+                      style={{
+                        borderBottom: S.borderDot,
+                        padding: "1mm 2mm",
+                        flex: 1,
+                      }}
+                    >
+                      {t("1")} {t("Name_of_child")}{" "}
+                      <span style={S.bold}>
+                        {certificate?.["R43kdns3YYL"] || ""}
+                      </span>
+                    </div>
+                    <div style={{ padding: "1mm 2mm", flex: 1 }}>
+                      {t("2")} {t("SEX")}{" "}
+                      <span style={S.bold}>
+                        {options[certificate?.["wxrDsUO1ELy"]] || ""}
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <div
+                      style={{
+                        borderBottom: S.borderDot,
+                        padding: "1mm 2mm",
+                        flex: 1,
+                      }}
+                    >
+                      {t("3")} {t("DATE_AND_TIME_OF_BIRTH")}{" "}
+                      <span style={S.bold}>
+                        {formatDateTime(
+                          certificate?.["zAetLzp3cT1"],
+                          certificate?.["uOK1Wcm91NB"]
+                        )}
+                      </span>
+                    </div>
+                    <div style={{ padding: "1mm 2mm", flex: 1 }}>
+                      {t("4")} {t("PLACE_OF_BIRTH")}{" "}
+                      <span style={S.bold}>
+                        {options[certificate?.["JAU9NM7UqQP"]] || certificate?.["JAU9NM7UqQP"] || ""}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── ROW: Particulars of Father ── */}
+              <div
+                style={{
+                  display: "flex",
+                  borderBottom: S.border,
+                }}
+              >
+                <div
+                  style={{
+                    width: "28mm",
+                    flexShrink: 0,
+                    borderRight: S.border,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    fontWeight: 700,
+                    fontSize: S.fsSm,
+                    padding: "1mm",
+                    lineHeight: 1.3,
+                  }}
+                >
+                  <Trans i18nKey="PARTICULAR_OF_FATHER" />
+                </div>
+                <div style={{ flex: 1, display: "flex" }}>
+                  <div
+                    style={{
+                      flex: 1,
+                      borderRight: S.borderDot,
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <div
+                      style={{
+                        borderBottom: S.borderDot,
+                        padding: "1mm 2mm",
+                        flex: 1,
+                      }}
+                    >
+                      {t("5")} {t("NAME")}{" "}
+                      <span style={S.bold}>
+                        {certificate?.["RKs8td9BnNj"] || ""}
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        borderBottom: S.borderDot,
+                        padding: "1mm 2mm",
+                        flex: 1,
+                      }}
+                    >
+                      {t("6")} {t("RACE")}{" "}
+                      <span style={S.bold}>
+                        {options[certificate?.["mIRVmCzC7Tt"]] || ""}
+                      </span>
+                    </div>
+                    <div style={{ padding: "1mm 2mm", flex: 1 }}>
+                      {t("7")} {t("CITIZENSHIP_AND_NRC")}{" "}
+                      <span style={S.bold}>
                         {getCitizenshipDisplay(
                           certificate["ed2RBrhMhnN"],
                           certificate["Fwa7gEzjZAH"],
                           certificate["YE1wx1a4Ky4"]
                         )}
-                    </span>
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <div
+                      style={{
+                        borderBottom: S.borderDot,
+                        padding: "1mm 2mm",
+                        flex: 1,
+                      }}
+                    >
+                      {t("8")} {t("RELIGION")}{" "}
+                      <span style={S.bold}>
+                        {options[certificate?.["m4b4SSlipKJ"]] || ""}
+                      </span>
+                    </div>
+                    <div style={{ padding: "1mm 2mm", flex: 1 }}>
+                      {t("9")} {t("OCCUPATION")}{" "}
+                      <span style={S.bold}>
+                        {certificate?.["CjjgDMbqfXX"] || ""}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                </div>
-              <div style={{width: "100%"}}>
-                <div style={{borderBottom: "2px dotted red"}}>{t("8")} {t("RELIGION")}: <span>{options[certificate?.["m4b4SSlipKJ"]] || ""}</span></div>
-                <div style={{borderBottom: "2px dotted red"}}>{t("9")} {t("OCCUPATION")}:<span>{certificate?.["CjjgDMbqfXX"] || ""}</span></div>
-              </div>        
-            </div>
-            <div style={{display: "flex", height: "2.5cm", borderBottom: "2px solid red"}}>
-              <div style={{display: "flex", flexShrink: "0", width: "10.9cm"}}>
-                <div style={{width: "3.3cm", flexShrink: "0", borderRight: "2px solid red", textAlign: "center"}}>{<Trans i18nKey="PARTICULAR_OF_MOTHER" />}</div>
-                <div style={{width: "100%"}}>
-                  <div style={{borderBottom: "2px dotted red"}}>{t("10")} {t("NAME")}: <span>{certificate?.["UYmZMZt32hZ"] || ""}</span></div>
-                  <div style={{borderBottom: "2px dotted red"}}>{t("11")} {t("RACE")}: <span>{options[certificate?.["XFmGvaRAJqP"]] || ""}</span></div>
-                  <div style={{borderBottom: "2px dotted red"}}>{t("12")} {t("CITIZENSHIP_AND_NRC")}: 
-                    <span>
-                            {getCitizenshipDisplay( 
-                              certificate["r8oFvT4PZwL"],
-                              certificate["M8pvzjPdija"],
-                              certificate["CowkFxAoqnl"]
-                            )}
-                    </span>
-                  </div>
-                </div>  
               </div>
-              <div style={{width: "100%"}}>
-                <div style={{borderBottom: "2px dotted red"}}>{t("13")} {t("RELIGION")}:<span>{options[certificate?.["QsUp6BSb8Du"]] || ""}</span></div>
-                <div style={{borderBottom: "2px dotted red"}}>{t("14")} {t("OCCUPATION")}:<span>{certificate?.["vg5hhREmzXe"] || ""}</span></div>
-                <div style={{borderBottom: "2px dotted red"}}>{t("15")} {t("PERMANENT_ADDRESS")}:<span>{certificate?.["bVyrfnpCd6i"] ? (certificate?.["bVyrfnpCd6i"].split(',').map(addr => (options[addr] || addr)).join(',')) : ""}</span></div>
-              </div>
-            </div>
-            <div style={{display: "flex",  flexShrink: "0",height: "1.35cm", borderBottom: "2px solid red"}}>
-              <div style={{display: "flex", flexShrink: "0", width: "11.7cm"}}>
-                <div style={{width: "3.3cm", flexShrink: "0", borderRight: "2px solid red", textAlign: "center"}}>{<Trans i18nKey="PARTICULAR_OF_INFORMANT" />}</div>
-                <div style={{width: "100%"}}>
-                  <div style={{borderBottom: "2px dotted red"}}>{t("SIGNATURE")}: <span></span></div>
-                  <div>{t("NAME")}: <span>{certificate?.["YdNUYjH3rct"] || ""}</span></div>
-                </div>
-              </div>
-              <div style={{width: "100%"}}>
-                <div style={{borderBottom: "2px dotted red"}}>{t("RELATION_TO_CHILD")}: <span>{certificate?.["eYh3U6sXrTQ"] || ""}</span></div>
-                <div>{t("ADDRESS")}: <span>{certificate?.["rRpqp6TPWlh"]}</span></div>
-              </div>
-            </div>
-          </div>
-          <div id="footer">
-            <div style={{height: "3.7", width: "19.9cm", wordSpacing: "16px"}}>
-              <span style={{paddingRight: "2.5cm"}}></span>{t("LIVE_BIRTH_PARA1_VALIDATION")} <br/>  
-              <span style={{paddingRight: "2.5cm"}}></span>{t("LIVE_BIRTH_PARA2_VALIDATION")}
-            </div>
-            <div style={{height: "1.9cm, width: 19.9cm", display:"flex", justifyContent:"space-between"}}>
-              <div style={{height: "1.9cm", display:"flex", alignItems: "flex-end"}}><div>{t("DATE")} <span>{currentDate}</span></div></div>
-              <div>{t("REGISTRATION_OFFICER")}</div>
 
-              <div>
-                <div>{t("SIGNATURE")} <span></span></div>
-                <div>{t("NAME")} <span> {certificate?.["B1QxOlRIEVk"]} </span></div>
-                <div>{t("DESIGNATION")} <span> {certificate?.["qsIjbrXLBL5"]} </span></div>
+              {/* ── ROW: Particulars of Mother ── */}
+              <div
+                style={{
+                  display: "flex",
+                  borderBottom: S.border,
+                }}
+              >
+                <div
+                  style={{
+                    width: "28mm",
+                    flexShrink: 0,
+                    borderRight: S.border,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    fontWeight: 700,
+                    fontSize: S.fsSm,
+                    padding: "1mm",
+                    lineHeight: 1.3,
+                  }}
+                >
+                  <Trans i18nKey="PARTICULAR_OF_MOTHER" />
+                </div>
+                <div style={{ flex: 1, display: "flex" }}>
+                  <div
+                    style={{
+                      flex: 1,
+                      borderRight: S.borderDot,
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <div
+                      style={{
+                        borderBottom: S.borderDot,
+                        padding: "1mm 2mm",
+                        flex: 1,
+                      }}
+                    >
+                      {t("10")} {t("NAME")}{" "}
+                      <span style={S.bold}>
+                        {certificate?.["UYmZMZt32hZ"] || ""}
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        borderBottom: S.borderDot,
+                        padding: "1mm 2mm",
+                        flex: 1,
+                      }}
+                    >
+                      {t("11")} {t("RACE")}{" "}
+                      <span style={S.bold}>
+                        {options[certificate?.["XFmGvaRAJqP"]] || ""}
+                      </span>
+                    </div>
+                    <div style={{ padding: "1mm 2mm", flex: 1 }}>
+                      {t("12")} {t("CITIZENSHIP_AND_NRC")}{" "}
+                      <span style={S.bold}>
+                        {getCitizenshipDisplay(
+                          certificate["r8oFvT4PZwL"],
+                          certificate["M8pvzjPdija"],
+                          certificate["CowkFxAoqnl"]
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <div
+                      style={{
+                        borderBottom: S.borderDot,
+                        padding: "1mm 2mm",
+                        flex: 1,
+                      }}
+                    >
+                      {t("13")} {t("RELIGION")}{" "}
+                      <span style={S.bold}>
+                        {options[certificate?.["QsUp6BSb8Du"]] || ""}
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        borderBottom: S.borderDot,
+                        padding: "1mm 2mm",
+                        flex: 1,
+                      }}
+                    >
+                      {t("14")} {t("OCCUPATION")}{" "}
+                      <span style={S.bold}>
+                        {certificate?.["vg5hhREmzXe"] || ""}
+                      </span>
+                    </div>
+                    <div style={{ padding: "1mm 2mm", flex: 1 }}>
+                      {t("15")} {t("PERMANENT_ADDRESS")}{" "}
+                      <span style={S.bold}>{permanentAddress}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── ROW: Particulars of Informant ── */}
+              <div
+                style={{
+                  display: "flex",
+                  borderBottom: S.border,
+                }}
+              >
+                <div
+                  style={{
+                    width: "28mm",
+                    flexShrink: 0,
+                    borderRight: S.border,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    fontWeight: 700,
+                    fontSize: S.fsSm,
+                    padding: "1mm",
+                    lineHeight: 1.3,
+                  }}
+                >
+                  <Trans i18nKey="PARTICULAR_OF_INFORMANT" />
+                </div>
+                <div style={{ flex: 1, display: "flex" }}>
+                  <div
+                    style={{
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      paddingLeft: "22mm",
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: "1mm 2mm",
+                        flex: 1,
+                      }}
+                    >
+                      {t("SIGNATURE")}
+                    </div>
+                    <div style={{ padding: "1mm 2mm", flex: 1 }}>
+                      {t("NAME")}{" "}
+                      <span style={S.bold}>
+                        {certificate?.["YdNUYjH3rct"] || ""}
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: "1mm 2mm",
+                        flex: 1,
+                      }}
+                    >
+                      {t("RELATION_TO_CHILD")}{" "}
+                      <span style={S.bold}>
+                        {certificate?.["eYh3U6sXrTQ"] || ""}
+                      </span>
+                    </div>
+                    <div style={{ padding: "1mm 2mm", flex: 1 }}>
+                      {t("ADDRESS")}{" "}
+                      <span style={S.bold}>
+                        {certificate?.["rRpqp6TPWlh"] || ""}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div style={{height: "1.25cm", width: "19.9cm", wordSpacing: "16px"}}>
+
+            {/* ═══════ FOOTER: Certification text ═══════ */}
+            <div
+              style={{
+                marginTop: "1.5mm",
+                fontSize: S.fsXs,
+                lineHeight: 1.45,
+                textAlign: "left",
+                padding: "0 2mm",
+              }}
+            >
+              <p style={{ textIndent: "12mm", margin: "0 0 1mm 0" }}>
+                {t("LIVE_BIRTH_PARA1_VALIDATION")}
+              </p>
+              <p style={{ textIndent: "12mm", margin: "0 0 1mm 0" }}>
+                {t("LIVE_BIRTH_PARA2_VALIDATION")}
+              </p>
+            </div>
+
+            {/* ── Registration Officer (centered, between paragraphs) + QR ── */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                fontSize: S.fsSm,
+                lineHeight: 1.4,
+                marginTop: "1mm",
+              }}
+            >
+              <div style={{ flex: 1 }} />
+
+              {/* Center: Registration Officer's { Signature / Name / Designation } */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "2mm",
+                }}
+              >
+                <div style={{ fontWeight: 700, textAlign: "right" }}>
+                  {t("REGISTRATION_OFFICER")}
+                </div>
+                <div
+                  style={{
+                    fontSize: "28pt",
+                    fontWeight: 400,
+                    lineHeight: 1,
+                    transform: "scaleY(1.6)",
+                    transformOrigin: "center",
+                    padding: "0 1mm",
+                  }}
+                >
+                  {"{"}
+                </div>
+                <div style={{ textAlign: "left" }}>
+                  <div>{t("SIGNATURE")}</div>
+                  <div>
+                    {t("NAME")}{" "}
+                    <span style={S.bold}>
+                      {certificate?.["B1QxOlRIEVk"] || ""}
+                    </span>
+                  </div>
+                  <div>
+                    {t("DESIGNATION")}{" "}
+                    <span style={S.bold}>
+                      {certificate?.["qsIjbrXLBL5"] || ""}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: QR Code */}
+              <div style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
+                {url && (
+                  <img
+                    src={url}
+                    alt="QR Code"
+                    style={{ width: "20mm", height: "20mm" }}
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* ── Bottom note (Para 3) ── */}
+            <div
+              style={{
+                marginTop: "1mm",
+                fontSize: S.fsXs,
+                lineHeight: 1.45,
+                textAlign: "left",
+                padding: "0 2mm",
+                textIndent: "12mm",
+              }}
+            >
               {t("LIVE_BIRTH_PARA3_VALIDATION")}
             </div>
+
+            {/* ── Date at the very bottom ── */}
+            <div
+              style={{
+                marginTop: "2mm",
+                fontSize: S.fsSm,
+                textAlign: "left",
+                padding: "0 2mm",
+              }}
+            >
+              {t("DATE")} <span style={S.bold}>{currentDate}</span>
+            </div>
           </div>
+
         </div>
       </div>
-      </div>
 
-      </div>
+      {/* ── Modal: Reason for re-issuance ── */}
       {showModal && (
         <div
           style={{
@@ -438,8 +1111,9 @@ const BirthCertificate = () => {
               alignItems: "center",
             }}
           >
-            <h3 style={{ textAlign: "center" }}>Please provide the reason</h3>
-
+            <h3 style={{ textAlign: "center", margin: "0 0 16px 0" }}>
+              Please provide the reason
+            </h3>
             <textarea
               value={reason}
               onChange={(e) => setReason(e.target.value)}
@@ -451,13 +1125,13 @@ const BirthCertificate = () => {
                 borderRadius: 6,
                 border: "1px solid #ccc",
                 marginBottom: 12,
+                fontFamily: "inherit",
               }}
             />
-
             <Button
               color="primary"
               variant="contained"
-              disabled={!reason ? true : false}
+              disabled={!reason}
               onClick={handleSubmitReason}
             >
               Submit
@@ -466,6 +1140,7 @@ const BirthCertificate = () => {
         </div>
       )}
 
+      {/* ── Toast notification ── */}
       {showToast && (
         <div
           style={{
