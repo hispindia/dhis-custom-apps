@@ -39,7 +39,7 @@ const DeathCertificate = () => {
         margin: 1,
         errorCorrectionLevel: "H",
         color: {
-          dark: "#cc0000",
+          dark: "#000000",
           light: "#ffffff",
         },
       })
@@ -198,9 +198,9 @@ const DeathCertificate = () => {
 
   /* ── shared style fragments ── */
   const S = {
-    color: "#b71c1c",
-    border: "1px solid #b71c1c",
-    borderDot: "1px dashed #b71c1c",
+    color: "#000",
+    border: "1px solid #000",
+    borderDot: "1px dashed #000",
     fs: "7.5pt",
     fsSm: "7pt",
     fsXs: "6.5pt",
