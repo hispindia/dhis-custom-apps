@@ -733,7 +733,7 @@ const BirthCertificate = () => {
                         flex: 1,
                       }}
                     >
-                      {t("5")} {t("NAME")}{" "}
+                      {t("5")} {t("NAME_OF_FATHER")}{" "}
                       <span style={S.bold}>
                         {certificate?.["RKs8td9BnNj"] || ""}
                       </span>
@@ -830,7 +830,7 @@ const BirthCertificate = () => {
                         flex: 1,
                       }}
                     >
-                      {t("10")} {t("NAME")}{" "}
+                      {t("10")} {t("NAME_OF_MOTHER")}{" "}
                       <span style={S.bold}>
                         {certificate?.["UYmZMZt32hZ"] || ""}
                       </span>
@@ -1021,7 +1021,7 @@ const BirthCertificate = () => {
                     fontSize: "28pt",
                     fontWeight: 400,
                     lineHeight: 1,
-                    transform: "scaleY(1.6)",
+                    transform: "scaleY(1.6) translateY(1mm)",
                     transformOrigin: "center",
                     padding: "0 1mm",
                   }}

@@ -425,7 +425,7 @@ const DeathCertificate = () => {
               </span>
             </div>
             <div>
-              {t("GENDER")}{" "}
+              {t("SEX")}{" "}
               {options[certificate?.["wxrDsUO1ELy"]] || ""}
             </div>
             <div>
@@ -535,7 +535,7 @@ const DeathCertificate = () => {
                 </div>
                 <div>
                   {t("BIRTH_AND_DEATH_REGISTRATION_PLACE")}{" "}
-                  <span style={S.bold}>{orgUnit?.name || ""}</span>
+                  <span style={S.bold}>{(orgUnit?.name || "").replace(/^\d+\.\s*/, "")}</span>
                 </div>
               </div>
 
@@ -591,7 +591,7 @@ const DeathCertificate = () => {
                     <span style={S.bold}>{certificate?.["aTbE3kYe98D"] || ""}</span>
                   </div>
                   <div style={{ padding: "1mm 2mm", borderBottom: S.borderDot }}>
-                    {t("2")} {t("GENDER")}{" "}
+                    {t("2")} {t("SEX")}{" "}
                     <span style={S.bold}>
                       {options[certificate?.["wxrDsUO1ELy"]] || ""}
                     </span>
@@ -685,9 +685,6 @@ const DeathCertificate = () => {
                     {t("14")} {t("Informants_Signature")}
                   </div>
                   <div style={{ paddingLeft: "6mm", marginTop: "1mm" }}>
-                    {t("SIGNATURE")}
-                  </div>
-                  <div style={{ paddingLeft: "6mm" }}>
                     {t("NAME")}{" "}
                     <span style={S.bold}>
                       {certificate?.["YdNUYjH3rct"] || ""}
@@ -780,7 +777,7 @@ const DeathCertificate = () => {
                     fontSize: "28pt",
                     fontWeight: 400,
                     lineHeight: 1,
-                    transform: "scaleY(1.6)",
+                    transform: "scaleY(1.6) translateY(1mm)",
                     transformOrigin: "center",
                     padding: "0 1mm",
                   }}

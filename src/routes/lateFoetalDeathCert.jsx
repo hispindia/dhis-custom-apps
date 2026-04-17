@@ -656,7 +656,7 @@ const LateFoetalDeathCert = () => {
                     }}
                   >
                     <div style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}>
-                      {t("4")} {t("NAME")}{" "}
+                      {t("4")} {t("NAME_OF_FATHER")}{" "}
                       <span style={S.bold}>
                         {certificate?.["RKs8td9BnNj"] || ""}
                       </span>
@@ -730,7 +730,7 @@ const LateFoetalDeathCert = () => {
                     }}
                   >
                     <div style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}>
-                      {t("9")} {t("NAME")}{" "}
+                      {t("9")} {t("NAME_OF_MOTHER")}{" "}
                       <span style={S.bold}>
                         {certificate?.["UYmZMZt32hZ"] || ""}
                       </span>
@@ -952,7 +952,7 @@ const LateFoetalDeathCert = () => {
                     fontSize: "28pt",
                     fontWeight: 400,
                     lineHeight: 1,
-                    transform: "scaleY(1.6)",
+                    transform: "scaleY(1.6) translateY(1mm)",
                     transformOrigin: "center",
                     padding: "0 1mm",
                     alignSelf: "center",
