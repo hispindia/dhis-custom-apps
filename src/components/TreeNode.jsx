@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 
 function TreeNode({ node, path, orgUnits, setOrgUnit, selectedOrgUnitId,  setSelectedOrgUnitId }) {
-  const [isOpen, setIsOpen] = useState(false);
+  // const [isOpen, setIsOpen] = useState(false);
 
   const children = orgUnits.find(orgUnit=> orgUnit.id == node.id)?.children.sort((a,b) => a.displayName.localeCompare(b.displayName));
 
   const isSelected = selectedOrgUnitId === node.id;
 
-  if(path.includes(node.id)) {
-    setIsOpen(true)
-  }
+  // if(path.includes(node.id)) {
+  //   setIsOpen(true)
+  // }
+
+  const isOpen = path.includes(node.id);
 
   return (
     <>
@@ -24,7 +26,7 @@ function TreeNode({ node, path, orgUnits, setOrgUnit, selectedOrgUnitId,  setSel
           fontSize:"13px",
         }}
         onClick={() => {
-          if(children.length) setIsOpen(!isOpen);
+          // if(children.length) setIsOpen(!isOpen);
           setOrgUnit(node);
           setSelectedOrgUnitId(node.id);
           localStorage.setItem('orgUnit', JSON.stringify(node));

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { flushSync } from "react-dom";
 import html2pdf from "html2pdf.js";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Trans, useTranslation } from "react-i18next";
@@ -7,20 +8,24 @@ import api from "../api";
 import { Button } from "@mui/material";
 import QrCode from "qrcode";
 import { NUMBERS } from "../constants";
+import CertField from "../components/certificate/CertField";
+import { buildCertificateCss } from "../components/certificate/certificateCss";
 
-const LateFoetalDeathCert = () => {
+const LateFoetalDeathCert = ({ blank = false } = {}) => {
   const [url, setUrl] = useState("");
   const [certificate, setCertificate] = useState({});
   const [options, setOptions] = useState({});
   const [orgUnit, setOrgUnit] = useState({});
 
   const pdfRef = useRef();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [showModal, setShowModal] = useState(false);
   const [reason, setReason] = useState("");
   const [issueCount, setIssueCount] = useState(0);
   const [showToast, setShowToast] = useState(false);
   const [hideBackArrow, setHideBackArrow] = useState(false);
+  const [printMode, setPrintMode] = useState("full");
+  const [preview, setPreview] = useState(false);
   const navigate = useNavigate();
 
   const currentDate = (() => {
@@ -33,6 +38,12 @@ const LateFoetalDeathCert = () => {
 
   const { search } = useLocation();
   const event = new URLSearchParams(search).get("stillbirth");
+
+  useEffect(() => {
+    const resetPrintMode = () => setPrintMode("full");
+    window.addEventListener("afterprint", resetPrintMode);
+    return () => window.removeEventListener("afterprint", resetPrintMode);
+  }, []);
 
   useEffect(() => {
     if (event) {
@@ -101,7 +112,7 @@ const LateFoetalDeathCert = () => {
     }
     return element;
   };
-
+const removeNumbersDots = (value) => value?.replace(/[0-9.]+/g, "").trim() ?? value;
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
     const datePart = String(dateStr).split("T")[0].split(" ")[0];
@@ -125,7 +136,11 @@ const LateFoetalDeathCert = () => {
       margin: 0,
       filename: "Late Foetal Death Certificate.pdf",
       image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+      html2canvas: {
+        scale: i18n.language?.startsWith("br") ? 2 : 3,
+        useCORS: true,
+        letterRendering: false,
+      },
       jsPDF: { orientation: "landscape", format: "a4", compress: true },
     };
     html2pdf()
@@ -168,7 +183,7 @@ const LateFoetalDeathCert = () => {
       const count = issueCount + 1;
       setIssueCount(count);
       await updateEventInDHIS2(count);
-      handleDownloadPDF();
+      handleCertificateOutput();
     }
   };
 
@@ -178,11 +193,30 @@ const LateFoetalDeathCert = () => {
     setIssueCount(count);
     await updateEventInDHIS2(count, reason);
     setReason("");
-    handleDownloadPDF();
+    handleCertificateOutput();
+  };
+
+  const handlePrintMode = (mode) => {
+    flushSync(() => {
+      setPrintMode(mode);
+    });
+    requestAnimationFrame(() => window.print());
   };
 
   const handlePrint = () => {
-    window.print();
+    handlePrintMode("full");
+  };
+
+  const handleDataOnlyPrint = () => {
+    handlePrintMode("data-only");
+  };
+
+  const handleCertificateOutput = () => {
+    if (i18n.language?.startsWith("br")) {
+      handleDownloadPDF();
+    } else {
+      handlePrint();
+    }
   };
 
   if (!certificate) return <div>No certificate data found.</div>;
@@ -192,11 +226,11 @@ const LateFoetalDeathCert = () => {
     color: "#0033cc",
     border: "1px solid #0033cc",
     borderDot: "1px dashed #0033cc",
-    fs: "7.5pt",
-    fsSm: "7pt",
-    fsXs: "6.5pt",
-    fsLg: "9pt",
-    bold: { fontWeight: 700 },
+    fs: "8pt",
+    fsSm: "8pt",
+    fsXs: "8pt",
+    fsLg: "9.5pt",
+    bold: { fontWeight: 400 },
   };
 
   const permanentAddress = certificate?.["bVyrfnpCd6i"]
@@ -205,68 +239,23 @@ const LateFoetalDeathCert = () => {
         .map((addr) => options[addr] || addr)
         .join(", ")
     : "";
+  const certificateFontFamily = i18n.language?.startsWith("br")
+    ? '"Pyidaungsu", "Myanmar Text", "Padauk", sans-serif'
+    : "Arial, sans-serif";
+  const counterfoilFatherNameLabel = i18n.language?.startsWith("br")
+    ? "ဖခင်အမည်"
+    : t("NAME_OF_FATHER");
+  const counterfoilMotherNameLabel = i18n.language?.startsWith("br")
+    ? "မိခင်အမည်"
+    : t("NAME_OF_MOTHER");
 
   return (
     <>
-      {/* ── print & page styles ── */}
-      <style>{`
-        @page {
-          size: A4 landscape;
-          margin: 0;
-        }
-        @media print {
-          html, body {
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 297mm !important;
-            height: 210mm !important;
-            max-height: 210mm !important;
-            overflow: hidden !important;
-            background: #fff !important;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-          }
-          .cert-wrapper {
-            margin: 0 !important;
-            padding: 0 !important;
-            background: #fff !important;
-            min-height: 0 !important;
-            height: auto !important;
-            overflow: hidden !important;
-          }
-          .no-print { display: none !important; }
-          header,
-          [class*="headerbar"],
-          [class*="HeaderBar"],
-          [data-test*="headerbar"],
-          .dhis2-ui-headerbar,
-          .jsx-headerbar {
-            display: none !important;
-            visibility: hidden !important;
-            height: 0 !important;
-          }
-          .cert-page {
-            margin: 0 !important;
-            padding: 3mm 4mm 2mm 4mm !important;
-            box-shadow: none !important;
-            page-break-inside: avoid !important;
-            page-break-after: avoid !important;
-            overflow: hidden !important;
-            width: 297mm !important;
-            height: 210mm !important;
-            max-height: 210mm !important;
-          }
-        }
-        @media screen {
-          .cert-page {
-            box-shadow: 0 1px 8px rgba(0,0,0,0.12);
-            margin: 12px auto;
-          }
-        }
-      `}</style>
+      {/* ── print & page styles (shared, layout-invariant) ── */}
+      <style>{buildCertificateCss()}</style>
 
       <div
-        className="cert-wrapper"
+        className={`cert-wrapper print-${printMode} ${preview ? "preview-data-only" : ""}`}
         style={{ background: "#f5f5f5", minHeight: "100vh", padding: "0" }}
       >
         {/* ── toolbar ── */}
@@ -300,6 +289,24 @@ const LateFoetalDeathCert = () => {
               <ArrowBackIcon style={{ fontSize: 20 }} /> Back
             </button>
           )}
+          {blank ? (
+            <button
+              onClick={() => window.print()}
+              style={{
+                padding: "8px 20px",
+                background: "#c62828",
+                color: "#fff",
+                border: "none",
+                borderRadius: 4,
+                cursor: "pointer",
+                fontWeight: 600,
+                fontSize: "13px",
+              }}
+            >
+              Print
+            </button>
+          ) : (
+            <>
           <button
             onClick={handleIssueClick}
             style={{
@@ -316,10 +323,10 @@ const LateFoetalDeathCert = () => {
             Issue Certificate {issueCount > 0 && `(${issueCount})`}
           </button>
           <button
-            onClick={handlePrint}
+            onClick={handleDataOnlyPrint}
             style={{
               padding: "8px 20px",
-              background: "#c62828",
+              background: "#263238",
               color: "#fff",
               border: "none",
               borderRadius: 4,
@@ -328,8 +335,25 @@ const LateFoetalDeathCert = () => {
               fontSize: "13px",
             }}
           >
-            Print
+            Print Certificate
           </button>
+          <button
+            onClick={() => setPreview((p) => !p)}
+            style={{
+              padding: "8px 20px",
+              background: preview ? "#6a1b9a" : "#7e57c2",
+              color: "#fff",
+              border: "none",
+              borderRadius: 4,
+              cursor: "pointer",
+              fontWeight: 600,
+              fontSize: "13px",
+            }}
+          >
+            {preview ? "Hide Data Preview" : "Preview Data Fit"}
+          </button>
+            </>
+          )}
         </div>
 
         {/* ══════════════ A4 LANDSCAPE CERTIFICATE ══════════════ */}
@@ -341,14 +365,12 @@ const LateFoetalDeathCert = () => {
             maxHeight: "210mm",
             height: "210mm",
             background: "#fff",
-            fontFamily: "'Pyidaungsu', 'Myanmar Text', 'Padauk', sans-serif",
+            fontFamily: certificateFontFamily,
             fontSize: S.fs,
             color: S.color,
             display: "flex",
             overflow: "hidden",
             position: "relative",
-            boxSizing: "border-box",
-            padding: "3mm 4mm 2mm 4mm",
           }}
         >
           {/* ── duplicate watermark ── */}
@@ -385,7 +407,10 @@ const LateFoetalDeathCert = () => {
               display: "flex",
               flexDirection: "column",
               fontSize: S.fsSm,
-              lineHeight: 1.4,
+              lineHeight: 2.05,
+              rowGap: "0.7mm",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
             }}
           >
             <div
@@ -395,6 +420,7 @@ const LateFoetalDeathCert = () => {
                 marginBottom: "1mm",
                 lineHeight: 1.2,
                 textAlign: "left",
+                whiteSpace: "normal",
               }}
             >
               {t("LATE_FOETAL_DEATH_CERTIFICATE_COUNTERFOIL")}
@@ -404,57 +430,46 @@ const LateFoetalDeathCert = () => {
               <strong>{t("VR_153")}</strong>
             </div>
 
-            <div>{t("BOOK_NUMBER")} {certificate?.["l0Pm3ydZ2om"] || ""}</div>
-            <div>{t("PAGE_NUMBER")} {certificate?.["PS99q9IRjKy"] || ""}</div>
-            <div>{t("ENTRY_NUMBER")} {certificate?.["MrtKbjcsHnk"] || ""}</div>
-            <div>
-              {t("DATE_OF_REGISTRATION")}{" "}
-              <span style={S.bold}>{formatDate(certificate?.["occurredAt"])}</span>
-            </div>
-            <div>
-              {t("SEX")}{" "}
-              {options[certificate?.["wxrDsUO1ELy"]] || ""}
-            </div>
-            <div>
-              {t("DATE_AND_TIME_OF_BIRTH")}{" "}
-              <span style={S.bold}>
-                {formatDateTime(
-                  certificate?.["zAetLzp3cT1"],
-                  certificate?.["uOK1Wcm91NB"]
-                )}
-              </span>
-            </div>
-            <div>
-              {t("PLACE_OF_BIRTH")}{" "}
-              {options[certificate?.["JAU9NM7UqQP"]] || certificate?.["JAU9NM7UqQP"] || ""}
-            </div>
-            <div>
-              {t("NAME_OF_FATHER")}{" "}
-              <span style={S.bold}>
-                {certificate?.["RKs8td9BnNj"] || ""}
-              </span>
-            </div>
-            <div>
-              {t("NAME_OF_MOTHER")}{" "}
-              <span style={S.bold}>
-                {certificate?.["UYmZMZt32hZ"] || ""}
-              </span>
-            </div>
-            <div>
-              {t("ADDRESS")} {permanentAddress}
-            </div>
+            <CertField label={t("MBDR_UNIQUE_ID")} value={certificate?.event || ""} />
+            <CertField
+              label={t("DATE_OF_REGISTRATION")}
+              value={formatDate(certificate?.["occurredAt"])}
+            />
+            <CertField
+              label={t("SEX")}
+              value={options[certificate?.["wxrDsUO1ELy"]] || ""}
+            />
+            <CertField
+              label={t("DATE_AND_TIME_OF_BIRTH")}
+              value={formatDateTime(
+                certificate?.["zAetLzp3cT1"],
+                certificate?.["uOK1Wcm91NB"]
+              )}
+            />
+            <CertField
+              label={t("PLACE_OF_BIRTH")}
+              value={options[certificate?.["JAU9NM7UqQP"]] || certificate?.["JAU9NM7UqQP"] || ""}
+            />
+            <CertField
+              label={counterfoilFatherNameLabel}
+              value={certificate?.["RKs8td9BnNj"] || ""}
+            />
+            <CertField
+              label={counterfoilMotherNameLabel}
+              value={certificate?.["UYmZMZt32hZ"] || ""}
+            />
+            <CertField label={t("ADDRESS")} value={permanentAddress} />
             <div style={{ marginTop: "2mm" }}>
               {t("SIGNATURE_OF_ISSUING_PERSON")}
             </div>
             <div>{t("NAME_OF_ISSUING_PERSON")}</div>
-            <div>
-              {t("DATE_OF_ISSUE")} <span style={S.bold}>{currentDate}</span>
-            </div>
+            <CertField label={t("DATE_OF_ISSUE")} value={blank ? '' : currentDate} />
 
             {/* QR Code - Left */}
-            <div style={{ marginTop: "3mm", textAlign: "center" }}>
+            <div style={{ marginTop: "3mm", textAlign: "center", height: "22mm" }}>
               {url && (
                 <img
+                  className="cert-value"
                   src={url}
                   alt="QR Code"
                   style={{ width: "22mm", height: "22mm" }}
@@ -508,66 +523,59 @@ const LateFoetalDeathCert = () => {
                 lineHeight: 1.4,
               }}
             >
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontWeight: 700, marginBottom: "1mm" }}>
                   <strong>{t("VR_153")}</strong>
                 </div>
-                <div>
-                  {t("STATE_REGION")}{" "}
-                  <span style={S.bold}>
-                    {orgUnit?.ancestors?.[1]?.name || ""}
-                  </span>
+                <CertField
+                  height="4mm"
+                  label={t("STATE_REGION")}
+                  value={removeNumbersDots(orgUnit?.ancestors?.[1]?.name) || ""}
+                />
+                {/* District and Township each get a fixed-width slot so the
+                    township position never depends on the district value */}
+                <div style={{ display: "flex", height: "4mm" }}>
+                  <CertField
+                    style={{ width: "48%", flexShrink: 0 }}
+                    label={t("DISTRICT")}
+                    value={removeNumbersDots(orgUnit?.ancestors?.[2]?.name) || ""}
+                  />
+                  <CertField
+                    style={{ flex: 1, minWidth: 0 }}
+                    label={t("TOWNSHIP")}
+                    value={removeNumbersDots(orgUnit?.ancestors?.[3]?.name) || ""}
+                  />
                 </div>
-                <div>
-                  {t("DISTRICT")}{" "}
-                  <span style={S.bold}>
-                    {orgUnit?.ancestors?.[2]?.name || ""}
-                  </span>
-                  <span style={{ marginLeft: "6mm" }}>
-                    {t("TOWNSHIP")}{" "}
-                    <span style={S.bold}>
-                      {orgUnit?.ancestors?.[3]?.name || ""}
-                    </span>
-                  </span>
-                </div>
-                <div>
-                  {t("BIRTH_AND_DEATH_REGISTRATION_PLACE")}{" "}
-                  <span style={S.bold}>{orgUnit?.name || ""}</span>
-                </div>
+                <CertField
+                  height="4mm"
+                  label={t("BIRTH_AND_DEATH_REGISTRATION_PLACE")}
+                  value={removeNumbersDots(orgUnit?.name) || ""}
+                />
               </div>
 
               <div
                 style={{
-                  width: "52mm",
+                  width: "62mm",
                   flexShrink: 0,
                   textAlign: "left",
                   paddingLeft: "4mm",
+                  whiteSpace: "nowrap",
                 }}
               >
-                <div>
-                  {t("BOOK_NUMBER")}{" "}
-                  {certificate?.["l0Pm3ydZ2om"] || ""}
-                </div>
-                <div>
-                  {t("PAGE_NUMBER")}{" "}
-                  {certificate?.["PS99q9IRjKy"] || ""}
-                </div>
-                <div>
-                  {t("ENTRY_NUMBER")}{" "}
-                  {certificate?.["MrtKbjcsHnk"] || ""}
-                </div>
-                <div>
-                  {t("DATE_OF_REGISTRATION")}{" "}
-                  <span style={S.bold}>{formatDate(certificate?.["occurredAt"])}</span>
-                </div>
+                <CertField height="4mm" label={t("MBDR_UNIQUE_ID")} value={certificate?.event || ""} />
+                <CertField
+                  height="4mm"
+                  label={t("DATE_OF_REGISTRATION")}
+                  value={formatDate(certificate?.["occurredAt"])}
+                />
               </div>
             </div>
 
             {/* ═══════ PARTICULARS TABLE ═══════ */}
-            <div style={{ border: S.border, display: "flex", flexDirection: "column" }}>
+            <div style={{ border: S.border, display: "flex", flexDirection: "column", whiteSpace: "nowrap", overflow: "hidden" }}>
 
               {/* ── ROW: Particulars of Child ── */}
-              <div style={{ display: "flex", borderBottom: S.border }}>
+              <div style={{ display: "flex", borderBottom: S.border, height: "12mm" }}>
                 <div
                   style={{
                     width: "28mm",
@@ -585,50 +593,49 @@ const LateFoetalDeathCert = () => {
                 >
                   <Trans i18nKey="PARTICULARS_OF_CHILD" />
                 </div>
-                <div style={{ flex: 1, display: "flex" }}>
+                <div style={{ flex: 1, display: "flex", minWidth: 0 }}>
                   <div
                     style={{
                       flex: 1,
                       borderRight: S.borderDot,
                       display: "flex",
                       flexDirection: "column",
+                      minWidth: 0,
                     }}
                   >
-                    <div style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}>
-                      {t("1")} {t("SEX")}{" "}
-                      <span style={S.bold}>
-                        {options[certificate?.["wxrDsUO1ELy"]] || ""}
-                      </span>
-                    </div>
-                    <div style={{ padding: "1mm 2mm", flex: 1 }}>
-                      {t("2")} {t("DATE_AND_TIME_OF_BIRTH")}{" "}
-                      <span style={S.bold}>
-                        {formatDateTime(
-                          certificate?.["zAetLzp3cT1"],
-                          certificate?.["uOK1Wcm91NB"]
-                        )}
-                      </span>
-                    </div>
+                    <CertField
+                      style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}
+                      label={`${t("1")} ${t("SEX")}`}
+                      value={options[certificate?.["wxrDsUO1ELy"]] || ""}
+                    />
+                    <CertField
+                      style={{ padding: "1mm 2mm", flex: 1 }}
+                      label={`${t("2")} ${t("DATE_AND_TIME_OF_BIRTH")}`}
+                      value={formatDateTime(
+                        certificate?.["zAetLzp3cT1"],
+                        certificate?.["uOK1Wcm91NB"]
+                      )}
+                    />
                   </div>
                   <div
                     style={{
                       flex: 1,
                       display: "flex",
                       flexDirection: "column",
+                      minWidth: 0,
                     }}
                   >
-                    <div style={{ padding: "1mm 2mm", flex: 1 }}>
-                      {t("3")} {t("PLACE_OF_BIRTH")}{" "}
-                      <span style={S.bold}>
-                        {options[certificate?.["JAU9NM7UqQP"]] || certificate?.["JAU9NM7UqQP"] || ""}
-                      </span>
-                    </div>
+                    <CertField
+                      style={{ padding: "1mm 2mm", flex: 1 }}
+                      label={`${t("3")} ${t("PLACE_OF_BIRTH")}`}
+                      value={options[certificate?.["JAU9NM7UqQP"]] || certificate?.["JAU9NM7UqQP"] || ""}
+                    />
                   </div>
                 </div>
               </div>
 
               {/* ── ROW: Particulars of Father ── */}
-              <div style={{ display: "flex", borderBottom: S.border }}>
+              <div style={{ display: "flex", borderBottom: S.border, height: "18mm" }}>
                 <div
                   style={{
                     width: "28mm",
@@ -646,63 +653,63 @@ const LateFoetalDeathCert = () => {
                 >
                   <Trans i18nKey="PARTICULAR_OF_FATHER" />
                 </div>
-                <div style={{ flex: 1, display: "flex" }}>
+                <div style={{ flex: 1, display: "flex", minWidth: 0 }}>
                   <div
                     style={{
                       flex: 1,
                       borderRight: S.borderDot,
                       display: "flex",
                       flexDirection: "column",
+                      minWidth: 0,
                     }}
                   >
-                    <div style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}>
-                      {t("4")} {t("NAME_OF_FATHER")}{" "}
-                      <span style={S.bold}>
-                        {certificate?.["RKs8td9BnNj"] || ""}
-                      </span>
-                    </div>
-                    <div style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}>
-                      {t("5")} {t("RACE")}{" "}
-                      <span style={S.bold}>
-                        {options[certificate?.["mIRVmCzC7Tt"]] || ""}
-                      </span>
-                    </div>
-                    <div style={{ padding: "1mm 2mm", flex: 1 }}>
-                      {t("6")} {t("CITIZENSHIP_AND_NRC")}{" "}
-                      <span style={S.bold}>
-                        {getCitizenshipDisplay(
-                          certificate["ed2RBrhMhnN"],
-                          certificate["Fwa7gEzjZAH"],
-                          certificate["YE1wx1a4Ky4"]
-                        )}
-                      </span>
-                    </div>
+                    <CertField
+                      style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}
+                      label={`${t("4")} ${t("NAME")}`}
+                      value={certificate?.["RKs8td9BnNj"] || ""}
+                    />
+                    <CertField
+                      style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}
+                      label={`${t("5")} ${t("RACE")}`}
+                      value={[
+                        options[certificate?.["mIRVmCzC7Tt"]],
+                        options[certificate?.["Wg3ceiNXr3i"]],
+                      ].filter(Boolean).join(", ")}
+                    />
+                    <CertField
+                      style={{ padding: "1mm 2mm", flex: 1 }}
+                      label={`${t("6")} ${t("CITIZENSHIP_AND_NRC")}`}
+                      value={getCitizenshipDisplay(
+                        certificate["ed2RBrhMhnN"],
+                        certificate["Fwa7gEzjZAH"],
+                        certificate["YE1wx1a4Ky4"]
+                      )}
+                    />
                   </div>
                   <div
                     style={{
                       flex: 1,
                       display: "flex",
                       flexDirection: "column",
+                      minWidth: 0,
                     }}
                   >
-                    <div style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}>
-                      {t("7")} {t("RELIGION")}{" "}
-                      <span style={S.bold}>
-                        {options[certificate?.["m4b4SSlipKJ"]] || ""}
-                      </span>
-                    </div>
-                    <div style={{ padding: "1mm 2mm", flex: 1 }}>
-                      {t("8")} {t("OCCUPATION")}{" "}
-                      <span style={S.bold}>
-                        {certificate?.["CjjgDMbqfXX"] || ""}
-                      </span>
-                    </div>
+                    <CertField
+                      style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}
+                      label={`${t("7")} ${t("RELIGION")}`}
+                      value={options[certificate?.["m4b4SSlipKJ"]] || ""}
+                    />
+                    <CertField
+                      style={{ padding: "1mm 2mm", flex: 1 }}
+                      label={`${t("8")} ${t("OCCUPATION")}`}
+                      value={certificate?.["CjjgDMbqfXX"] || ""}
+                    />
                   </div>
                 </div>
               </div>
 
               {/* ── ROW: Particulars of Mother ── */}
-              <div style={{ display: "flex", borderBottom: S.border }}>
+              <div style={{ display: "flex", borderBottom: S.border, height: "21mm" }}>
                 <div
                   style={{
                     width: "28mm",
@@ -720,61 +727,65 @@ const LateFoetalDeathCert = () => {
                 >
                   <Trans i18nKey="PARTICULAR_OF_MOTHER" />
                 </div>
-                <div style={{ flex: 1, display: "flex" }}>
+                <div style={{ flex: 1, display: "flex", minWidth: 0 }}>
                   <div
                     style={{
                       flex: 1,
                       borderRight: S.borderDot,
                       display: "flex",
                       flexDirection: "column",
+                      minWidth: 0,
                     }}
                   >
-                    <div style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}>
-                      {t("9")} {t("NAME_OF_MOTHER")}{" "}
-                      <span style={S.bold}>
-                        {certificate?.["UYmZMZt32hZ"] || ""}
-                      </span>
-                    </div>
-                    <div style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}>
-                      {t("10")} {t("RACE")}{" "}
-                      <span style={S.bold}>
-                        {options[certificate?.["XFmGvaRAJqP"]] || ""}
-                      </span>
-                    </div>
-                    <div style={{ padding: "1mm 2mm", flex: 1 }}>
-                      {t("11")} {t("CITIZENSHIP_AND_NRC")}{" "}
-                      <span style={S.bold}>
-                        {getCitizenshipDisplay(
-                          certificate["r8oFvT4PZwL"],
-                          certificate["M8pvzjPdija"],
-                          certificate["CowkFxAoqnl"]
-                        )}
-                      </span>
-                    </div>
+                    <CertField
+                      style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}
+                      label={`${t("9")} ${t("NAME")}`}
+                      value={certificate?.["UYmZMZt32hZ"] || ""}
+                    />
+                    <CertField
+                      style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}
+                      label={`${t("10")} ${t("RACE")}`}
+                      value={[
+                        options[certificate?.["XFmGvaRAJqP"]],
+                        options[certificate?.["Vv6CLsgwrzj"]],
+                      ].filter(Boolean).join(", ")}
+                    />
+                    <CertField
+                      style={{ padding: "1mm 2mm", flex: 1 }}
+                      label={`${t("11")} ${t("CITIZENSHIP_AND_NRC")}`}
+                      value={getCitizenshipDisplay(
+                        certificate["r8oFvT4PZwL"],
+                        certificate["M8pvzjPdija"],
+                        certificate["CowkFxAoqnl"]
+                      )}
+                    />
                   </div>
                   <div
                     style={{
                       flex: 1,
                       display: "flex",
                       flexDirection: "column",
+                      minWidth: 0,
                     }}
                   >
-                    <div style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}>
-                      {t("12")} {t("RELIGION")}{" "}
-                      <span style={S.bold}>
-                        {options[certificate?.["QsUp6BSb8Du"]] || ""}
-                      </span>
-                    </div>
-                    <div style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}>
-                      {t("13")} {t("OCCUPATION")}{" "}
-                      <span style={S.bold}>
-                        {certificate?.["vg5hhREmzXe"] || ""}
-                      </span>
-                    </div>
-                    <div style={{ padding: "1mm 2mm", flex: 1, minHeight: "10mm", lineHeight: 1.5 }}>
-                      {t("14")} {t("PERMANENT_ADDRESS")}{" "}
-                      <span style={S.bold}>{permanentAddress}</span>
-                    </div>
+                    <CertField
+                      style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}
+                      label={`${t("12")} ${t("RELIGION")}`}
+                      value={options[certificate?.["QsUp6BSb8Du"]] || ""}
+                    />
+                    <CertField
+                      style={{ padding: "1mm 2mm", borderBottom: S.borderDot, flex: 1 }}
+                      label={`${t("13")} ${t("OCCUPATION")}`}
+                      value={certificate?.["vg5hhREmzXe"] || ""}
+                    />
+                    {/* fixed 2-line box: long addresses wrap instead of clipping */}
+                    <CertField
+                      lines={2}
+                      height="10mm"
+                      style={{ padding: "1mm 2mm", flexShrink: 0 }}
+                      label={`${t("14")} ${t("PERMANENT_ADDRESS")}`}
+                      value={permanentAddress}
+                    />
                   </div>
                 </div>
               </div>
@@ -830,7 +841,7 @@ const LateFoetalDeathCert = () => {
               </div>
 
               {/* ── ROW: Particulars of Informant ── */}
-              <div style={{ display: "flex" }}>
+              <div style={{ display: "flex", height: "16mm" }}>
                 <div
                   style={{
                     width: "28mm",
@@ -848,44 +859,46 @@ const LateFoetalDeathCert = () => {
                 >
                   <Trans i18nKey="PARTICULAR_OF_INFORMANT" />
                 </div>
-                <div style={{ flex: 1, display: "flex" }}>
+                <div style={{ flex: 1, display: "flex", minWidth: 0 }}>
                   <div
                     style={{
                       flex: 1,
                       display: "flex",
                       flexDirection: "column",
                       paddingLeft: "18mm",
+                      minWidth: 0,
                     }}
                   >
                     <div style={{ padding: "1mm 2mm", flex: 1 }}>
                       {t("SIGNATURE")}
                     </div>
-                    <div style={{ padding: "1mm 2mm", flex: 1 }}>
-                      {t("NAME")}{" "}
-                      <span style={S.bold}>
-                        {certificate?.["YdNUYjH3rct"] || ""}
-                      </span>
-                    </div>
+                    <CertField
+                      style={{ padding: "1mm 2mm", flex: 1 }}
+                      label={t("NAME")}
+                      value={certificate?.["YdNUYjH3rct"] || ""}
+                    />
                   </div>
                   <div
                     style={{
                       flex: 1,
                       display: "flex",
                       flexDirection: "column",
+                      minWidth: 0,
                     }}
                   >
-                    <div style={{ padding: "1mm 2mm", flex: 1 }}>
-                      {t("RELATION_TO_CHILD")}{" "}
-                      <span style={S.bold}>
-                        {certificate?.["eYh3U6sXrTQ"] || ""}
-                      </span>
-                    </div>
-                    <div style={{ padding: "1mm 2mm", flex: 1 }}>
-                      {t("ADDRESS")}{" "}
-                      <span style={S.bold}>
-                        {certificate?.["rRpqp6TPWlh"] || ""}
-                      </span>
-                    </div>
+                    <CertField
+                      style={{ padding: "1mm 2mm", flex: 1 }}
+                      label={t("RELATION_TO_CHILD")}
+                      value={certificate?.["eYh3U6sXrTQ"] || ""}
+                    />
+                    {/* fixed 2-line box for the informant address */}
+                    <CertField
+                      lines={2}
+                      height="10mm"
+                      style={{ padding: "1mm 2mm", flexShrink: 0 }}
+                      label={t("ADDRESS")}
+                      value={certificate?.["rRpqp6TPWlh"] || ""}
+                    />
                   </div>
                 </div>
               </div>
@@ -918,6 +931,7 @@ const LateFoetalDeathCert = () => {
                 fontSize: S.fsSm,
                 lineHeight: 1.4,
                 marginTop: "3mm",
+                height: "22mm",
               }}
             >
               <div style={{ flex: 1 }} />
@@ -960,20 +974,11 @@ const LateFoetalDeathCert = () => {
                 >
                   {"{"}
                 </div>
-                <div style={{ textAlign: "left" }}>
+                {/* fixed width: the value must never widen the centered group */}
+                <div style={{ textAlign: "left", width: "52mm", flexShrink: 0 }}>
                   <div>{t("SIGNATURE")}</div>
-                  <div>
-                    {t("NAME")}{" "}
-                    <span style={S.bold}>
-                      {certificate?.["B1QxOlRIEVk"] || ""}
-                    </span>
-                  </div>
-                  <div>
-                    {t("DESIGNATION")}{" "}
-                    <span style={S.bold}>
-                      {certificate?.["qsIjbrXLBL5"] || ""}
-                    </span>
-                  </div>
+                  <CertField label={t("NAME")} value={""} />
+                  <CertField label={t("DESIGNATION")} value={""} />
                 </div>
               </div>
 
@@ -981,6 +986,7 @@ const LateFoetalDeathCert = () => {
               <div style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
                 {url && (
                   <img
+                    className="cert-value"
                     src={url}
                     alt="QR Code"
                     style={{ width: "20mm", height: "20mm" }}
@@ -990,16 +996,11 @@ const LateFoetalDeathCert = () => {
             </div>
 
             {/* ── Date at the very bottom ── */}
-            <div
-              style={{
-                marginTop: "2mm",
-                fontSize: S.fsSm,
-                textAlign: "left",
-                padding: "0 2mm",
-              }}
-            >
-              {t("DATE")} <span style={S.bold}>{currentDate}</span>
-            </div>
+            <CertField
+              style={{ marginTop: "2mm", fontSize: S.fsSm, padding: "0 2mm" }}
+              label={t("DATE")}
+              value={blank ? '' : currentDate}
+            />
           </div>
         </div>
       </div>

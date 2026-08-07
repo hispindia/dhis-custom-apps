@@ -142,6 +142,41 @@
     return (
      <div className={`${styles.card} ${styles.main}`}>
       <h3> Birth Certificate Records</h3>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "12px",
+          padding: "10px 12px",
+          marginBottom: "12px",
+          border: "1px solid #d0d7de",
+          borderRadius: "6px",
+          background: "#f8fafc",
+        }}
+      >
+        <strong>Generate Blank Template</strong>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button
+            style={{ width: "60px", height: "28px", background: "#BFF4B", border:"1px solid green", borderRadius: "10%" }}
+            onClick={() => {
+              i18n.changeLanguage('br');
+              navigate("/blank-birth-certificate");
+            }}
+          >
+            Bur
+          </button>
+          <button
+            style={{ width: "60px", height: "28px",background: "#ADD8E6", border:"1px solid green", borderRadius: "10%" }}
+            onClick={() => {
+              i18n.changeLanguage('en');
+              navigate("/blank-birth-certificate");
+            }}
+          >
+            En
+          </button>
+        </div>
+      </div>
       <table>
       <thead>
         <tr>
