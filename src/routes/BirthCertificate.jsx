@@ -636,7 +636,7 @@ const BirthCertificate = ({ blank = false } = {}) => {
                 style={{
                   display: "flex",
                   borderBottom: S.border,
-                  height: "15mm",
+                  height: "17mm",
                 }}
               >
                 <div
@@ -707,7 +707,7 @@ const BirthCertificate = ({ blank = false } = {}) => {
                 style={{
                   display: "flex",
                   borderBottom: S.border,
-                  height: "18mm",
+                  height: "20mm",
                 }}
               >
                 <div
@@ -747,7 +747,7 @@ const BirthCertificate = ({ blank = false } = {}) => {
                       label={`${t("6")} ${t("RACE")}`}
                       value={[
                         options[certificate?.["mIRVmCzC7Tt"]],
-                        options[certificate?.["Wg3ceiNXr3i"]],
+                        certificate?.["Wg3ceiNXr3i"],
                       ].filter(Boolean).join(", ")}
                     />
                     <CertField
@@ -787,7 +787,7 @@ const BirthCertificate = ({ blank = false } = {}) => {
                 style={{
                   display: "flex",
                   borderBottom: S.border,
-                  height: "21mm",
+                  height: "25mm",
                 }}
               >
                 <div
@@ -827,7 +827,7 @@ const BirthCertificate = ({ blank = false } = {}) => {
                       label={`${t("11")} ${t("RACE")}`}
                       value={[
                           options[certificate?.["XFmGvaRAJqP"]],
-                          options[certificate?.["Vv6CLsgwrzj"]],
+                          certificate?.["Vv6CLsgwrzj"],
                         ].filter(Boolean).join(", ")}
                     />
                     <CertField
@@ -861,7 +861,7 @@ const BirthCertificate = ({ blank = false } = {}) => {
                     {/* fixed 2-line box: long addresses wrap instead of clipping */}
                     <CertField
                       lines={2}
-                      height="10mm"
+                      height="12mm"
                       style={{ padding: "1mm 2mm", flexShrink: 0 }}
                       label={`${t("15")} ${t("PERMANENT_ADDRESS")}`}
                       value={permanentAddress}
@@ -875,7 +875,7 @@ const BirthCertificate = ({ blank = false } = {}) => {
                 style={{
                   display: "flex",
                   borderBottom: S.border,
-                  height: "16mm",
+                  height: "19mm",
                 }}
               >
                 <div

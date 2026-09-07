@@ -444,6 +444,7 @@ const removeNumbersDots = (value) => value?.replace(/[0-9.]+/g, "").trim() ?? va
               value={options[certificate?.["MOV6uMBMkph"]] || certificate?.["MOV6uMBMkph"] || ""}
             />
             <CertField
+              height='15mm'
               label={t("CAUSE_OF_DEATH")}
               value={options[certificate?.["nQy5xQrOMXj"]] || certificate?.["nQy5xQrOMXj"] || ""}
             />
@@ -622,7 +623,7 @@ const removeNumbersDots = (value) => value?.replace(/[0-9.]+/g, "").trim() ?? va
                     label={`${t("7")} ${t("RACE")}`}
                     value={[
                       options[certificate?.["b9BVo7x8248"]],
-                      options[certificate?.["x7BjckVHXKk"]]
+                      certificate?.["x7BjckVHXKk"]
                     ].filter(Boolean).join(", ")}
                   />
                   <CertField

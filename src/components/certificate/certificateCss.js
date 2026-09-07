@@ -50,11 +50,11 @@ export const buildCertificateCss = () => `
     white-space: nowrap;
   }
   .cert-field.cert-lines-2 {
-    align-items: flex-start;
+    // align-items: flex-start;
   }
   .cert-field.cert-lines-2 > .cert-value {
     white-space: normal;
-    line-height: 1.35; /* headroom for Myanmar stacked diacritics */
+    // line-height: 1.35; /* headroom for Myanmar stacked diacritics */
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;

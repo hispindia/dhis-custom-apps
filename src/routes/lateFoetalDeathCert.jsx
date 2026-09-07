@@ -575,7 +575,7 @@ const removeNumbersDots = (value) => value?.replace(/[0-9.]+/g, "").trim() ?? va
             <div style={{ border: S.border, display: "flex", flexDirection: "column", whiteSpace: "nowrap", overflow: "hidden" }}>
 
               {/* ── ROW: Particulars of Child ── */}
-              <div style={{ display: "flex", borderBottom: S.border, height: "12mm" }}>
+              <div style={{ display: "flex", borderBottom: S.border, height: "15mm" }}>
                 <div
                   style={{
                     width: "28mm",
@@ -635,7 +635,7 @@ const removeNumbersDots = (value) => value?.replace(/[0-9.]+/g, "").trim() ?? va
               </div>
 
               {/* ── ROW: Particulars of Father ── */}
-              <div style={{ display: "flex", borderBottom: S.border, height: "18mm" }}>
+              <div style={{ display: "flex", borderBottom: S.border, height: "21mm" }}>
                 <div
                   style={{
                     width: "28mm",
@@ -673,7 +673,7 @@ const removeNumbersDots = (value) => value?.replace(/[0-9.]+/g, "").trim() ?? va
                       label={`${t("5")} ${t("RACE")}`}
                       value={[
                         options[certificate?.["mIRVmCzC7Tt"]],
-                        options[certificate?.["Wg3ceiNXr3i"]],
+                        certificate?.["Wg3ceiNXr3i"],
                       ].filter(Boolean).join(", ")}
                     />
                     <CertField
@@ -709,7 +709,7 @@ const removeNumbersDots = (value) => value?.replace(/[0-9.]+/g, "").trim() ?? va
               </div>
 
               {/* ── ROW: Particulars of Mother ── */}
-              <div style={{ display: "flex", borderBottom: S.border, height: "21mm" }}>
+              <div style={{ display: "flex", borderBottom: S.border, height: "25mm" }}>
                 <div
                   style={{
                     width: "28mm",
@@ -747,7 +747,7 @@ const removeNumbersDots = (value) => value?.replace(/[0-9.]+/g, "").trim() ?? va
                       label={`${t("10")} ${t("RACE")}`}
                       value={[
                         options[certificate?.["XFmGvaRAJqP"]],
-                        options[certificate?.["Vv6CLsgwrzj"]],
+                        certificate?.["Vv6CLsgwrzj"],
                       ].filter(Boolean).join(", ")}
                     />
                     <CertField
@@ -781,7 +781,7 @@ const removeNumbersDots = (value) => value?.replace(/[0-9.]+/g, "").trim() ?? va
                     {/* fixed 2-line box: long addresses wrap instead of clipping */}
                     <CertField
                       lines={2}
-                      height="10mm"
+                      height="12mm"
                       style={{ padding: "1mm 2mm", flexShrink: 0 }}
                       label={`${t("14")} ${t("PERMANENT_ADDRESS")}`}
                       value={permanentAddress}
@@ -791,7 +791,7 @@ const removeNumbersDots = (value) => value?.replace(/[0-9.]+/g, "").trim() ?? va
               </div>
 
               {/* ── ROW: Particulars of Person (certifier) ── */}
-              <div style={{ display: "flex", borderBottom: S.border }}>
+              <div style={{ display: "flex", borderBottom: S.border  }}>
                 <div
                   style={{
                     width: "28mm",
@@ -841,7 +841,7 @@ const removeNumbersDots = (value) => value?.replace(/[0-9.]+/g, "").trim() ?? va
               </div>
 
               {/* ── ROW: Particulars of Informant ── */}
-              <div style={{ display: "flex", height: "16mm" }}>
+              <div style={{ display: "flex", height: "19mm" }}>
                 <div
                   style={{
                     width: "28mm",
